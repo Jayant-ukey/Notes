@@ -1,0 +1,2120 @@
+05-06
+------
+
+Temperory variable stored in stack.
+
+-> Heap memory is always larger than stack
+
+-> for each method a block of memory is allocated in stack memory 
+ - primitive variable doesnt hold any reference it is store value only so it is store in stack only.
+ - If we are creating any object like Demo obj = new Obj()
+  Here we are creating one object so in stack memory we are only holding the reference of that object and it will be available in heap memory.
+  
+  - String literals data will store in string pool only, and string pool present in heap memory.
+  But the varaible name which is holding the value is present in stack memory and which will refer to the string pool where value is present 
+  
+  example : String stringLiteral = "24"
+  
+  Here stringLiteral is present in stack which is holding the refernce for vaue "24".
+  This "24" will be present in the string pool of heap memory.
+  
+  
+  
+Summery 1 -> 
+(Both stack and heap are created by JVM and stored in RAM)
+
+1. There will be one method in the program then a dedicated area will get allocated for that particular method in the stack memory which is called as frame.
+
+2. Now inside that method different variables will be present and this variable can be of objects, strings, or varaibles.
+
+3. i. For varaibles the memory will get allocated in the stcak memory only.
+Imp :- For primitve variable it doesnt hold any reference, then it is directly stored in the stack memory only.
+
+ii. If string literals are there -> Inside data frame we will be holding only reference.
+
+example : String val = "Hello"
+
+- Here reference varaible which is  "val" is hold in stack.
+- and this string variable "val" is holding the reference for "Hello" which is present in the string pool.
+String pool is present in the Heap memory only.
+
+
+iii. If we are creating new object.
+
+example : Person obj = new Person();
+
+- Here the Person() object will be created in the heap memory and it has one reference i.e obj. So this obj which is refernece is present in the stack memory, and it hold the refernece of the Person() object. 
+
+
+
+Summery 2:
+
+1. If there is any other method which we are calling from main method lets name it as memoryManagementTest()
+
+Inside this method we having one code 
+example : Person obj2 = obj;
+
+Here we are creating a refernece obj2 in the stack, which will hold the same reference of the Person() object obj which we created previously.
+
+2. String val2 = "Hello"
+Here val2 will point out to the same literals which is present in the string pool.
+
+3. String val3 = new String("Hello");
+Here it will create a new memory inside heap memory and oustide the srting pool to store "Hello".
+and the refernce variable val3 will store in the stack memory only.
+
+
+Summery 3
+
+- As soon as the scope of method get completed for example {}. we exit from the method.
+- As soon as the scope is finished all the variables and the references which is present inside that particular frame will get deleted one by one, in the LIFO manner.
+- LIFO means we are using stack memory so for whatever the variable which we are putting in the stack memory it get one by one, as per the sequence of the variable that we are giving, and once the scope get end, it will delete that particular variable or refernce which will first out. That's why we called it as LIFO manner.
+
+= One by one it will clear stack memory, and remove the refernce and varaibles.
+
+
+- Each thread has it's own stack memory.
+- Varaible within a scope is only visible and as soon as any variable goes out of the SCOPE, it get deleted from the Stack (in LIFO order).
+
+
+
+Summery 4:
+-Once the stack memory get cleared, we get question about heap memory, how the memory which is present in the heap memory get cleared.
+So it get cleared by the garabege collector. We don't need to worry about it.
+
+
+=> JVM having control over Garbage collector, even if you are wiriting System.gc(). Then also there will be no guaranty that this command will get executed.
+It totally handled by JVM. JVM has full control over garbage collector, whether I should run it or when to run it, that kind of thing. That's why it is called as automatice garbage management. So you don't have to worry about freeing up the memory. JVM periodically check up the heap memory.
+If JVM finds out that heap memeory getting filled so fast then JVM runs the garbage collector more frequently. If JVM thinks we have more heap memory then it will check less frequently.
+
+
+=========================================================
+
+Stack -> It stores the reference os object.
+Heap -> It stores the object.
+
+
+TYPES OF Reference
+------------------
+
+*Strong reference : Person obj = new Person();
+
+- If strong reference is present in code then this object never get deleted till strong reference is present.
+- Strong reference said that, hey grabage collector don't delete my object , I have strong reference. So garabage collector will not delete it.
+
+*Weak reference : 
+- To create we have a class called WeakReference, and we can create weak reference as follows:
+WeakReference<Person> weakObj = new WeakReference<Person>(new Person());
+
+-Weak reference says, I have a reference I can access the value, but as soon as you run the garabage collector I will free it up, and after freeing it up if user try to access it, it will give the null value
+
+
+*Soft Reference:
+Soft reference is a type of weak reference.
+It tells the grabage collector that you are allowd to free it up, even though I have soft reference. But do it only when it is very very urgent. Very very urgent means there is no more space/ very limited space, then you can do it.
+
+
+
+==========================================================
+
+HOW THE DATA FROM HEAP MEMEORY GET DEALLOCATED
+-----------------------------------------------
+
+If we are creating one object let make Person object.
+
+Person obj1 = new Person(); //Strong reference
+
+1. obj1 = null
+Here what it will do, it will remove the refrence of Person object from heap memeory, and as soon as garabge collector runs, it will remove or free up the space.
+
+2. Person obj2 = new Person();
+   obj1 = obj2;
+   
+   Here obj1 will refer to the Person obj2 in the heap memeory. So the obj1 refering previously will get free up as soon as we run garabage collector.
+   
+   
+************************************************
+
+Intrermediate operations in stream api:
+- Intermediate operations return a stream as the output, and intermediate operations not executed until a terminal operation is invoked on the stream. This is called lazy evaluation.
+- Intermediate operation of stream api's process the current data and return a new stream.
+- When intermediate operations executed it only return a new stream.
+
+example - map(), filter(), peek(), distinct(), sorted().
+
+
+
+*********************************************************
+
+06-06
+------
+
+Singelton Class:
+This class objective is to create only 1 and 1 object.
+
+Use case:
+-In DBConnection, you want only one time connection with DB, and want to execute as many query as you want.
+- So in that case Singelton class will come in picture. Which says no matter how many time you call this class, no matter from where you call this class, only one and one object will be create for this class. That is the purpose of singelton class.
+
+
+Different ways of creating singelton class:
+1. Eager initialization
+2. Lazy Inititalization
+3. Synchronization Block.
+4. Double Check lock (there is a memeory issue, resolved through Volatile instance variable)
+5. Bill Pugh Solution
+6. Enum Singelton
+
+
+1. Eager initialization:
+-
+
+public class DBConnection{
+	private static DBConnection conObject = new DBConnection();
+	
+	private DBConnection(){} //private constructor
+	
+	public static DBConnection getInstance(){
+		return conObject;
+	}
+}
+
+public class Main{
+	psvm(){
+		DBConnection conObj = DBConnection.getInstance();
+	}
+}
+
+--
+1.
+- Here we have created object in advance means eagerly.
+- We made it private so that it should be accessible inside of that class only, and no one will able to update it outside.
+- static means it's belongs to class now, not to the object. So only one time it will create object, only one copy will get created
+
+2. Make a constructor private so nobody able to create new object outside the class using new keyword like - new DBConnection().
+
+
+3. Created a public method. So anyone want the object of this class then this method getInstance() simply return the object.
+- and this method is static so that you can call directly using class name only, as you see in the main method
+
+
+
+Note: 
+- This is called eager intialization because we are using static there to create the object class. and static variable will get preloaded in the memory as soon as we start the application. 
+- There is one problem in it that, even if we are not using that getInstance class, object will get created. THat's the problem with Eager Initialization.
+
+-In simple the problem is that even if we are not using it, it will create the object.
+
+=====================
+
+2.Lazy Inititalization:
+
+public class DBConnection{
+	private static DBConnection conObject;
+	
+	private DBConnection(){} //private constructor
+	
+	public static DBConnection getInstance(){
+		
+		if(conObject == null){
+			conObject = new DBConnection();
+		}
+		return conObject;
+	}
+}
+
+
+1. Here instead of creating/initializing object at the beginning, but it still private static.
+
+2. Constructor is private.
+
+3. In getInstance method. Here we are first checking whether refernce hold any memory or not. If it is null then only reference will created and memory get allocated.
+and after that if second thread will come and check whether the object is null, it will found that it's not null then it simply return the object.
+
+Note: Here problem is that if two threads suppose T1 and T2 come parallely. Then both the threads will find that object is null, and two object will get created. To overcome this new new pattern come.
+
+==================================================
+
+3. Synchronization Block:-
+
+
+public class DBConnection{
+	private static DBConnection conObject;
+	
+	private DBConnection(){} //private constructor
+	
+	synchorized public static DBConnection getInstance(){
+		
+		if(conObject == null){
+			conObject = new DBConnection();
+		}
+		return conObject;
+	}
+}
+
+
+- Here with method we use synchorized keyword, which actually do two things.
+It first put a lock and then do unlock.
+
+- So now if two threads T1, T2 calling this getInstance() method, but now we are using synchorized keyword. So only one thread will go inside of this method, and it will see that current object is null so it will create object of it. Then come outside do unlock.
+Then second thread will come do lock, then it check object is already created then simply return it, adn do unlock.
+
+
+- Here only disadvantage is that we are putting synchronized at method level. So that's why it become slow. For example if we are calling getInstance() method for 100 of time. Then everytime when we call this method, it will call first lock then do unlock. Beacuase of which it become very slow.
+To overcome this double unlocking mechanism come.
+
+===============================================
+
+4. Double Check lock:
+
+public class DBConnection{
+	private static volatile DBConnection conObject;
+	
+	private DBConnection(){} //private constructor
+	
+	public static DBConnection getInstance(){
+		
+		if(conObject == null){
+			synchronized(DBConnection.class){
+				if(conObject == null){
+					conObject = new DBConnection();
+				}
+			}
+		}
+		return conObject;
+	}
+}
+
+
+-Here we are not using synchronized over the method.
+and here we are doing double check, that we are first checking the object is null or not, then they found that object is null then they go inside and then we are locking using synchronized, and then we are again checking whether object is null or not, if it is null then go inside, and create a object.
+and if thread 2 come it will first check outer and see that object is already created then directly return it.
+
+
+Summery : If 2 threads T1 and T2 come. Then first it check whether the object is null or not. If not then it goes inside. Then here 2 threads come concurrently, so we have synchronized there. So T1 will lock and then it will check whether the object is null or not. If null then it will create the object, then T1 get unlock.
+After that T2 get lock and check whether the object is null or not. It found that object is already created, so it will get unlock and simply return the object.
+
+Here we are dooing double check inside the method that's why it is called as double check lock.
+
+
+Note:
+In CPU there are multiple core and each core having there cache genrally known as L1 cache and then having the memory.
+
+diagram:
+
+	Core1		core2
+	  |			  |
+	L1 cache	L1 cache
+	  |			  |
+	  Common Memory
+	  
+	 
+Here if we have 2 threads T1, T2. and even though they are not come concurrently.
+
+Suppose T1 thread come, and its computation happens at core1. So it creates the object for DBConnection in L1 cache.
+After that thread 2 come and it's computation happens at core2, and found that object is still null(considering the scenario where cache1 and cache2 not sync up yet). After finding in the cache 2 it gets null, so it will go to memory and check whether object is still null or anything assign to it. Lets say in memory object its not get updated yet, then it will show null there. SO in that case multiple object get created because of caching, and this issue is solved by volatile.
+
+
+=> Here Volatile is solving 2 issue one is of caching and another one is of ordering that we are seeing here.
+
+=>How volatile solve caching issue?
+- Volatile says any write and read operation will happend, it will directly happend in the memory, it will not done in the cache.
+- So if we are creating the object then it will directly get updated in the memory, not in the cache. Same thing happen if we are performing any read operation, means if we are checking that any value get assign to the object or not, it will direclty check from Memory.
+
+Because we are direclty using memory and not using cache, process become slow. It's time consuming.
+To overcome this solution there is one more solution Bill Pugh Solution.
+
+====================================================
+
+5. Bill Pugh Solution
+
+- Here we are not using volatile nor synchronized.
+- It is simply making use of eager initialization. The problem in eager initialization is that even if we are not using the method object will get created. So Bill Pugh resolve that.
+
+
+Code:
+
+public class DBConnection{
+	private DBConnection(){}
+	
+	private static class DBConnectionHelper{
+		private static final DBConnection INSTANCE_OBJECT = new DBConnection();
+	}
+	
+	public static DBConnection.getInstance(){
+		return DBConnectionHelper.INSTANCE_OBJECT;
+	}
+}
+
+
+- Here in Bill pugh that initialization part(private static final DBConnection INSTANCE_OBJECT = new DBConnection();) we are just putting inside the inner class or nested class DBConnectionHelper.
+
+- The purppose behind nested class is that. When you start your application all the nested class do not get loaded into the memory.
+Only when they are refered, they get use at that time only they get loaded in the memory. That's the one of the property of nested class.
+
+=> Here we make nested class as private so that this nested class cannot be accesible outside the class.
+
+
+THis Bill Pugh solution is also fast.
+====================================================
+
+6. ENUM
+
+COde:
+enum DBConnection{
+	INSTANCE;
+}
+
+
+-We know that in ENUM all the cosntructor are by default private
+-and per JVM only one ENUM gets created. Means with each jvm only one ENUM get generated, here it will take care that only one INSTANCE get created. That means ENUM is by default singelton only.(One object per JVM)
+
+
+*******************************************************
+
+IMMUTABLE Class
+
+- Strings are immutable, means if we assigned any value that cannot be changed.
+
+As per notes:
+- We cannot change the value of an object once it is created.
+- Declare class as 'final' so that it cannot be extended.
+- All class members should be private. So that direct access can be avoided.
+- And class members are initialized only once using constructor.
+- There should not be any setters method, which is generally use to change the value.
+- Just getter methods. and return copy of the member variable.
+- Exaple : String, Wrapper classes etc.
+
+
+final class MyImmutable{
+	
+	private final String name;
+	private final List<Object> petNameList;
+	
+	MyImmutable(String name, List<Object> petNameList){
+		this.name = name;
+		this.petNameList = petNameList;
+	}
+	
+	public String getName()
+	{
+		return name;
+	}	
+	
+	public List<Object> getPetName(){
+		//this is required because making list final means you can not now point it to new list, but still can add, delete value in it. So thats why we send the copy of it.
+		
+		return new ArrayList<>(petNameList);
+		//Here we are sending the copy of list.
+		//return petNameList -> if we do that then we are passing the memory location of that particular list, so in that list we can add or delete the elements
+	}
+}
+
+public class Main{
+	
+	psvm(){
+	
+		List<Object> petName = new ArrayList<>();
+		petName.add("sj");
+		petName.add("pj");
+		
+		MyImmutable obj = new MyImmutable("myName", petName);
+		
+		obj.getPetName().add("hello");
+		sysout(obj.getPetName()); //sj, pj -> It will not return hello from the list, as we are sending copy of the list from the getPetName method.
+		
+	}
+}
+
+
+**********************************************************
+
+07-06
+
+
+Functional interface:
+
+Q: What is functional interface?
+Ans: - If an interface contains only 1 abstract method that is known as functional innterface.
+- Also known as SAM interface (Single Abstract Method).
+- @FunctionalInterface keyword can be used at top of the interface (But its optional)
+
+
+You cna write functional interface in below 2 types:-
+
+@FunctionalInterface
+public interface Bird{
+		void canFly(String val);
+}
+
+	OR
+	--
+	
+public interface Bird{
+		void canFly(String val);
+}
+
+
+
+Q: If both the above things perform same operation then why we used annotation there?
+Ans : @FunctionalInterface Annotation restrict us and throws compilation error, if we try to add more than 1 abstract method.
+
+example:
+@FunctionalInterface
+public interface Bird{
+		void canFly(String val);
+		void getHeight(); //compilation error
+}
+
+
+
+More about functioanl Interface:
+1. In functional interface only 1 abstract method is allowed, but we can also have other methods like i)default method ii)static method iii)Object class method (Methods inherited from object class).
+
+code:
+
+@FunctionalInterface
+public interface Bird{
+		void canFly(String val);
+		
+		default void getHeight(){
+			//default method implementation
+		}
+		
+		static void canEat(){
+			//static method implementation
+		}
+		
+		String toString(); //Object class method
+}
+
+
+-More about object class method in interface.
+1. If in interface if we are using object class method like toString, and you are implementing it in other class, and you don't provide implementatio of that toString then also it is valid.
+Because default implementation will be present in object class, and all the class extends that object class by default.
+
+example code:
+
+public interface TestInterface{
+	String toString();
+}
+
+public class TestClassImplements implements TestInterface{
+
+}
+
+
+===================================================
+
+Q: What is Lambda expression and why it comes when we talk about functional interface.
+
+Ans : There are different ways to implemets functional interface.
+
+@FunctionalInterface
+public interface Bird{
+	void canFly(String val);
+}
+
+1. Using implements
+- If we implements Bird class then we need to provide definition of the abstract class method.
+
+code:
+public class Eagle implements Bird{
+
+	@override
+	public void canFly(String val){
+		sysout("Eagle Bird implementation")
+	}
+} 
+
+Bird eagleObj = new Eagle();
+eagleObj.canFly("Vertical");
+
+
+2. Using "anonymous class"
+
+public class Main{
+	psvm(){
+		Bird eagleObj = new Bird(){
+			@override
+			public void canFly(String val){
+				sysout("Eagle Bird Implementation");
+			}
+		};
+		
+		eagleObj.canFly("Vertical");
+	}
+}
+
+
+3. Using Lambda Expression
+
+Q: what is lambda expression?
+=> Lambda expression is a way to implement functional interface.
+
+Q; Why we need lambda expression to implement functional interface if we already have 2 methods?
+Ans: In functional interface we know that only one abstract method is there. So why we need to perform any extra things? like writing method name and then inside that method provide implementation all that thing.
+- So lambda expression reduce that thing it reduce verbose, that's why we used it.
+
+
+- Lambda expreesion is define as : ()->
+- ()-> : It is also called as arrow operator.
+- If any parameter we are passing in abstract method then that we need to pass in that lambda expression.
+- If multiple lines of code we are implementing inside it then we need to give curley braces, otherwise for single line of code we don't need to give curley braces it's optional.
+
+Code:
+
+public class Main{
+	psvm(){
+		
+		Bird eagleObj = (String value) -> {
+			sysout("Eagle Bird implementation" + value);
+		};
+		eagleObj.canFly("vertical");
+	}
+}
+
+
+====================================================
+
+
+
+-> Types of functional interface:
+
+- There are already some types of functional interface there that we do't even need to write it.
+1. Consumer
+2. Supplier
+3. Function
+4. Predicate
+
+- All this interface are present in java.util.function package
+
+
+
+1. Consumer
+
+- Represents an operation, that accepts a single input parameter and returns no result.
+- PResenst in java.util.function
+
+syntax:
+
+@FunctionalInterface
+public interface Cosumer<T> {
+	void accept(T t);
+}
+
+
+As we see above that it accepts a single input: So here in accept function we are passing a single input.
+Apart from that it returns a no result : As return type is void.
+
+
+Code:
+
+public class Main{
+	
+	psvm{
+		
+		Consumer<Integer> loggingObject = (Integer val) -> {
+			if(val > 10)
+				sysout("Logging");
+		};
+		
+		loggingObject.accept(11);
+	}
+}
+
+
+
+psvm(){
+	Consumer<String> strObj = (String str) ->{
+		sysout("My name is "+str);
+	};
+	strObj.accept("Jayant");
+}
+-------------
+
+2.Supplier
+
+-Represents the supplier of the result. Accepts no input parameter but produce a result.
+
+syntax:
+
+@FunctionalInterface
+public interface Supplier<T> {
+	T get();
+}
+
+
+- Accepts no input : in get function we are not providing any input.
+- Produces result : return type of get method is not void.
+
+
+Code:
+	
+public class Main{
+	psvm(){
+		Supplier<String> isEvenNo = ()-> "This is data I am returning";
+		
+		sysout(isEvenNo.get());
+	}
+}
+
+			OR
+			---
+			
+public class Main{
+	psvm(){
+		Supplier<String> isEvenNo = ()-> {
+			"This is data I am returning";
+		};
+		sysout(isEvenNo.get());
+	}
+}
+
+
+--------------------
+
+3. Function
+
+- Represennts function, that accepts one argument, process it and produce a result.
+
+
+syntax:
+
+@FunctionalInterface
+public interface Function<T, R>{
+	R apply(T t);
+}
+
+
+- So this functional interface takes two generic type parameter, and it's having one function which takes one parameter and return some value.
+
+
+Code:
+
+public class Main{
+	psvm(){
+		Function<Integer, String> integerToString = (Integer num) -> {
+			String output = num.toString();
+			return output;
+		};
+		sysout(integerToString.apply(64));
+	}
+}
+
+-----------------------
+
+4. Predicate
+
+- Represents fuunction, that accepts one argument and return the boolean
+
+syntax:
+
+@FunctionalInterface
+public interface Predicate<T>{
+	boolean test(T t);
+}
+
+
+Code:
+
+public class Main{
+	psvm(){
+		Predicate<Integer> isEven = (Integer num) -> {
+			if(num%2 == 0) 
+				return true;
+			
+			else 
+				return false;
+		};
+		
+		sysout(isEven.test(19));
+	}
+}
+
+
+- If you think from this 4 functional interface your requirement is not get statisy then you can write you own functional interface and use it.
+
+-----------------------------------------
+
+* Handle use case when functional interface extends from the other interface.
+
+
+Use case 1. Functional interface extending non-functional interface
+
+a. Will give compile time error.
+
+public interface LivingThing{
+	public void canBreathe();
+}
+
+@FunctionalInterface
+public interface Bird extends LivingThing{
+	void canFly(String val);
+}
+
+- When we are extending any interface then there methods also we can access it. So indirectly canBreathe method will be there in FunctionalInterface(parent class methods are accessible in child because of inheritance) and which is not right thing as per definition. So it will give a compilation error.
+
+b. Right way.
+
+public interface LivingThing{
+	default public boolean canBreathe(){
+		return true;
+	}
+}
+
+@FunctionalInterface
+public interface Bird extends LivingThing{
+	void canFly(String val);
+}
+
+- Here in LivingThing we are using default method(Note: if we are making any method in interface then by default it will be public abstract, that's why we need to add default keyword infront of it to make it default method.)
+
+- And in FunctionalInterface we have only one abstract method which is fine. So here we will not get any error, as in functional interface we can write default method.
+
+-----------
+
+Use case 2: Interface exteding functional interface
+
+@FunctionalInterface
+public interface LivingThing{
+	 public boolean canBreathe();
+}
+
+
+public interface Bird extends LivingThing{
+	void canFly(String val);
+}
+
+- THis is fine because here we and extending functional interface in an interface, and the Bird interface is not the functional interface thats why we interface can have more than 1 abstract method.
+
+-----------------
+
+Case 3 : Functional interface extending other functional interface
+
+
+a. Will give error
+
+@FunctionalInterface
+public interface LivingThing{
+	 public boolean canBreathe();
+}
+
+
+@FunctionalInterface
+public interface Bird extends LivingThing{
+	void canFly(String val);
+}
+
+- Here child interface will get two abstracts method, and rule of functional interface will get disobey. So we will get compilation error.
+
+
+b. Correct way
+
+@FunctionalInterface
+public interface LivingThing{
+	 public boolean canBreathe();
+}
+
+
+@FunctionalInterface
+public interface Bird extends LivingThing{
+	 boolean canBreathe();
+}
+
+public class Main{
+	psvm(){
+		Bird eagle = () -> {
+			true;
+		};
+		
+		sysout(eagle.canBreathe());
+	}
+}
+
+
+- If both the functioanl interface have the same methods then it will be allowed.
+
+
+
+*********************************************************
+
+10-06
+
+Collection
+-----------
+
+Q: What is Java collection Framework ?
+Ans: - It was added in java 1.2.
+- Here collection means nothing but group of objects. and it is present in java.util package.
+- and Framework means? : framework provide us the architecture to manage these group of objects i.e. add, update, delete, search etc.
+
+
+Q: Why do we need the java collection framework?
+Ans: -Prior to JCF we have array, vector, hash tables.
+- But problem with that is, there is no common interface, so its difficult to remeber the methods for each.
+
+
+Lets understand it with the help of an example
+
+public class Main{
+	psvm(){
+	
+		int arr[] = new int[4];
+		arr[0] = 1;
+		int val = arr[0];
+		
+		//read and insert activity using vector.
+		Vector<Integer> vector = new Vector();
+		vector.add(1);
+		vector.get(0);
+	}
+}
+
+
+- So from the above example you can see that there are no methods common to get and add the elements between array and vector. SO it become harder to remeber rthe method for each data type.
+So to solve this one of the problem Java Collection Framework, which makes this thing easy.
+
+---------------------------
+
+
+- Parent interface : Iterable
+- Collection extends Iterable.
+So all the Collections are the child of Collection interface.
+- Queue, List, and Set extends Collection.
+- Iterable is added in java 1.5 and Collection was present from java 1.2.
+- Collection having 3 child Queue, List and Set.
+
+
+Note: Map is not the child of Collection.
+
+
+1. Iterable.
+
+Q: Why iterable is used?
+Ans : Iterable is used to traverse the collection.
+- Below are the methods which are frequently used:
+	1. iterator() : It is avaiable from java 1.5
+					- It returns the iterator object, which provides below methods to iterate the collection.
+					
+					a. hasNext() - returns true, if there are more element in collection.
+					b. next() - Return the next element in the iteration().
+					c. remove() - Removes the last element returned by iterator.
+					
+	2. forEach() : - It is available from java 1.8.
+					- Iterate collection using Lambda expression. Lambda expression is called for each element in the collection.
+
+
+
+example of iterable:
+
+public class Main{
+	psvm(){
+		List<Integer> values = new ArrayList<>();
+		values.add(1);
+		values.add(2);
+		values.add(3);
+		values.add(4);
+		
+		//Method1 to iterate.
+		sysout("Iterating the values using iterator method");
+		Iterator<Integer> valuesIterator = values.iterator();
+		
+		while(valueIterator.hasNext()){
+			int val = valuesIterator.next();
+			sysout(val);
+			
+			//use of remove method present/return by iterator.
+			if(val == 3)
+				valuesIterator.remove();
+		}
+		
+		
+		//Method 2: Using foreach method
+		sysout("Testing forEach method");
+		values.forEach(Integer val) -> sysout(val);
+		
+		
+		//Method 3
+		sysout(Iterating the values using for each loop/ enhanced for loop);
+		for(int val: values){
+			sysout(val);
+		}
+
+	}
+}
+
+
+
+--
+Que: Iterable is available from java 1.5. So before java 1.5 how we are going to iterate?
+Ans: Before java 1.5 Collection interface was there, and inside that interface we already have iterator method.
+
+Q: As per the above ans Iterator was there in Collection interface then why we add Iterable Interface?
+A: Iterable interfcae just addedd for convienece. Where we put all the method which are needed for iteration.
+
+===================================================
+
+2.Collection Interface:
+
+- It represents the group of objects. Its an interfcae which provides methods to work on group of objects.
+
+- Below are the most common methods which are implemented by its child classes like ArrayList, Stack, LinkedList etc.
+
+1. size() - available from java 1.2. - It returns the total number of elements present in the collection.
+
+2. isEmpty() - available from java 1.2 - return true/false.
+
+3. contains() - java 1.2 - return true/false
+
+4. toArray() - java 1.2 - Convert collection into an array.
+
+5. add() - java 1.2 - insert and element in collection.
+
+6. remove() - java 1.2 - remove an element from collection.
+
+7. addAll() - java 1.2 - Used to insert one collection in another collection.
+
+8. removeAll() - java 1.2 - Remove all the elements from collection which are present in collection passed in the parameter.
+
+9. clear() - java 1.2 - Remove all the elements from the collection.
+
+10. equals() - java 1.2 - Used to check if two collections are equal or not.
+
+11. stream() and parallelStream() - java 1.8 - provide effective way to work with collection like filtering, processing data etc.
+
+12. iterator() - java 1.2 - As Iterable interface added in java 1.5. So before this, iterator() method was used to iterate the collection and still can be used.
+
+
+
+example to cover all above 11 methods except stream():
+
+public class Main{
+	psvm(){
+	
+		List<Integer> values = new ArrayList<>();
+		values.add(2);
+		values.add(3);
+		values.add(4);
+		
+		
+		//size
+		sysout("size : "+values.size());
+		
+		//isEmpty
+		sysout("isEmpty : "+values.isEmpty());
+		
+		//contains
+		sysout("Contains 5 ? : "+values.contains(5));
+		
+		//add
+		values.add(5);
+		
+		sysout("Contains 5 ? : "+values.contains(5));
+
+		//remove using index
+		values.remove(3); //element present at index 3 will get remove.
+		
+		sysout("Removed using index : "+values.contains(5));
+		
+		
+		//remove using object,removes the first occurance of the value.
+		values.remove(Integer.valueOf(3));
+		
+		sysout("Removed using object : "+values.contains(3));
+		
+		Stack<Integer> stackValues = new Stack<>();
+		stackValues.add(6);
+		stackValues.add(7);
+		stackValues.add(8);
+		
+		//addAll
+		values.addAll(stackValues);
+		sysout("addAll test using containsAll : "+values.containsAll(stackValues));
+		
+		//containsAll
+		values.remove(Integer.valueOf(7));
+		sysout("ContainsAll after removing one element : "+values.containsAll(stackValues));
+		
+		
+		//removeAll
+		values.removeAll(stackValues);
+		sysout("removeAll : "+values.contains(8));
+		
+		//clear
+		values.clear();
+		sysout("Clear : "+values.isEmpty());
+		
+	}
+}
+
+
+
+==========================================
+
+Collection vs Collections
+
+-Collection is a part of Java Collection Framework, and its an interface, which expose various methods which is implemented by various collection classes like ArrayList, Stack, LinkedList etc.
+
+- Collections is a utility class and provide static methods, which are used to operate on collections like sorting, swapping, searching, reverse, copy etc.
+
+Methods which are present in Collections Utility class:
+sort()
+binarySearch()
+get()
+reverse()
+shuffle()
+swap()
+copy()
+min()
+max()
+rotate()
+unmodifiableCollection
+
+
+public class Main{
+	psvm(){
+		List<Integer> values = new ArrayList<>();
+		values.add(1);
+		values.add(2);
+		values.add(2);
+		values.add(4);
+
+
+		sysout("Max value: "+Collections.max(values));
+		sysout("Min value : "+Collections.min(values));
+		
+		Collections.sort(values);
+		sysout("sorted");
+		values.forEach((Integer val) -> sysout(val));
+	}
+}
+
+
+
+
+***************************************************
+
+- Map
+
+-Don't say hashmap only store key, value. Because along with that it also store hash and Node. you will learn below.
+
+Q: Why Map is not under Collection Interface?
+Ans: In Collectoin Framework List, set, and stack are there and they all work on values.
+and in map we work on key-value pair. So here functionality will be different so there will be no meaning in putting Map under Collection interface.
+
+
+Map properties:
+- It's an interface and its implementation are:
+	1.HashMap : do not maintains the order.
+	2.HashTable : Synchronized version of hashmap.
+	3.LinkedHashMap : Maintains the insertion order.
+	4. TreeMap : sorts the data internally.
+	
+- Objcet that maps key to values.
+- Can not contain duplicate values.
+
+
+Methods available in Map interface:
+1. size() - returns the number of key-value mapping present.
+
+2. isEmpty() - return true: if map contains no key-value mapping else false.
+
+3. containsKey(Object key) : If given key is already present in the map returns true else false.
+
+4. containsValue(Object value) : return true is one or more key mapped to the specific value.
+
+5.get(Object key) : returns the value to which this key is mapped.
+
+6. put(K key, V value) : if map already has the same key present it will overwrite the value.
+If do not have the key present - it will add new key-value mapping.
+
+7. remove(Object 
+
+
+- To acces subInterface : first parent interface . then sub interface.
+
+example : Map.Entry (here Map - parent interface, Entry- sub interface)
+
+
+
+---
+
+Internal working of hashmap:
+
+- Map has sub interface called Entry<K, V>
+- Node<K, V> implements this Entry interface.
+
+-This Node having 4 things/variables:
+ 1. hash
+ 2. key
+ 3. value
+ 4. next (Node<K,V> next : here the data type of next is node. So there will be another node after that)
+
+- and size of table will be default size which is metioned as 16. So this hash table having 16 index initially.
+
+- Now suppose we are adding value in hashmap like hm.put(1, "Jayant");
+	
+	Here key is integer and value is string. So below is the step that will gonna perform once we do put operation.
+	step 1 : hash(key). Key will go through the process and generate the hash.
+			There are different hashing mechanism available like SHA, MD1, SH256, or you can generate your one hash also.
+	
+	step 2: Once the hash get generate. Then we are goinig to find the mod.
+			hash % (size of table).
+			Whatever the hash get generated we are trying to generate the mod of it.
+			So the hash will lie between that range of table.
+			
+			example :- hash: 123456  . sizeOfTable: 16.
+					index = 123456%16 = 3 (suppose 3 is mod).
+					So at index 3 we will find out key as 1 and value as Jayant.
+					
+			example 2: put(5, "Manish");
+					=> hash(5) -> 982410 % 16 = 2
+					So at index 2 hash:982410, key:5, value: Manish, next: null.
+				
+				
+Que:- What will happen if collision occurs?
+Ans:- lets take an example that we are putting value as Atishh
+		put(10, "Atishh");
+		
+		- Here first Map will check that 10 key is already present in our table or not. If the key is present it will simply overrite it.
+		- If not then 
+			hash(10) -> 515100 -> 515100%16 = 2.
+			
+			Here it poiting at index 2 again. But at index 2 we have Manish as value, and 5 as key.
+			So it will simply add one node with key:10, value:"Atishh" hash:515100, next:null.
+			and the previous node where key is 5, it will now point to the above node.
+			and that's how it handles the colliosion.
+			
+Summary till now:
+First we have the array of Entry<K, V>, and in hashmap Node implement it. and this array define the intial capacity of hashmap. Means the size of hashmap.
+Once we define the initial capacity, and put operation perform then depending on hash we are putting that element in table, and whenever collision happens we make a chaining or we add it as a linkedlist.
+--------
+
+how get works?
+
+get(10);
+- Here first we will do hash. So hash function should return the same hash that it was generated for that particular key.
+- For 10 the hash was - 515100, then it will took mod. So found that it is 2. 
+- SO now it will iterate over all the nodes of index 2, until it found that key is 10. Thats how get function works.
+
+---------
+Contract between hashcode and equal methods:-
+1. If two objects obj1 == obj2 are equals, then their hash should be also same.
+	Example: If you are trying to generate hash for 5 multiple times, it will return the same hashcode always.
+	
+2. If 2 object hash is same doesnt means that 2 objects are equal.
+	That's why when we try to get particular key like.
+	get(5) -> Here they compare 2 thing . a. hash b. key. If both hash and key are same then they return value for that particular key.
+
+
+
+----
+- LoadFactor:
+	By default it is 0.75.
+	We know that hash table have the default size of 16. and inside that table they internally use linkedlist for every index.
+	So load factor is used to define the size of that linkedlist.
+	size of linked list = load factor * size of table (0.75 * 16 = 12).
+	So the size of every linked list will be of 12. and as soon as 13 element try to insert, re-hashing will take place.
+	
+	Rehashing : table will get double in size, means earlier it was 16, now it will be of 32 size. and whatever the elements was present in the table, there hash will get regenerate and they will place accordingly.
+	
+	That's why average time complexity in hashing is : O(1). But in worst case it may be O(n) -> If the element found at the end of linked list then O(n).
+	
+	
+Q : Is load factor guarnteed that it alone will help you to increase the size?
+Ans : No, Load factor alone cannot help to determine that we need to increase the size of table.
+	  Let's take an example where you have sufficient space. Lets take 128 as the size of table. So there is ample amout of space.
+	  But when we are trying to do put operation and evertime collision happens. So everytime suppose it go on index 0. and rest all the indexes are empty, that case may also arise.
+	  
+	  So how to handle this condition?
+	  So to handle that condition it also have another factor called TREEIFY_THRESHOLD.
+	  Default value of TREEIFY_THRESHOLD is 8.
+	  So what happen, inside a table if linked list occupy first 8 nodes, then linked list get convert into balanced binary search tree (BST).
+	  In BST smaller element will be on left side of the node, and greater will be on right side.
+	  and this BST is balanced because it used Red-Black tree. AVL is also balanced but there may one situation arise that all the values are greater than node then it goes on the right side of the node only. But Red-Black tree also takes care of that.
+	  
+	  - So as soon as internally linkedlist hits TREEIFY_THRESHOLD. It will get convert into tree, and the time complexity to perform any operation in balanced tree is O(log n).
+	  
+Q: Time Complexity
+Ans : Average/Amortized time complexity to perform insertion, search and deletetion operation : O(1)
+		Worst time complexity : O(n) when it's linked list, but internally it get converted into Balanced Binary Search Tree, and time complexity in that case for searching is O(logn).
+		So we can consider worst as O(logn).
+		
+		binCount - here bin means bucket, that bucket is nothing but the individual node that we are using in linkedlist.
+		
+
+									
+----------------------
+
+- Hashmap is not thread safe. and it do not maintain the order.
+- HashTable is Thread safe. and it is synchronized version of hashmap.
+
+
+Hashmap:
+- Can store null key or value. (Hahstable do not contains null key or value.)
+- Hashmap do not maintains the insertion order.
+- Its not thread safe (instead use ConcurrenetHashMap or HashTable for thread safe HashMap implementation.)
+
+
+
+public class HashMapExample{
+	psvm(){
+		Map<Integer, String> rollNumberVsNameMap = new HashMap<>();
+		rollNumberVsNameMap.put(null, "Test") // we can store key as null in hashmap.
+		rollNumberVsNameMap.put(0, null); // Can store value as null in hashmap.
+		rollNumberVsNameMap.put(1, "A");
+		rollNumberVsNameMap.put(2, "B");
+		
+		
+		//compute if present
+		//If there is null or no value is present for that particular key. Or if there is no such key is present in that case we can use putIfAbsent method.
+		rollNumberVsNameMap.putIfAbsent(null, "test");
+		rollNumberVsNameMap.putIfAbsent(0, "Zero");
+		rollNumberVsNameMap.putIfAbsent(3, "C");
+		
+		
+		for(Map.Entry<Integer, String> entryMap : rollNumberVsNameMap.entrySet()){
+			Integer key = entryMap.getKey();
+			String value = entryMap.getValue();
+			sysout("Key : "+key+", value: "+value);
+		}
+		
+		//isEmpty
+		sysout("isEmpty() : "+rollNumberVsNameMap.isEmpty());
+		
+		//size
+		sysout("size : "+rollNumberVsNameMap.size());
+		
+		//containsKey
+		sysout("containsKey(3) : "+rollNumberVsNameMap.containsKey(3));
+		
+		//get(key)
+		sysyout("get(1): "+rollNumberVsNameMap.get(1));
+		
+		//getOrDefault(key)
+		sysout("get(9): "+rollNumberVsNameMap.getOrDefault(9, "default value"));
+		
+		//remove(key)
+		sysout("remove(null): "+rollNumberVsNameMap.remove(null));
+		
+		for(Map.Entry<Integer, String> entryMap : rollNumberVsNameMap.entrySet()){
+			Integer key = entryMap.getKey();
+			String value = entryMap.getValue();
+			sysout("Key : "+key+", value: "+value);
+		}
+		
+		//keySet()
+		for(Integer key: rollNumberVsNameMap.keySet()){
+			sysout("Key : "+key);
+		}
+		
+		//values()
+		Collection<String> values = rollNumberVsNameMap.values();
+		for(String value: values){
+			sysout("value : "+value);
+		}
+		
+	}
+}
+
+
+output:
+
+key : null value : TEST
+key : 0 value : Zero
+key: 1 value : A
+key: 2 value: B 
+key: 3 value: C
+isEmpty(): false
+size: 5
+containsKey(3): true 
+get(1): A 
+get(9) : default value
+remove(null): TEST
+key: 0 value:ZERO 
+key:1 value: A 
+key:2 value: B  
+key:3 value: C 
+key: 0
+key: 1
+key: 2
+key: 3
+value: ZERO 
+value: A  
+value: B  
+value: C 
+
+
+************************************************************
+
+13-06
+
+Streams
+-------
+
+Q: What is Stream?
+Ans: - We can consider stream as a pipeline, through which our collection elements passes through.
+- While elements passes through pipelines, it perform various operations like sorting, filtering etc.
+- Useful when deals with bulk processing.(Actually we cannot find much difference between if else and this streams until and unless bulk processing can happen. Actually streams can do parallel processing.)
+ 
+---
+
+There are 3 steps to perform stream operations.
+Step1 : Create Stream:
+		Streams are created from data source like collection or array etc.
+		
+Step2 : Intermediate operations:
+		Intermediate operations like: filter(), sorted(), map(), distinct() etc are used.
+		-  These operations transform streams into another stream and more operations can be done on top of it.
+		
+		- These are lazy in nature means these operations get executed only when terminal operation is invoked.
+		
+Step 3: Terminal operation:
+		- Terminal operation used only once.
+		- Terminal operation like : collect(), reduce(), count() etc are used.
+		- These operations triggers the processing of the stream.
+		- and produce the output. Means after terminal operation used, no more operation we can perform.
+		
+		- As soon as terminal operation invoked you get result,and after that you cannot add more operation after that. Becuase once terminal operation performed it will close the stream.
+		
+Note: Sometimes we dont need intermediate operation, at that time we can skip it.
+- You can use 0 or more intermediate operations.
+
+Normal code:
+
+psvm(){
+	List<Integer> salaryList = new ArrayList<>();
+	salaryList.add(3000);
+	salaryList.add(4100);
+	salaryList.add(9000);
+	salaryList.add(1000);
+	salaryList.add(3500);
+
+	int count = 0;
+	for(Integer salary  : salaryList){
+		if(salary > 3000){
+			count++;
+		}
+	}
+	
+	sysout("Employee with salary > 3000 "+count);
+}
+
+
+
+
+-Above code using streams:
+
+psvm(){
+
+	List<Integer> salaryList = new ArrayList<>();
+	salaryList.add(3000);
+	salaryList.add(4100);
+	salaryList.add(9000);
+	salaryList.add(1000);
+	salaryList.add(3500);
+
+	long output = salaryList.stream().filter((Ineteger sal) -> sal > 3000).count();
+	
+	sysout("Employee with salary > 3000 "+output);
+}
+
+----------------
+
+Different ways to create a stream:
+
+1. From collection:
+
+	List<Integer> salaryList = Arrays.asList(3000, 4100, 9000, 1000, 3500);
+	Stream<Integer> streamFromIntegerList = salaryList.stream();
+
+
+2. From Array:
+
+	Integer[] salaryArray = {3000, 4100, 9000, 1000, 3500};
+	Stream<Integer> streamFromIntegerArray = Arrays.stream(salaryArray);
+
+
+3. From static method:
+
+	Stream<Integer> streamFromStaticMethod = Stream.of(1000, 3500, 4000, 9000);
+		
+	//We can make streams of static using of method
+
+
+4. From Stream Builder:
+
+	Stream.Builder<Integer> streamBuilder = stream.builder();
+	streamBuilder.add(1000).add(9000).add(3500);
+	
+	Stream<Integer> streamFromStreamBuilder = streamBuilder.build();
+	
+	//Here we need to use build() method in order to build the stream.
+
+
+5. From Stream iterate:
+
+Stream<Integer> streamFromIterate = Stream.iterate(1000, (Iterate n) -> n+5000).limit(5);
+
+	//In the iterate method we need to give the starting point. Here starting point is 1000, and then we need to provide increment, here it will incremenet by 5000. Also we gave the limit here and limit is 5.
+
+	Normally we use iterate method with limit. So that we can limit it upto particular value. Otherwise it will run infinietly.
+
+	//  output for n=1000
+		1000
+		6000
+		11000
+		16000
+		21000
+		
+
+--------------
+
+Different Intermediate operations:
+
+We can chain multiple intermediate operations together to perform more complex processing before applying terminal operations to produce the result.
+- Need to import java.util.stream.*; while using Stream class.
+
+1. filter(Predicate<T> predicate) -> It filters the element.
+
+example: 
+Stream<String> nameStream = Stream.of("	HELLO", "EVERYONE", "HOW", "ARE", "YOU", "DOING");
+Stream<String> filteredStream = nameStream.filter((String name) -> name.length() <= 3);
+
+List<String> filteredNameList = filteredStream.collect(Collectors.toList());
+//Functions associated with Collectors usually get used inside collect() methods. Collectors class is part of Stream package. Collectors is one of the utility class.
+
+output : HOW, ARE, YOU
+
+
+
+2. map(Function<T, R> mapper) :- Used to transform each element.
+
+Stream<String> nameStream = Stream.of("HELLO", "EVERYBODY", "HOW", "ARE", "YOU", "DOING");
+Stream<String> filteredNames = namesStream.map((String name) -> name.toLowerCase());
+
+//OUTPUT : hello, everybody, how, are, you, doing 
+
+
+3. flatMap(Function<T, Stream<R>> mapper) :- Used to iterate over each element of the complex collection, and helps to flatten it.
+
+List<List<String>> sentenceList = Arrays.asList(
+	Arrays.asList("I", "LOVE", "JAVA"),
+	Arrays.asList("CONCEPTS", "ARE", "CLEAR"),
+	Arrays.asList("ITS", "VERY", "EASY")
+);
+
+//Here we are storing list under list. So you can consider that there are 3 nodes of a list, and under each node there is other list.
+
+//Without any intermediate streams
+Stream<String> wordsStream1 = sentenceList.stream().flatMap((List<String> sentence) -> sentence.stream());
+// output : I, LOVE, JAVA, CONCEPTS, ARE, CLEAR, ITS, VERY, EASY
+
+
+//With intermediate stream
+Stream<String> wordStream2 = sentenceList.stream().flatMap((List<String> sentence)-> sentence.stream().map((String value) -> value.toLowerCase()))
+//Output: i, love, java, concepts, are, clear, its, very, easy
+
+
+4.distinct() ->Removes duplicate from stream.
+
+code:
+Integer[] arr = {1,5,2,7,4,4,2,0,9};
+Stream<Integer> arrStream = Arrays.stream(arr).distinct();
+
+//output: 1,5,2,7,4,0,9
+
+
+5. sorted() -> sortes the elements
+
+Code:
+Integer[] arr = {1,5,2,7,4,4,2,0,9};
+Stream<Integer> arrStream = Arrays.stream(arr).sorted();
+
+//Output: 0,1,2,2,4,4,5,7,9
+
+
+
+6. peek(Consumer<T> action) -> Helps you to see the intermediate result of the stream which is getting processed.
+
+List<Integer> numbers = Arrays.aslist(2,1,3,4,6);
+Stream<Integer> numberStream = numbers.stream().
+								.filter((Integer val) -> val>2)
+								.peek((Integer val) -> sysout(val))
+								.map((Integer val) -> -1*val);
+List<Integer> numberList = numberStream.collect(Collectors.toList());
+
+//Here we are using peek intermediate method which took the parameter but didnt return any of the value.
+
+
+7. limit(long maxSize) -> Truncate the stream, to have no longer than givem maxSize.
+
+List<Integer> numbers = Arrays.asList(2,1,3,4,6);
+Stream<Integer> numberStream = numbers.stream().limit(3);
+
+List<Integer> numberList = numberStream.collect(Collectors.toList());
+
+//Output: 2,1,3.
+
+8. skip(long n) :-> Skip the first n element of the stream
+
+List<Integer> numbers = Arrays.asList(2,1,3,4,6);
+Stream<Integer> numberStream = numbers.stream().skip(3);
+
+List<Integer> numberList = numberStream.collect(Collectors.toList());
+
+//output : 4,6
+
+
+9. mapToInt(ToIntFunction<T> mapper) : helps to work with primitve int data type.
+
+
+code:
+a. List<String> number = Arrays.asList("2", "1", "4", "7");
+
+IntStream nuberStream = numbers.stream().mapToInt((String val) -> Integer.parseInt(val));
+
+IntStream numberStream = numbers.stream().mapToInt((String val) -> Integer.parseInt(val));
+
+int[] numberArray = numberStream.toArray()
+
+//Output : 2,1,4,7
+
+//Here we are using IntStream, which is very specific for int primitve data type.
+// After that we are using mapToInt(ToIntFunction<T> mapper) -> This function particulary takes Generic data type, and this ToIntFunction is also the fucntional interface which takes the input parameter and return the int value. For more info hover and check eac method.
+// return type of mapToInt function is IntStream.
+
+
+code b.
+
+int[] numbersArray = {2,1,4,7};
+IntStream numberStream = Arrays.stream(numberArray);
+numberStream.filter((int val) -> val>2);
+int[] filteredArray = numberStream.toArray();
+
+
+//output : 4, 7
+
+
+
+10. mapToLong(ToLongFunction<T> mapper) : helpes to work with primitve "long" data types.
+
+
+11. mapToDouble(ToDoubleFunction<T> mapper) : helps to work with primitive double data types.
+
+---------------------------------------------
+
+Q :- Why we call intermediate operation "Lazy"
+Ans:- Because these intermediate functions doesnt get executed until terminal operation get performed. Below are the examples which demonstrates that.
+
+
+code a.
+public class StreamExample{
+	psvm(){
+		List<Integer> number = Arrays.asList(2,1,4,7,10);
+		Stream<Integer> numberStream = number.stream().filter((Integer val) -> val>=3).peek((Integer val)-> sysout(val));
+	}
+}
+
+output:- Nothing would be printed in the output as there is no terminal operation performed.
+
+
+code b.
+
+public class StreamExample{
+	psvm(){
+		List<Integer> numbers = Arrays.asList{2,1,4,7,10};
+		
+		Stream<Integer> numberStream = numbers.stream().filter((Integer val) -> val>=3).peek((Integer val)->sysout(val));
+		
+		numberStream.count(); //count is one of the terminal operation.
+	}
+}
+
+
+output: 4 7 10
+
+---
+========================================
+
+Sequence of stream operations:
+
+public class StreamExample{
+	List<Integer> numbers = Arrays.asList(2,1,4,7,10);
+	Stream<Integer> numbersStream = numbers.stream()
+									.filter((Integer val) -> val>= 3)
+									.peek((Integer val) -> sysout("After filter :"+val))
+									.map((Integer val) -> val*-1)
+									.peek((Integer val) -> sysout("After negating : "+val))
+									.sorted()
+									.peek((Integer val) -> sysout("After sorted : )+val);
+									
+	List<Integer> filteredNumberStream = numbersStream.collect(Collectors.toList());
+	
+	
+Expected output:         Actual Output:
+-----------------       ------------------
+After filter :4			After filter :4
+After filter :7			After negating :-4
+After filter :10		After filter :7
+						After negating :-7
+After negating :-4		After filter :10
+After negating :-7		After negating :-10
+After negating :-10		After sorted :-10
+						After sorted :-7
+						After sorted :-4
+After sorted :-10
+After sorted :-7
+After sorted :-4
+
+}
+
+
+-> Stream work like above acutal output. It will try to perform operations as down as it is possible, that's why when it filter the element 4. It performs remaining operations till when it can do. like it did filer->peek->map->peek.
+-> Then at sorted why it's stop? :- There are some intermediate operations for which entire data is needed. and sorted is one of that operation. That was the reason.
+
+Inshort:- Generally each element processed sequentially and perform multiple operations, this feature helps stream to fast process the task.
+for example : If you need to return any number which is greater than 3, processing will stop at 4 itself.
+
+==========================
+
+Terminal Operations:
+
+Terminal operatoins are the once that produces the result. It triggers the processing of the stream.
+
+
+1. forEach(Consumer<T> action) : Perform action on each element of the stream. Do not returns any value.
+
+Code:
+List<Integer> numbers = Arrays.asList(2,1,4,7,10);
+
+numbers.stream().filter((Integer val)-> val>=3)
+				.forEach((Integer val) -> sysout(val));
+				
+//output: 4, 7, 10
+
+-------------------------------
+2. toArray() : Collects the element of the stream into an array. 
+- We can implement toArray method using 2 different ways which we will see below.
+-This toArray method returns the object array, and if we want the array of particular data type then also we can acheive it, by providing the siez of the array. Below are 2 examples of toArray method.
+
+
+a. returns the object array.
+List<Integer> numbers = Arrays.asList(2,1,4,7,10);
+
+Object[] filteredNumberArr1 = numbers.stream()
+							  .filter((Integer val) -> val >= 3)
+							  .toArray();
+							  
+
+b. return the specific type of array.Here it is returing Integer array.
+
+Integer[] filteredNumberArr2 = numbers.stream()
+							   .filter((Integer val) -> val >= 3)
+							   .toArray((int size) -> new Integer[size]);
+							   //Here we need to provide the size of the array.
+							   
+-----------------------
+
+3. reduce(BinaryOperator<T> accumulator) :
+	Does reduction on the elements of the stream. Perform assosiative aggregation function.
+	
+	List<Integer> numbers = Arrays.asList(2,1,4,7,10);
+	
+	Optional<Integer> reducedValue = numbers.stream()
+								.reduce((Integer val1, Integer val2) -> val1+val2);
+								
+	sysout(reducedValue.get());
+	
+	//output: 24
+	//Here we are using Optional. Optional means anything it can return null also. reducedValue can be empty also. That's why we are using .get here to avoid nullpointer exception. So that we get value.
+	
+-------------------
+
+4. collect(Collector<T, A, R> collector):
+	can be used to collects the elements of the stream into an List.
+	
+	
+	List<Integer> number = Arrays.asList(2,1,4,7,10);
+	
+	List<Integer> filteredNumber = numbers.stream()
+								   .filter((Integer val) -> val>=3)
+								   .collect(Collectors.toList());
+								   
+-----------
+
+5. min(Comparator<T> comparator) and max(Comparator<T> comparator):
+Finds the minimum or maximum element from the stream based on the comparator provided.
+
+code a:
+List<Integer> numbers = Arrays.asList(2,1,4,7,10);
+
+Optional<Integer> minimumValType1 = numbers.stream().
+						filter((Integer val) -> val>=3)
+						.min((Integer val1, Integer val2) -> val1-val2)
+
+sysout(minimumValType1.get());
+
+//output: 4
+
+
+code b:
+Optional<Integer> minimumValType2 = numbers.stream()
+								.filter((Integer val) -> val>=3)
+								.min((Integer val1, Integer val2) -> val2-val1);
+sysout(minimumValType2.get());
+						
+//output: 10
+// Imp:  Here in the both the code I used min as the function. 
+	     So here when we are passing val1-val2 : It do the sorting in increasing order .
+		 and for val2-val1 : It sort in the descending order and return the first element.
+
+---------------
+
+6. count() : returns the count of element present in the stream.
+
+List<Integer> numbers = Arrays.asList(2, 1, 4, 7, 10);
+
+long numberOfValPresent = numbers.stream()
+						  .filter((Integer val) -> val>=3)
+						  .count();
+						  
+sysout(numberOfValPresent);
+
+//output: 3
+
+--------------------
+
+7. anyMatch(Predicate<T> predicate):	checks if any value in the stream match the given predicate and return the boolean.
+
+List<Integer> numbers = Arrays.asList(2,1,4,7,10);
+boolean hasValGreaterThanThree = numbers.stream()
+								.anyMatch((Integer val) -> val>3);
+								
+sysout(hasValGreaterThanThree);
+
+//output: true
+// Here we are not using any intermediate operation. SO using intermediate operation is not mandatory. 
+
+-----------------------
+8. allmatch(Predicate<T> predicate):
+	Checks if all value in the stream match the given predicate and return the boolean.
+	
+-------------------------
+
+9. noneMatch(Predicate<T> predicate): 
+	Checks if no value in the stream match the given predicate and return the boolean.
+	
+----------------------------
+
+10. findFirst() : finds the first element of the stream.
+
+List<Integer> number = Arrays.asList(2, 1, 4, 7, 10);
+Optional<Integer> firstVal = number.stream()
+							.filter((Integer val) -> val>=3)
+							.findFirst();
+							
+sysout(firstVal.get());
+
+//output: 4
+
+-----------------------
+
+11. findAny() : finds any random element of the stream.
+
+				
+===============================================
+
+Q: How many times we can use a single stream.
+Ans: One terminal operation is used on a stream, it is closed/consumed and can not be used again for the another terminal operation.
+
+Code:
+List<Integer> numbers = Arrays.asList(2,1,4,7,10);
+Stream<Integer> filteredNumbers = numbers.stream()
+								.filter((Integer val) -> val>=3);
+								
+filteredNumber.forEach((Integer val) -> sysout(val)); //consumed the filteredNumber stream.
+
+//trying to use the closed stream again.
+List<Integer> listFromStream = filteredNumber.collect(Collectors.toList());
+
+//Above line will throw an error that stream has already been operated like that
+
+
+=======================
+
+Parallel Stream:
+
+- Helps to perform operation on stream concurrently, taking advantage of multi core CPU.
+- parallelStream() method is  used instead of regular stream() method.
+- Internally it does:
+1. Task splitting : it uses "spliterator" function to split the data into multiple chunks.
+2. Task submission and parallel processing: Uses Fork-join pool technique.
+
+public class StreamExample{
+	psvm(){
+		List<Integer> number = Arrays.asList(11,22,33,44,55,66,77,88,99,110);
+		
+		//sequential processing
+		long sequentialProcessingStartTime = System.currentTimeMillis();
+		numbers.stream()
+				.map((Integer val) -> val*val)
+				.forEach((Integer val)-> sysout(val));
+				
+		sysout("Sequential processing time taken : "+(System.currentTimeMillis() - sequentialProcessingStartTime)+"millisec");
+		
+		
+		//parallel processing
+		long parallelProcessingStartTIme = System.currentTimeMillis();
+		numbers.parallelStream()
+				.map((Integer val) -> val*val)
+				.forEach((Integer val) -> sysout(val));
+				
+		sysout("Parallel processing time taken: "+(System.currentTimeMillis = parallelProcessingStartTIme)+" millisec");
+	}
+}
+
+
+output: 
+121 484 1089 1936 3025 4356 5929 7744 9801 12100
+Sequential processing time taken : 64 millisec
+
+7744 121 5929 4356 1936 484 12100 1089 9801 3025
+parallel processing time taken: 5 millisec.
+
+
+- As mention above in the introduction. This splititerator  takes the data and it has one function called try split which splites the data.
+- Once spilit is done then fork join pool technique will takes care of how to fork or join the data.
+
+- Above code output shows parallel streaming takes less time. But the output is not in sequential manner.
+
+**********************************************
+
+18-06
+
+Introduction of multithreading
+
+Q: What is thread and process.
+
+Process:
+- Process is an instance of a program that is getting executed.
+- It has its own resource like memory, thread, etc. OS allocate these resources to process when its created.
+
+Compilation(javac Test.java) -: Generates bytecode that can be executed by JVM.
+
+Execution (java Test) : At this point, JVM starts the new process, here Test is the class which has "public static void main(String args[])" method.
+
+- In the above statement highlight the point "JVM starts new process". Which states that process gets create at that time. 
+-i.e whenever you execute a program a process get created.and it has allocated its own resources. 2 process never shares there resources to each other, they always have there own resources and they can run parallely.
+
+
+
+-
+Thread:
+
+- Thread is known as lightweight process.
+OR
+Smallest sequence of instructions that are executed by CPU independently.
+
+- And 1 process can have multiple threads.
+
+- When a process is created, it start with 1 thread and that initial thread known as 'main thread' and from that we can create multiple threads to perform task concurrently.
+
+
+(
+	What is process do?:-
+		Process converts bytecode into machine code and this machine code has to be executed by CPU.
+		and this machine code is nothing but the sequence of instruction.
+		
+		and what is thread?:
+		Thread is a smallest sequence of instruction that are executed by CPU.
+)
+
+
+Code:
+
+public class MultithreadingLearning{
+	psvm(){
+		sysout("Thrad name : "+Thread.currentThread().getName());
+	}
+}
+
+
+output: Thread name: Main threads
+
+-------------
+
+- When we are exececuting a program. It get executed and we get the final result. But how this internally work?
+
+ans: When we execute the main program using java Main.then it do the follows:
+1. It create a process.
+2. A new JVM Instance is created.
+
+
+Each JVM Instance has the below things:
+1. heap memory(common for all thread of that process)
+2. code segment(common for all thread of that process)
+3. data segment(common for all thread of that process)
+4. register
+5. stack
+6. counter
+
+
+Now the question is, when we learn memory management at that time we see that JVM has limited heap memory, then how it is alloacated for each process?
+Ans:- Actaully that memory is the- Physical memory(Total JVM heap memory allocated).
+and this total JVM heap memory is get allocated to each of the process that we create.
+
+and we can manually tell each process that how much heap memory they need to consume using the below:
+
+
+-> Raw diagram of memeory.
+
+			physical memory(Total JVM Heap Memory allocated)
+			
+	Process2:
+		JVM Instance2:
+			 heap memory
+				|
+		code segment	data segment
+		
+		Thread1		thread2		thread3
+		Register	Register	Register
+		Stack		Stack		Stack
+		Counter		Counter 	Counter
+		
+
+From the above diagram you can see that, heap memory, code segment, and data segment are commonly shared in a process.
+Whereas Register, stack and counter are seperately allocated for each of the thread.
+
+
+Now lets understand each term
+
+1. Code segment:
+- Contains the compiled BYTECODE(i.e. machine code) of the java program. 
+- Its read only. {Once the machine code created we cannot change}
+- All threads within the same process, share the same code segment.
+
+
+2. Data Segment:
+- Contains the GLOBAL and STATIC variables. {Global and static variable are stored and maintain by data segment.}
+- All threads within the same process, share the same data segment.
+- Threads can read and modify the same data.
+- Synchronization is required between multiple threads.
+(Threads can read and modify the same data, that's why we need the proper synchronization between threads.)
+
+
+3. Heap:
+- Object created at runtime using "new" keyword are allocated in the heap.
+- Heap is shared among all the threads of the same process.(but not within process)(let say in process1, X8000 heap memory poiting to some location in physical memory, same X8000 heap memory point to different location for process2.){
+	Inshort, we can have different processes. So each process have the separate heap memory, But this heap memory they are taking from the Common shared heap memory.
+}
+
+- Thrads can read and modify the heap data.
+- Synchronization is required between multiple threads.
+
+------------------------
+
+4. Stack:
+- Each thread has its own stack.
+- It manages method calls, local variables.
+
+
+5. Register:
+- When JIT(Just-in-time) copiler converts the bytecode into native machine code, its uses register to optimized the generated machine code.
+- It also helps in context-switching.
+- Each thread has its own register.
+
+
+
+6. Counter:
+- Also known as program counter, it points to the instruction which is getting executed.
+(Byte code is stored in the code segment. and thread need to execute some set of instruction. SO how thread will get to know that this portion of instruction we need to execute?
+So here counter comes in the picture. It stores the address of that instruction, then tells that this particular portion we need to execute. So which portion need to execute it tells by the counter.)
+- Increments its counter after successfully execution of the instructions.
+
+
+Overall summery of above:
+- First we have code. we will compile it. After that we get the Byte code. and that bytecode is stored in the code segment.
+- Then we execute the code. Then process will be created.and then JVM Instance is allocated. JVM instance will have the heap memory and remainng things
+- After that Interpretor or JIT compiler converts that bytecode into machine code. 
+- So now while converting htat byte code into machine code. It says that, I have main thread and inside that main thread I have 2 more thread name as thread1, and thread2. and I need to execute that also.
+So for each thread it will create Register, Stack and counter. and they all assigned by the JVM. JVm takes care of that.
+- Now whatever that machine code is generated is stored in the code segment. So now code segment have the machine code which CPU understands.
+- So now there are counter for each threads, So this counter will point to the memory address of the code segment. This counter tells the threads, that from this address we need to execute that particular set of instruction.
+
+
+--
+
+When we excute the program. JVM doesnt run it. CPU actually runs that machine code.
+
+   CPU			   CPU
+(Register)		(Register)
+	|				|
+  Cache			  Cache
+    |			|--
+Main memory(RAM)
+
+
+So CPU have the register and Thrad also have the register, and both works in the similar manner.
+
+Consider you have one single core CPU it has its register and cache. (Single core means having only one CPU, and in the diagram we are showing double core.)
+
+Now we have threads, and it has the machine code.
+Now consider main thread have the data and it uses the register, it stores the data and assign it to CPU.
+So now CPU will start executing this main thread.
+Now the question is who takes care of assigning this machine code to CPU?
+- So OS manages or schedules this threads. 
+There are Os schedulars and JVM schedulars are there. But OS schdular manages the JVM schedular. So indirectly OS manages or schedule this threads.
+
+
+- From program counter(here we are taking example of main thread) CPU will load that machine code to the register(thread register).
+and now from thread register it will assign to the CPU register. and now CPU will start executing this machine code.
+
+Now lets say. CPU have given time to the each thread of 1 sec.
+
+- Now we are taking overall execution of all 3 threads that are main thread, T1 threa, T2 thread.
+Start from main thread. Counter will load the machine code(set of instruction) to its register i.e main thread register. and from there it gets assign to the CPU register using OS. and now CPU will execute it. SO now while executing it 1 second get completed. So now it has to do context switching.
+
+Context switching meaning: Consider within that 1 second. CPU has process 50% of data of main thread. So whatever data it has process it will store it in the main thread register.
+So now T1 thread is running. SO within 1 second 70% of data it process. So it will now store this process data in T1 thread register. and then it will do context switch and start the thread T2.
+So like that when Thread T1 turns come again. At that time it will use its thread register and load it back again in CPU and it will start from there. Means till 70% process of T1 thread already completed. So it will start from there only and try to complete remaining process in 1 second.
+So it will start from where it lefts that is known as context switching.
+This is the scene when we have only 1 CPU.
+
+
+- Now conside if we have 4 core CPU, and 3 threads tht are main, T1, and T2. At that time this threads are actually running parallely on each core. i.e main thread running on core CPU1 , T1 on CPU2, T2 on CPU3, adn core CPU4 having no thread. So here this all threads are running parallely.
+
+
+- So sometimes CPU is of less core and threads are more. At time time they are using context switching which looks like they are doing thing parallely. But it's not true they are using context switching at that time.
+But somtimes CPU cores are more and threads are less at that time they are actually doing parallel processing.
+
+
+Definition of multithrading:
+- Allows a program to perform multiple task at the same time.
+- Multiple threads share the same resources such as memory(heap memory, code segment, data segment) but still can perfomr task independently.
+
+Benefits and challengs of multithreading:
+Benefits:
+- Improved performance by task parallelism.
+- Resposiveness
+- Resource sharing (loading code into register using counter from code segment)
+
+Challenges:
+- Concurrency issue like deadlock, data inconsistency etc.
+- Synchronized overhead
+- Testing and debugging difficult.
+
+---------------------------------------
+
+Multithreading vs multitasking
+
+Multitasking:
+- process1, process2 this are called as task1, task2, and they are called as multitasking.
+- It does not share the resources.
+
+Multithreading:
+- Inside each task we can create multiple threads. Which is called as multithreading.
+- In multithreading they share the resources like memory, data segment code segment.
+
+
