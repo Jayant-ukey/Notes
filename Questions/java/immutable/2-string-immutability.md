@@ -72,7 +72,7 @@ The original string **never changes**.
 
 ---
 
-## 4️⃣ Why Java Made String Immutable
+## 4️⃣ Why Java Made String Immutable (Main sub-question)
 
 Main reasons:
 
