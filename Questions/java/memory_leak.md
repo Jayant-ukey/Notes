@@ -1,6 +1,22 @@
 ## Que: Your Java/SpringBoot Application has memory leak, how will you find it? 
 
-## Ans: 1. Confirm it’s actually a memory leak
+## Ans: Short and proper
+
+“First, I would confirm that it’s actually a memory leak by monitoring heap usage and GC behavior using tools like VisualVM or Java Mission Control. If heap usage keeps growing and GC is not able to reclaim memory, that indicates a leak.
+
+Next, I would take a heap dump using tools like jmap or by enabling -XX:+HeapDumpOnOutOfMemoryError. Then I would analyze the heap dump using Eclipse Memory Analyzer Tool to identify objects with high retained memory and check the dominator tree.
+
+After that, I would trace those objects back to GC roots to understand why they are not being garbage collected.
+
+Since it’s a Spring Boot application, I would also look for common causes like unbounded caches, singleton beans holding large data, ThreadLocal leaks, unclosed resources, or improperly managed async tasks.
+
+Finally, I would fix the issue by removing unnecessary references or adding proper limits/cleanup, and then validate the fix by monitoring memory usage under load.”
+
+---
+
+## Detail Explanation as below.
+
+## 1. Confirm it’s actually a memory leak
 
 First, I’d verify the symptom:
 
