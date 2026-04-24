@@ -1,3 +1,14 @@
+## Normal Question
+* If your application follows a microservices architecture, what does the overall design look like?
+* How are the microservices configured, and how do they communicate with each other?
+* Which messaging system is used in the project, and how does it work?
+* Do you use any monitoring tools for the application? If so, which ones?
+* What deployment process is being used?
+* What different profiles are used in the application?
+* How are these profiles configured?
+
+---
+
 ## 🎯 Project-Based Interview Questions (Refined)
 
 ### 🏗️ Architecture
