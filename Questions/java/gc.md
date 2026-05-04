@@ -75,5 +75,4 @@ You can add:
 
 “Garbage Collection in Java is an automatic memory management process where the JVM removes unreachable objects from heap memory. It works based on reachability analysis, divides memory into generations like Young and Old, and uses algorithms like Mark-Sweep or G1 to reclaim memory efficiently.”
 
-rview follow-up questions
-* or a mock answer you can memorize and deliver confidently 👍
+
