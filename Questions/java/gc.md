@@ -75,4 +75,23 @@ You can add:
 
 “Garbage Collection in Java is an automatic memory management process where the JVM removes unreachable objects from heap memory. It works based on reachability analysis, divides memory into generations like Young and Old, and uses algorithms like Mark-Sweep or G1 to reclaim memory efficiently.”
 
+---
+---
 
+## Daemon thread
+
+A Daemon Thread in Java is a low-priority background thread that runs to support user (non-daemon) threads. It does not prevent the JVM from exiting.
+
+Key behavior (this is the most important point)
+JVM exits when all user threads finish
+Daemon threads are automatically terminated when JVM shuts down
+👉 They don’t get a chance to complete execution
+
+
+Common daemon threads:
+
+Garbage Collector, 
+Finalizer thread, 
+Background monitoring tasks
+
+setDaemon(true) must be called before start()
