@@ -83,8 +83,8 @@ You can add:
 A Daemon Thread in Java is a low-priority background thread that runs to support user (non-daemon) threads. It does not prevent the JVM from exiting.
 
 Key behavior (this is the most important point)
-JVM exits when all user threads finish
-Daemon threads are automatically terminated when JVM shuts down
+JVM exits when all user threads finish.
+Daemon threads are automatically terminated when JVM shuts down.
 👉 They don’t get a chance to complete execution
 
 
@@ -95,3 +95,75 @@ Finalizer thread,
 Background monitoring tasks
 
 setDaemon(true) must be called before start()
+
+---
+
+
+**`Cloneable` breaks Singleton, not “prevents” it.**
+Question is: *how do you prevent Singleton from being broken via cloning?*
+
+
+## 🔹 How Singleton breaks with cloning
+
+If your Singleton class implements `Cloneable`, someone can do:
+
+```java
+MySingleton obj1 = MySingleton.getInstance();
+MySingleton obj2 = (MySingleton) obj1.clone();
+
+System.out.println(obj1 == obj2); // false ❌
+```
+
+👉 Now you have **two instances**, which violates Singleton.
+
+
+## 🔹 How to prevent it (expected answer)
+
+### ✅ Override `clone()` method
+
+```java
+@Override
+protected Object clone() throws CloneNotSupportedException {
+    throw new CloneNotSupportedException("Singleton cannot be cloned");
+}
+```
+
+👉 This is the **most expected interview answer**
+
+
+### ✅ Alternative: return same instance
+
+```java
+@Override
+protected Object clone() {
+    return getInstance();
+}
+```
+
+👉 Ensures no new object is created
+
+
+## 🔹 Best practice (senior-level answer)
+
+Even better, avoid this problem entirely by using:
+
+### ✅ Enum Singleton (recommended)
+
+```java
+public enum MySingleton {
+    INSTANCE;
+}
+```
+
+👉 Why this is best:
+
+* Prevents cloning
+* Prevents reflection attacks
+* Handles serialization automatically
+
+
+## 🔹 Crisp interview answer
+
+“If a Singleton implements Cloneable, cloning can create a new instance and break the pattern. To prevent this, we override the clone() method and either throw CloneNotSupportedException or return the same instance. A better approach is to use an enum-based Singleton, which prevents cloning, reflection, and serialization issues.”
+
+---
