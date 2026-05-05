@@ -1,0 +1,665 @@
+
+Que : What are the categories of design pattern?
+Ans : We mainly categorize design pattern in 4 basic broad division
+		1. Creational Pattern.
+		2. Behavioral Pattern
+		3. Structural Pattern
+		4. J2EE pattern
+		
+
+Que : Why do we need design pattern? What do we need Design Pattern?
+Ans: -> Design patterns are solutions to some issues or known problems.
+		Example : I want to create a project, and my complete project must have one single object and it should not
+				create multiple objects, then the solution to that is singelton design pattern.
+		So design pattern are nothing but the solution to some known problems.
+		
+		-> As design patterns are well dcoumented and understood by soft arechticets, designers and developers, then their application
+		witihin a specific solution will likewise be well understood.
+		
+		-> Patterns give a software developer an array of tried and tested solutions to common problems, thus reducing the technical risk to 
+		the project by not having to employ a new and untested design, thus saving time and effort during the implementation stage of the
+		software developement lifecycle.
+		
+		-> They are language neutral and so can be applied to any lanugaeg that supporst object orientated languages.
+		
+		-> By using well understood and dcumented solutions, the final product will have a much higher degree of comphrehension. If the 
+		solution is easier to comprehend, then by extension, it will also be easier to maintain.
+		
+		
+		Que : What are creational patterns/
+			-> Creational design patterns are related to way of creating objects.
+			-> THis pattern is used to define and describe how objects are created at class instantiation time.
+			
+			Example :
+					Employee emp = new Employee()
+					
+					Here we are creating the instance using the new keyword.
+					
+
+Que - Categories of creational design patterns
+	1. Factory Method
+	2. Abstract Factory
+	3. Builder design pattern
+	4. Prototype
+	5. Singelton
+	
+	
+1. Factory Design Pattern:
+	
+	- In factory pattern, we dont expose the creation logic to the client and refer the created object using a standard interface.
+	- The factory pattern is also known as virtual constructor.(Because you dont know how the object is created.)
+	
+	Steps:
+		1. Create main class which call factory class
+		2. Factory class return required class instance.
+		
+	
+	FlowChart :
+			Main Class/client -> Factory class ->  		Profession
+											Engineer 	Doctor	Teacher
+											
+	
+	Code:
+		
+		a. Profession Interface
+			
+			public interface Profession{
+				void print();
+			}
+	
+		b. Doctor Class
+			
+			public class Doctor implements Profession{
+				@Override
+				public void print(){
+					sout("Print method of Doctor Class");
+				}
+			}
+			
+		c. Engineer Class 
+			public class Engineer implements Profession{
+				@Override
+				public void print(){
+					sout("Print method of Engineer Class");
+				}
+			}
+		
+		d. Teacher Class
+		
+			public class Teacher implements Profession{
+				@Override
+				public void print(){
+					sout("Print method of Teacher Class");
+				}
+			}
+		
+		
+		-> Now I want to create an object of either Doctor or Engineer or Teacher, but I dont want to show you how am I creating that Object.
+		So in order to resolve that we are going to create a factory as below.
+		
+		e. Factory Class
+		
+			public class ProofessionFactory{
+				public Profession getProfession(String typeOfProfession){
+					if(typeOfProfession == null){
+						return null;
+					}
+					
+					if(typeOfProfession.equalsIgnoreCase("Doctor"){
+						return new Doctor();
+					}
+					
+					if(typeOfProfession.equalsIgnoreCase("Engineer"){
+						return new Engineer();
+					}
+					if(typeOfProfession.equalsIgnoreCase("Teacher"){
+						return new Teacher();
+					}
+					return null;
+				}
+			}
+			
+			
+			f. Main Class or Client
+			
+				public class FactoryPatternMainClass{
+					psvm(){
+						ProofessionFactory professionFactory = new ProofessionFactory();
+						
+						Profession doc = professionFactory.getProfession("Doctor");
+						doc.print();
+					}
+				}
+				
+				
+	Real Time Example:
+		-> Suppose you are a client and you go the the factory suppose tootpaste factory it is , so you will ask for giving me the tootpaste.
+			You dont want to know how that toopaste got created or what, you only want toothpaste that's all.
+			
+		-> So there is a client, there is a factoyr, and client create the object of factory, and tell factory go and bring this. So how factory is going to create object, that doesn't matter for client.
+		
+		
+That's why factory design pattern is of 2 simple steps which we mentioned earlier as well i.e.
+		1. Create main class which call factory class
+		2. Factory class return required class instance.
+		
+------------------
+
+2. Abstract Factory Pattern:
+	-> This factory is also called as factory of factories.
+	-> Abstract Factory lets a class return a factory of classes.
+	-> So this is the reason that Abstract Factory Pattern is one level higher than the Factory Pattern.
+	-> An Abstract Factory Pattern is also known as Kit.
+	
+	
+	Steps:
+		1. Create main class which call factory of factory class.
+		2. Factory of factory/factory Producer creates instance of factory class.
+		3. Factory class return required class instance.
+		
+		
+	FlowChart:
+	
+					Main Class
+						|
+					AbstractFactoryProducer
+						|
+					Abstract Factory
+					|				|
+			Profession A F       Trainee Profession A F (Abstract Factory)
+				|							|
+			Profession					Profession
+			|		|					|		|
+		  Engg	  Teacher			Trainee Engg   Trainee Teacher
+
+		
+	-> So we have Profession Abstract Factory under which 2 classess are there that are Teacher and Engineer.
+		Whereas we have another Trainee profession Abstract factory as well, which have Trainne Teacher and Trainee Engineer.
+		
+		So this 2 above factory class can called as intermediate factory or second factory.
+		
+		
+	code:
+	
+		// One interface
+		a . Profession interface
+			
+			public interface Profession{
+				void print();
+			}
+	
+			
+		// Four implementation class of that interface
+		b. Engineer Class 
+			public class Engineer implements Profession{
+				@Override
+				public void print(){
+					sout("Print method of Engineer Class");
+				}
+			}
+		
+		c. Teacher Class
+		
+			public class Teacher implements Profession{
+				@Override
+				public void print(){
+					sout("Print method of Teacher Class");
+				}
+			}
+		
+		d. Trainee Engineer Class 
+			public class TraineeEngineer implements Profession{
+				@Override
+				public void print(){
+					sout("Print method of Trainee Engineer Class");
+				}
+			}
+		
+		e. Trainee Teacher Class
+		
+			public class TraineeTeacher implements Profession{
+				@Override
+				public void print(){
+					sout("Print method of Trainee Teacher Class");
+				}
+			}
+		
+	
+	
+		//Two factories 
+		1. ProfessionAbstractFactory
+		
+		public class ProfessionAbstractFactory extends AbstractFactory{
+			
+			@Override
+			public profession getProfession(String typeOfProfession){
+				
+				if(typeOfProfession == null){
+					return null;
+				}
+				
+				else if(typeOfProfession.equalsIgnoreCase("Engineer")){
+					return new Engineer();
+				}
+				
+				else if(typeOfProfession.equalsIgnoreCase("Teacher")){
+					return new Teacher();
+				}
+				return null;
+			}
+		}
+		
+		2. TraineeProfessionAbstractFactory
+		
+		public class TraineeProfessionAbstractFactory extends AbstractFactory{
+			
+			@Override
+			public profession getProfession(String typeOfProfession){
+				
+				if(typeOfProfession == null){
+					return null;
+				}
+				
+				else if(typeOfProfession.equalsIgnoreCase("Engineer")){
+					return new TraineeEngineer();
+				}
+				
+				else if(typeOfProfession.equalsIgnoreCase("Teacher")){
+					return new TraineeTeacher();
+				}
+				return null;
+			}
+		}
+		
+		
+		3. Abstract class which is extend by above two factories
+		
+		public abstract class AbstractFactory{
+			abstract Profession getProfession(String typeOfProfession);
+		}
+		
+		
+		
+		4. //Now the Main Factory whose obj is creates by the client.
+		
+		public class AbstractFactoryProducer{
+			public static AbstractFactory getprofession(boolean isTrainee){
+				if(isTrainee){
+					return new TraineeProfessionAbstractFactory();
+				}
+				else{
+					return new ProfessionAbstractFactory();
+				}
+			}
+		}
+		
+		//5. Main Class or Client
+		
+		public class FactoryPatternMainClass{
+			psvm(){
+				//first get the factory instance from factory of factory class, if you want trainees.
+				AbstractFactory abstractFactory = AbstractFactoryProducer.getProfession(true);
+				
+				Profession engg = abstractFactory.getProfession("Engineer");
+				
+				engg.print();
+			}
+		}
+		
+		
+--------------------
+
+Que : What is Singelton Design Pattern?
+Ans: -> Singelton pattern is one of the simpletest design pattern in java.
+	-> This pattern involves a single class which is responsible to create an object while making sure that only single object gets created.
+	-> THis class provides a way to access its only object which can be accessed directly without need to instantiate the object of the class.
+	
+	
+	public class SingeltonClass{
+		
+		private static SingeltonClass singeltonInstance = new SingeltonClass();
+		
+		private SingeltonClass(){
+		
+		}
+		
+		//get the only object available
+		public static SingeltonClass getInstance(){
+			return singeltonInstance;
+		}
+		
+		public void simpleMethod(){
+			sout("HashCode of singelton object :"+singeltonInstance);
+		}
+	}
+	
+	
+	
+	//2 Main Class
+	public class MainClass{
+		psvm(){
+			SingeltonClass singeltonObj = SingeltonClass.getInstance();
+			singeltonObj.simpleMethod();
+			
+			SingeltonClass singeltonObj2 = SingeltonClass.getInstance();
+			singeltonObj2.simpleMethod();
+		}
+	}
+	
+	//Both the object will print the samehashcdoe, which tell only one object got created.
+	
+---------------------------
+
+What is prototype design pattern?
+
+-> Prototype pattern refers to creating duplicate object while keeping performace in mind.
+-> It involves implementating a prototype interface which tells to create a clone of the current object.
+-> THis pattern is used when creation of object directly costly.
+	IMP Ex : Fpr example it requires database calls or 2. required too mych of processing that will take a lot of memory.
+	
+-> What can be done? 
+	We can cache the object, return its clone on next request.
+	
+	
+Steps:
+	1. Create main class which call CacheImpl Class.
+	2. CacheImpl class has 2 methods: 
+		1st to load the key value in map and create the cache.
+		2nd to return the required cloned object.
+	3. The main class the parent of all required concrete class contains clonning technique. Rest concrete class are normal POJOs, nothing special.
+	
+	
+BluePrint
+
+	Main CLass -> Loads Cache and returns requird class instance clone -> 							Profession
+																					Engineer 		Doctor		Teacher
+																					
+																					
+
+Code :
+	1. Here we are creating abstract class not interface of Profession.
+	Why ? -> So this Profession class extends the Clonnable which give you method of how to clone the object.
+	
+	
+	public abstract class Profession implements Cloneable{
+		public int id;
+		public String name;
+		
+		abstract void print();
+		
+		public Object clonningMethod(){
+			Object clone = null;
+			
+			try{
+				clone = super.clone();
+			}
+			catch(CloneNotSupoortedException){
+				e.printStackTrace();
+			}
+			return clone;
+		}
+	}
+	
+	
+	2. Doctor
+	
+	public class Doctor extends Profession{
+		@Override
+		public void print(){
+			sout("In print of doctor class");
+		}
+	}
+	
+	
+	3. Engineer
+	
+	public class Engineer extends Profession{
+		@Override
+		public void print(){
+			sout("In print of Engineer class");
+		}
+	}
+	
+	4. Teacher
+	
+	public class Teacher extends Profession{
+		@Override
+		public void print(){
+			sout("In print of teacher class");
+		}
+	}
+	
+	
+	5. ProfessionCache class
+	
+	public class ProfessionCache{
+		private static Hashtable<Integer, Profession> professionMap = new Hashtable<>();
+		
+		//This method returns the clone object of that particular profession using clonningMethod() which is present in Cloneable Class extended by Profession Class.
+		public static Profession getCloneNewProfession(int id){
+			Profession cacheProfessionInstance = professionMap.get(id);
+			return (Profession) cachedProfessionInstance.clonningMethod();
+		}
+		
+		public static void loadProfessionCache(){
+			Doctor doc = new Doctor();
+			doc.id = 1;
+			professionMap.put(doc.id, doc);
+			
+			Engineer engineer = new Engineer();
+			engineer.id = 2;
+			professionMap.put(engineer.id, engineer);
+			
+			Teacher teacher = new Teacher();
+			teacher.id = 3;
+			professionMap.put(teacher.id, teacher);
+		}
+	}
+	
+	
+	
+	6. Main class or Client Class
+	
+	public class PrototypePatternMainClass{
+		psvm(){
+			ProfessionCache.loadProfessionCache();
+		
+			Profession docProfession = ProfessionCache.getCloneNewProfession(1); //In map 1 we used for doctor
+			sout(docProfession);
+			
+			Profession engProfession =  ProfessionCache.getCloneNewProfession(2);
+			sout(engProfession);
+			
+			Profession teacherProfession = ProfessionCache.getCloneNewProfession(3);
+			sout(teacherProfession);
+			
+			//One more time creating object for doctor profession, to check whther its return the same object or creating a new one.
+			//getCloneNewProfession returns the new Clone object hence hashcode will be different.
+			Profession docProfession2 = ProfessionCache.getCloneNewProfession(1);
+			sout(docProfession2);
+		}
+	}
+	
+
+	
+	Imp questions:
+	1. Why we use protytpe design pattern?
+	ans: When creation of new object is costly at that time we use prototype design pattern.
+	
+	2. Counter question -> When creation of new object is costly?
+	Ans : 1. When the process involves the database calls. As each database calls gives some monetory losses.
+		2. Processing time take a lot of memory. ex: suppose there is very big object and you have to do lot of processing which will take a lot of memory and 
+			then you are trying to create as object, this is very heavy process, which will give you lot of memory issues, then you can just clone it and return in that case.
+			
+			
+	Imp : So what has been done in prototype?
+	-> We can cache the object, and return the clone of cache object, not the original cache object on next request.
+	
+	
+-----------------------------
+
+Builder Design Pattern
+
+	-> Builder pattern refers to approach that focuses on construting a complex object from simple objects using strp-by-strp approach.
+	
+	Major roles used in this design pattern are:
+		1. Complex Object/ Final Product:
+			example - house -> complex object which we will generate with builder design pattern.
+			(How house is complex?  -> Creating a house or builiding on different location is complex. Because there might be different areas,
+										like flood prone area, or earthquake prone area. and you have to build the building for Flood prone area,
+										here you cannot build Earthquake Prone area, so here creation of end product is complex, Hencse we are using
+										builder design pattern here.)
+		
+		2. Builder -> abstract class/ interface that defines all ways to create the product. It also has getFinalProduct method that will finally
+					return complex object.
+					
+		3. ConcreteBuilder -> multiple Builder Impls that will give different final objects which are complex to design.
+						It's basically inplementation classes of Builder interface/abstract class.
+		
+		4. Director -> Controls complex object creation. It has 2 main goals:
+						1. 1st to call appropriate concrete builder to create correct complex object.
+						2. Return that complex object.
+						
+		
+		
+
+Code:
+		1. Home class/ End product that we want to deliver
+		
+		public class Home{
+			public String floor;
+			public String walls;
+			public String terrace;
+		}
+		
+		
+		2. Builder interface
+		
+		interface Builder{
+			public void buildFloor();
+			public void buildWalls();
+			public void buildTerrace();
+			
+			public Home getComplexObject(); //It should have the method which returns Home.
+		}
+		
+		
+		
+		3. EarthQuakeResistantBuilder  
+		
+		EarthQuakeResistantBuilder implements Builder{
+			private Home earthquakeResistantHome = new Home();
+			
+			@Override
+			public void buildFloor(){
+				this.earthquakeResistantHome.floor = "Wooden floor";
+			}
+			
+			@Override
+			public void buildWalls(){
+				this.earthquakeResistantHome.walls = "Wooden walls";
+			}
+			
+			@Override
+			public void buildTerrace(){
+				this.earthquakeResistantHome.terrace = "Wooden terrace";
+			}
+			
+			@Override
+			public Home getComplexObject(){
+				return this.earthquakeResistantHome;
+			}
+		}
+		
+		
+		4. FloodResistantBuilder
+		
+		class FloodResistantBuilder implements Builder{
+			private Home floodResistantHome = new Home();
+			
+			@Override
+			public void buildFloor(){
+				floodResistantHome.floor = "10 feets above ground level floor";
+			}
+			
+			@Override
+			public void buildWalls(){
+				floodResistantHome.walls = "Water resistant walls";
+			}
+			
+			@Override
+			public Home buildTerrace(){
+				floodResistantHome.terrace = "Water leakage resistant terrace";
+			}
+			
+			@Override
+			public Home getComplexHomeObject(){
+				return this.floodResistantHome;
+			}
+		}
+		
+		
+		
+		5. Director
+		
+		class Director{
+			private Builder builder;
+			
+			//constructor
+			public Director(Builder builderType){
+				this.builder = builderType;
+			}
+			
+			//return Complex object
+			public Home getComplexObjectOfHome(){
+				return this.builder.getComplexHomeObject();
+			}
+			
+			//Manage complex object
+			public void managerRequiredHomeConstruction(){
+				this.builder.buildFloor();
+				this.builder.buildWalls();
+				this.builder.buildTerrace();
+			}
+		}
+		
+		
+		6. Main Class or Client 
+		
+		public class MainClass{
+			psvm(){
+				//create object of required homebuilder/ i.e required complexobject
+				EarthQuakeResistantBuilder earthquakeResistantBuilder = new EarthQuakeResistantBuilder();
+				
+				//Create object of director that will keep eye on your builder
+				Director director = new Director(earthquakeResistantBuilder);
+				
+				//Director first manages
+				director.managerRequiredHomeConstruction();
+				
+				//return the complex object.
+				Home homeContrutctedAtTheEnd = director.getComplexObjectOfHome();
+				
+				sout(homeContrutctedAtTheEnd);
+				sout(homeContrutctedAtTheEnd.floor);
+			}
+		}
+		
+		
+Steps for creation of Builder Design Pattern
+	1. Create a complex class POJO.
+	2. Create Builder Interface/Abstract class which has definitions.
+	3. Create concrete Builder class that has implementations.
+	4. Create Director that will have responsibilty to call correct concrete Builder and then return final object.
+	5. Create main class that will initialize Director, and call method of director finally which will in turn return complex object instance required.
+	
+	
+
+
+**************************************************************************************************************************************************************
+
+
+Microservice
+-------------
+
+
