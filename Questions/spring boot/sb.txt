@@ -1,0 +1,1840 @@
+
+Que 1 : What are starter dependencies in Spring Boot
+Ans :- Starter dependencies in Spring Boot are pre-configured dependency descriptors that simplify project setup. Instead of adding multiple individual dependencies manually, Spring Boot provides starter packages that bundle commonly used libraries together for a specific functionality.
+
+For example:
+	</xml>
+	
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+	
+	
+This single starter automatically includes:
+	- Spring MVC
+	- Embedded Tomcat
+	- Jackson for JSON processing
+	- Validation libraries
+	- Logging dependencies
+
+So we don’t need to configure everything manually.
+
+Commonly Used Starter Dependencies
+	- spring-boot-starter-web → REST APIs & microservices
+	- spring-boot-starter-data-jpa → Database operations using Hibernate/JPA
+	- spring-boot-starter-security → Authentication & authorization
+	- spring-boot-starter-test → Unit & integration testing
+	- spring-boot-starter-actuator → Monitoring & health checks
+	- spring-boot-starter-validation → Request validations
+	- spring-cloud-starter-openfeign → Inter-service communication in microservices
+
+Why They Are Important:
+	Starter dependencies help maintain dependency compatibility, reduce configuration effort, and speed up development. Since Spring Boot manages dependency versions internally, it avoids version conflicts and makes applications production-ready faster.
+	
+	In enterprise projects, starter dependencies are especially useful in microservices because they standardize configurations across services and reduce boilerplate setup.
+	
+	
+sub que :- How does Spring Boot manage dependency versions?
+ans - Spring Boot uses a parent POM called spring-boot-starter-parent, which provides dependency management and compatible versions for all Spring libraries.
+
+----
+
+Que 2: - What is spring Initializer
+
+ans :- Spring Initializr is a web-based tool provided by Spring that helps developers quickly bootstrap a Spring Boot project with the required configuration, dependencies, and project structure.
+
+What It Does?
+	Using Spring Initializr, we can:
+		- Choose build tool → Maven or Gradle
+		- Select Java version
+		- Select Spring Boot version
+		- Add required starter dependencies
+		- Generate a ready-to-use project structure
+		
+
+Example
+	For example, if I want to create a microservice, I can select:
+		- Spring Web
+		- Spring Data JPA
+		- Eureka Client
+		- OpenFeign
+		- MySQL Driver
+		- Actuator
+
+	and Spring Initializr generates the complete starter project.
+	
+
+Benefits
+	- Reduces manual setup effort
+	- Provides standard project structure
+	- Avoids dependency/version mismatch
+	- Speeds up development
+	- Useful for quickly creating microservices
+	
+
+5+ Years Answer
+	In enterprise projects, we usually use Spring Initializr during initial service creation. After that, organization-specific standards like logging, security, monitoring, Docker setup, and CI/CD configurations are added on top of the generated template.
+	
+
+Sub-que : What files are generated?
+ans:- 
+	- pom.xml or build.gradle
+	- Main application class
+	- application.properties/yml
+	- Maven/Gradle wrapper
+	- Standard package structure
+	
+	
+----
+
+Que 3: - How do you start a spring boot application.
+
+Ans:- 
+A Spring Boot application is typically started using the main() method annotated with @SpringBootApplication. Internally, Spring Boot uses SpringApplication.run() to bootstrap the application context, perform component scanning, auto-configuration, and start the embedded server like Tomcat.
+
+Example:
+	@SpringBootApplication
+	public class OrderServiceApplication {
+
+		public static void main(String[] args) {
+			SpringApplication.run(OrderServiceApplication.class, args);
+		}
+	}
+	
+	
+What Happens Internally
+	When the application starts:
+	- Spring Boot creates the Application Context
+	- Performs component scanning
+	- Loads beans into the IOC container
+	- Applies auto-configurations
+	- Starts the embedded web server
+	- Initializes configurations from application.properties or application.yml.
+	
+Ways to Run the Application
+practical ways:
+
+	1. From IDE
+		Run as Java Application from IntelliJ/Eclipse/STS
+	
+	2. Using Maven
+		mvn spring-boot:run
+		
+	3. Running JAR
+		java -jar order-service.jar
+		
+		
+Microservices Perspective:
+	In microservices architecture, each Spring Boot application runs independently with its own embedded server and configuration. We usually containerize the service using Docker and deploy it through Kubernetes or CI/CD pipelines.
+	
+IMP - During startup, Spring Boot also reads profiles like dev, qa, or prod and loads environment-specific configurations.”
+	Example:
+	properties files-
+	spring.profiles.active=prod
+	
+----
+
+Que :  Difference between @controller and @RestController
+
+Ans: - @Controller and @RestController are both Spring MVC annotations used to handle HTTP requests, but the main difference is in how the response is returned.
+
+@Controller:
+	@Controller is mainly used in traditional Spring MVC applications where we return view pages like JSP, Thymeleaf, or HTML.
+	
+	Example:
+		@Controller
+		public class HomeController {
+
+			@GetMapping("/home")
+			public String home() {
+				return "home";
+			}
+		}
+
+	
+	Here:
+	- "home" is treated as a view name
+	- Spring resolves it to a JSP/HTML page
+	
+	
+@RestController
+	@RestController is used in REST APIs and microservices. It returns data directly as JSON or XML instead of returning a view.
+	
+	Example:
+		@RestController
+		public class EmployeeController {
+
+			@GetMapping("/employee")
+			public Employee getEmployee() {
+				return new Employee(101, "Rahul");
+			}
+		}
+		
+	
+	Here:
+		Response is automatically converted into JSON using Jackson
+		
+	
+	
+Internal Difference:
+	@RestController is a combination of @Controller + @ResponseBody.
+		
+	Equivalent:
+		@Controller
+		@ResponseBody
+		public class EmployeeController {
+		}
+
+
+Real-Time Usage 
+	- “In microservices architecture, we mostly use @RestController because services communicate through REST APIs returning JSON responses.”
+	- “@Controller is generally used in monolithic or MVC-based applications where server-side rendering is required.”
+	
+	
+----
+
+Que : What is @RequestMapping
+
+Ans:- @RequestMapping is used to map incoming HTTP requests to specific handler methods or controller classes in Spring MVC and Spring Boot.
+
+Example:
+	@RestController
+	@RequestMapping("/employees")
+	public class EmployeeController {
+
+		@RequestMapping("/all")
+		public String getEmployees() {
+			return "Employee List";
+		}
+	}
+	
+Here:
+	/employees → class-level mapping
+	/all → method-level mapping
+	
+	Final endpoint becomes: /employees/all
+	
+
+HTTP Method Mapping
+	@RequestMapping can also define HTTP methods like GET, POST, PUT, DELETE.
+	
+	Example:
+	@RequestMapping(value="/employee", method=RequestMethod.GET)
+	public String getEmployee() {
+		return "Employee";
+	}
+	
+	
+Modern Approach 
+	In modern Spring Boot applications, instead of using @RequestMapping for every method, we usually use specialized annotations like:
+
+		@GetMapping
+		@PostMapping
+		@PutMapping
+		@DeleteMapping
+		
+	Example: 
+	@GetMapping("/employee")
+	public Employee getEmployee() {
+		return employeeService.getEmployee();
+	}
+	
+	These annotations improve readability and reduce boilerplate code.
+
+	
+Real-Time Microservices Usage
+	“In microservices, @RequestMapping is commonly used at class level to define a base URI for a service module, while method-level mappings define specific REST endpoints.”
+	
+	example:
+		@RestController
+		@RequestMapping("/api/v1/orders")
+		public class OrderController {
+		}
+		
+
+Advanced Points:-
+
+	“@RequestMapping supports:
+
+	- Path variables
+	- Request parameters
+	- Headers
+	- Content type mappings (consumes and produces)
+	- Multiple URL patterns”
+	
+	Example:
+	@RequestMapping(
+		value="/orders",
+		method=RequestMethod.POST,
+		consumes="application/json",
+		produces="application/json"
+	)
+	
+
+----
+
+Que: Difference between @GetMapping and @PostMapping.
+
+Ans:- @GetMapping and @PostMapping are specialized Spring annotations used for handling different HTTP request methods in REST APIs.
+
+@GetMapping
+	“@GetMapping is used to retrieve data from the server.”
+	
+	Characteristics
+		- Used for fetching/read operations
+		- Data is usually passed through path variables or query parameters
+		- Should not modify server state
+		- HTTP Method = GET
+		
+		
+	Example:
+		@GetMapping("/employees/{id}")
+		public Employee getEmployee(@PathVariable int id) {
+			return employeeService.getEmployee(id);
+		}
+		
+		
+	Real-Time Usage
+		- Fetch employee details
+		- Get order information
+		- Search APIs
+		- Read-only operations
+		
+	
+
+@PostMapping:
+	“@PostMapping is used to send data to the server and create resources.”
+
+	Characteristics
+		- Used for create operations
+		- Request data is generally sent in request body
+		- Modifies server state
+		- HTTP Method = POST
+	
+	Example:
+	@PostMapping("/employees")
+	public Employee addEmployee(@RequestBody Employee employee) {
+		return employeeService.save(employee);
+	}
+	
+	Real-Time Usage
+		- Create employee
+		- Place order
+		- User registration
+		- Upload data
+		
+
+Important REST API Concept
+	“GET requests should be safe and idempotent, meaning they should not change application data. POST requests are generally used for resource creation and can change server state.
+	
+
+----
+
+Que:-  What is Spring Boot Actuator.
+
+Ans:- Spring Boot Actuator is a production-ready feature of Spring Boot used for monitoring, managing, and observing applications. It provides built-in endpoints to check application health, metrics, environment details, beans, mappings, and other operational information.
+
+Dependecy:
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-actuator</artifactId>
+	</dependency>
+
+
+Common Actuator Endpoints
+	Endpoint				Purpose
+	/actuator/health		Application health status
+	/actuator/info			Application information
+	/actuator/metrics		JVM, memory, CPU metrics
+	/actuator/env			Environment properties
+	/actuator/beans			Loaded Spring beans
+	/actuator/mappings		All request mappings
+	/actuator/loggers		Change log levels dynamically
+	
+
+Example:
+	http://localhost:8080/actuator/health
+	
+	Response in JSON format:
+		{
+		   "status": "UP"
+		}
+		
+	
+Why It Is Important in Microservices
+	“In microservices architecture, Actuator is very important for monitoring service health and integrating with monitoring tools.”
+
+Real-time usage:
+	- Kubernetes liveness/readiness probes
+	- Monitoring with Prometheus & Grafana
+	- Centralized monitoring
+	- Alerting systems
+	- Production troubleshooting
+	
+
+
+Configuration Example:
+	</> properties
+	management.endpoints.web.exposure.include=*
+	
+	
+	Or expose selected endpoints:
+	</>properties
+	management.endpoints.web.exposure.include=health,info,metrics
+	
+
+
+Security Point (Important for Experienced Answer)
+	“In production, we never expose all actuator endpoints publicly because some endpoints contain sensitive information. We secure them using Spring Security or API gateways.”
+	
+
+Advanced 5+ Years Points
+	“Actuator also provides custom metrics support, distributed tracing integration, and application monitoring through Micrometer.”
+
+“We commonly integrate Actuator with:
+	Prometheus
+	Grafana
+	ELK Stack
+	Splunk
+	Datadog”
+	
+	
+Short Interview Answer
+
+“Spring Boot Actuator provides production-ready monitoring and management features through endpoints like health, metrics, and info, helping monitor and manage Spring Boot microservices.”
+
+----
+
+Que:- @conditional annotation in spring boot
+
+Ans:- “@Conditional in Spring Boot/Spring Framework is used to conditionally load beans or configurations based on specific conditions at runtime.”
+	“It provides flexibility to enable or disable configurations depending on environment, properties, classpath, OS, or custom logic.”
+	
+	
+syntax:
+	@Configuration
+	@Conditional(MyCondition.class)
+	public class AppConfig {
+	}
+	
+Here, MyCondition is a custom class implementing Condition interface.
+
+As per GFG:
+
+Spring Framework offers conditional annotations that control bean creation based on specific conditions. These annotations make applications adaptable to different environments without adding unnecessary code. They belong to the org.springframework.context.annotation and org.springframework.boot.autoconfigure.condition packages and rely on the @Conditional mechanism.
+
+1. @Conditional
+Used to register beans only when a custom condition is met. The condition logic is defined in a class implementing the Condition interface.
+
+import org.springframework.context.annotation.*;
+
+@Configuration
+public class MyConfiguration {
+
+    @Bean
+    @Conditional(MyCondition.class)
+    public MyBean myBean() {
+        return new MyBean();
+    }
+}
+
+Here, MyCondition defines whether the MyBean should be created.
+
+
+Common Conditional Annotations in Spring Boot:
+	“Spring Boot provides many predefined conditional annotations built on top of @Conditional.”
+	
+
+| Annotation                   | Purpose                       |
+| ---------------------------- | ----------------------------- |
+| `@ConditionalOnClass`        | Load if class exists          |
+| `@ConditionalOnMissingBean`  | Load if bean not present      |
+| `@ConditionalOnBean`         | Load if bean exists           |
+| `@ConditionalOnProperty`     | Load based on property value  |
+| `@ConditionalOnMissingClass` | Load if class absent          |
+| `@ConditionalOnExpression`   | Load based on SpEL expression |
+
+
+-----
+
+Que:- What is @ConditionalOnClass?
+
+Ans:- “@ConditionalOnClass is a Spring Boot conditional annotation used in auto-configuration. It tells Spring to create or load a bean/configuration only if a specific class is present in the classpath.”
+
+Why It Is Used
+	“It helps Spring Boot enable features automatically based on available dependencies.”
+
+For example:
+	- If JDBC classes are available → configure DataSource
+	- If Tomcat classes are present → configure embedded Tomcat
+	- If Jackson is present → enable JSON conversion
+	
+Example:
+
+@Configuration
+@ConditionalOnClass(DataSource.class)
+public class DatabaseConfig {
+
+    @Bean
+    public MyService myService() {
+        return new MyService();
+    }
+}
+
+// This configuration will load only if DataSource class exists in the application classpath.
+
+
+Real-Time Spring Boot Usage:
+	“Spring Boot internally uses @ConditionalOnClass heavily in auto-configuration classes.”
+
+Example:
+	- spring-boot-starter-web adds Tomcat and Spring MVC classes
+	- Spring Boot detects them
+	- Automatically configures web application support
+	
+Advantage
+	- Reduces manual configuration
+	- Enables plug-and-play architecture
+	- Supports modular applications
+	- Improves auto-configuration mechanism
+	
+Important Point
+	“This annotation is one of the core reasons Spring Boot supports auto-configuration. Based on available libraries, Spring Boot intelligently configures beans without explicit setup.”
+	
+
+Related Conditional Annotations
+	- @ConditionalOnMissingBean
+	- @ConditionalOnProperty
+	- @ConditionalOnBean
+	- @ConditionalOnMissingClass
+
+
+Short Answer
+“@ConditionalOnClass loads a configuration or bean only when a specified class is available in the classpath. It is widely used in Spring Boot auto-configuration.”
+
+
+-----
+
+Que: What is @CondiotionalOnProperty?
+
+Ans:- @ConditionalOnProperty is a Spring Boot conditional annotation used to create or load a bean only when a specific property is present and matches a given value.
+
+Why It Is Used
+	It is commonly used for feature toggles, environment-specific configurations, and enabling/disabling modules dynamically without changing code.
+	
+Example:
+@Configuration
+public class AppConfig {
+
+    @Bean
+    @ConditionalOnProperty(
+            name = "feature.payment.enabled",
+            havingValue = "true")
+    public PaymentService paymentService() {
+        return new PaymentService();
+    }
+}
+
+
+application.properties
+feature.payment.enabled=true
+
+
+Explanation:
+	“The PaymentService bean will be created only if the property value is true.”
+	
+
+Imp Atributes:
+
+| Attribute        | Purpose                       |
+| ---------------- | ----------------------------- |
+| `name`           | Property name                 |
+| `havingValue`    | Expected value                |
+| `matchIfMissing` | Execute if property is absent |
+
+
+
+Example with matchIfMissing:
+@ConditionalOnProperty(
+    name = "cache.enabled",
+    havingValue = "true",
+    matchIfMissing = true
+)
+
+Here, the bean loads even if the property is missing.
+
+
+Real-Time Usage in Microservices
+	“In enterprise microservices, we use @ConditionalOnProperty for:
+		- Enabling/disabling Kafka consumers
+		- Switching between mock and real services
+		- Feature flags
+		- Environment-based integrations
+		- Cloud-specific configurations”
+		
+Example:
+</properties>
+kafka.enabled=true
+redis.enabled=false
+
+
+Advantage
+	- No code changes required
+	- Easy environment-based behavior control
+	- Useful for production deployments
+	- Supports feature management
+	
+Important Point:
+	“Spring Boot internally uses this annotation extensively in auto-configuration classes to activate configurations only when certain properties are enabled.”
+
+Short Interview Answer:
+	“@ConditionalOnProperty loads a bean or configuration only when a specified property exists and matches the expected value. It is commonly used for feature toggles and environment-based configurations in Spring Boot.”
+	
+	
+----
+
+Que:- What is @Profile?
+
+Ans:- @Profile in Spring Boot is used to load beans, configurations, or components only for specific environments like dev, qa, test, or prod.
+	It helps manage environment-specific configurations without changing the code.
+	
+Example:
+
+@Configuration
+@Profile("dev")
+public class DevConfig {
+
+    @Bean
+    public DataSource dataSource() {
+        return new H2DataSource();
+    }
+}
+
+-> This configuration will load only when the dev profile is active.
+
+
+Activating Profile
+	1. application.properties
+		spring.profiles.active=dev
+
+	2. Or via command line:
+		java -jar app.jar --spring.profiles.active=prod
+		
+
+Real-Time Example
+
+	“In enterprise projects:
+		- Dev environment may use H2 database
+		- QA may use MySQL
+		- Prod may use Oracle/PostgreSQL
+
+Using @Profile, we can load different beans for different environments.”
+
+Multiple Profiles
+	@Profile({"qa", "prod"})
+
+“Bean loads for either QA or Production.”
+
+
+Common Use Cases
+	- Different databases per environment
+	- Mock vs real implementations
+	- Environment-specific security configs
+	- Cloud vs local configurations
+	- Feature enablement
+	
+	
+Difference Between @Profile and @ConditionalOnProperty
+| `@Profile`                      | `@ConditionalOnProperty`        |
+| ------------------------------- | ------------------------------- |
+| Environment-based               | Property-based                  |
+| Used for dev/qa/prod            | Used for feature toggles        |
+| Activated using Spring profiles | Activated using property values |
+
+
+
+Advanced Point:
+	“In microservices deployments, profiles are widely used along with Kubernetes ConfigMaps, Docker environment variables, and centralized configuration servers to manage environment-specific behavior.”
+	
+
+Short Interview Answer
+	“@Profile is used to load Spring beans and configurations only for specific environments such as dev, qa, or prod. It supports environment-specific configuration management in Spring Boot.”
+	
+
+
+-----
+
+Que:- What is microservice architecture?
+
+Ans:- Microservice architecture is an architectural style where an application is divided into multiple small, independently deployable services. Each microservice is focused on a specific business capability and communicates with other services using lightweight protocols like REST APIs, Kafka, or messaging queues.
+
+Key Characteristics
+1. Independent Services
+	“Each service can be developed, deployed, and scaled independently.”
+
+	Example:
+		- User Service
+		- Order Service
+		- Payment Service
+		- Inventory Service
+		
+2. Loosely Coupled:- “Services are loosely coupled, meaning changes in one service should minimally impact others.”
+
+3. Separate Database:- “Typically each microservice owns its own database to maintain autonomy.”
+
+4. Independent Deployment :- “Teams can deploy services separately without deploying the entire application.”
+
+5. Technology Flexibility :- “Different services can use different technologies if required, although in most enterprise systems we standardize on Spring Boot.”
+
+Real-Time Example
+	“For an e-commerce application:
+		- Product Service manages products
+		- Order Service handles orders
+		- Payment Service processes payments
+		- Notification Service sends emails/SMS
+
+All services communicate through REST APIs or asynchronous messaging like Kafka.”
+
+
+| Monolith           | Microservices                 |
+| ------------------ | ----------------------------- |
+| Single application | Multiple independent services |
+| Single deployment  | Independent deployments       |
+| Tight coupling     | Loose coupling                |
+| Harder to scale    | Easily scalable               |
+
+
+
+Practical Perspective:-
+	“In production systems, we generally use API Gateway for routing, Eureka for service discovery, centralized logging with ELK, distributed tracing, and Kubernetes for orchestration.”
+	
+
+Short Answer:
+	“Microservice architecture is a design approach where an application is split into small independent services, each handling a specific business capability and communicating through APIs or messaging systems.”
+
+
+-----
+
+Que: What is Spring Cloud?
+
+Ans: “Spring Cloud is a framework built on top of Spring Boot that provides tools and components for developing distributed systems and microservices.”
+
+“It helps solve common microservices challenges like service discovery, centralized configuration, API gateway, load balancing, fault tolerance, distributed tracing, and inter-service communication.”
+
+
+Why Spring Cloud Is Needed:
+	“When we build multiple microservices, managing communication, configuration, scalability, and resiliency becomes complex. Spring Cloud provides ready-made solutions for these distributed system problems.”
+	
+
+Common Components of Spring Cloud
+| Component           | Purpose                        |
+| ------------------- | ------------------------------ |
+| Eureka Server       | Service discovery              |
+| Spring Cloud Config | Centralized configuration      |
+| API Gateway         | Routing & security             |
+| OpenFeign           | Inter-service communication    |
+| LoadBalancer        | Client-side load balancing     |
+| Circuit Breaker     | Fault tolerance                |
+| Sleuth & Zipkin     | Distributed tracing            |
+| Bus                 | Config refresh across services |
+
+
+
+Real-Time Microservices Flow
+
+	Example:
+		- Order Service calls Payment Service
+		- Services register in Eureka
+		- API Gateway routes requests
+		- Feign Client handles communication
+		- Config Server manages centralized configs
+
+
+Example of Feign Client:
+
+@FeignClient(name = "payment-service")
+public interface PaymentClient {
+
+    @GetMapping("/payment/{id}")
+    Payment getPayment(@PathVariable int id);
+}
+
+
+
+Advantages
+	- Simplifies distributed system development
+	- Reduces boilerplate code
+	- Provides production-ready microservices patterns
+	- Easy integration with Spring Boot
+	- Supports cloud-native applications
+	
+	
+Important Point 
+	“Spring Cloud follows the ‘convention over configuration’ principle and integrates seamlessly with Spring Boot, making enterprise microservices development faster and more maintainable.”
+	
+	
+Modern Industry Note
+	“Nowadays, some Netflix OSS components like Ribbon and Hystrix are deprecated, and modern Spring Cloud projects commonly use:
+
+	- Spring Cloud LoadBalancer
+	- Resilience4j
+	- Kubernetes-native service discovery”
+	
+
+Practical Production Usage
+“In enterprise applications, we commonly combine Spring Cloud with:
+	- Docker
+	- Kubernetes
+	- Kafka
+	- Prometheus/Grafana
+	- ELK Stack
+	- Jenkins/GitHub Actions”
+	
+
+Short Answer
+	“Spring Cloud is a framework for building microservices and distributed systems in Spring Boot. It provides solutions for service discovery, centralized configuration, API gateway, load balancing, fault tolerance, and inter-service communication.”
+	
+	
+-----
+
+Que: What is externalized configuration?
+
+Ans:- Externalized configuration means keeping application configuration outside the application code/JAR/WAR, so that the same application can run in different environments without changing or rebuilding the code.
+
+	In Spring Boot, configurations like:
+	database URL
+	username/password
+	API keys
+	Kafka brokers
+	ports
+	feature flags
+	environment-specific properties
+
+	are stored externally using:
+
+	application.properties
+	application.yml
+	environment variables
+	command-line arguments
+	Spring Cloud Config Server
+	Kubernetes ConfigMaps/Secrets
+
+	instead of hardcoding them inside Java classes.
+	
+Why It Is Important
+
+	In microservices architecture, the same service is deployed in:
+		local
+		dev
+		QA
+		staging
+		production
+	Each environment has different configurations.
+	
+	Externalized configuration helps:
+		avoid code changes per environment,
+		improve security,
+		support CI/CD,
+		make deployments easier,
+		follow 12-factor app principles.
+		
+
+Example
+
+	Bad Practice (Hardcoded)
+	String url = "jdbc:mysql://localhost:3306/test";
+	
+	
+	Good Practice
+
+	application.yml
+		spring:
+		  datasource:
+			url: jdbc:mysql://localhost:3306/test
+			username: root
+			password: root
+			
+	Usage:
+		@Value("${spring.datasource.url}")
+		private String url;
+				
+			or
+
+		@ConfigurationProperties
+		
+	
+	
+
+Sub Que: Spring Boot Configuration Priority 
+	Spring Boot loads configurations in priority order.
+
+	Higher priority overrides lower priority.
+
+		Typical order:
+		Command-line arguments
+		Environment variables
+		External config files
+		Internal application.properties
+		Default values
+		
+	Example:	
+	java -jar app.jar --server.port=9090
+
+	This overrides the value from properties file.
+	
+	
+In Microservices:
+
+	In distributed systems, we often use centralized configuration management using:
+
+		Spring Cloud Config
+		HashiCorp Vault
+		Kubernetes ConfigMaps and Secrets
+
+	This allows updating configurations centrally without rebuilding services.
+	
+	
+
+
+Follow-up Questions Interviewer May Ask
+	1. Difference between @Value and @ConfigurationProperties?
+
+	Expected:
+
+	@Value → single property
+	@ConfigurationProperties → grouped/type-safe configuration
+	
+	
+	2. How to secure sensitive configs?
+
+		Expected:
+
+		environment variables
+		Vault
+		encrypted properties
+		Kubernetes Secrets
+
+		Avoid hardcoding passwords.
+		
+		
+	3. What is Spring Cloud Config?
+
+		Expected:
+		Centralized configuration server for all microservices.
+		
+
+
+
+Short Interview Version
+
+Externalized configuration means keeping application configuration outside the application code so the same build can run across multiple environments with different settings. In Spring Boot, it can be done using properties/yaml files, environment variables, command-line arguments, or centralized config servers like Spring Cloud Config. It improves flexibility, security, and deployment management in microservices architecture.
+
+
+-----
+
+Main Que: - How to optimize spring boot performace? how to optimize hibernate performace?
+
+follow up questions: 
+	How do you identify bottlenecks?”
+	“How does HikariCP work?”
+	“What is N+1 problem?”
+	“How does Redis improve performance?”
+	“Difference between WebClient and RestTemplate?”
+	“How do you tune JVM?”
+	“What metrics do you monitor?”
+	“How many threads should Tomcat have?”
+	“When should we use Kafka instead of REST?”
+	“How did you improve performance in your project?”
+
+
+Ans:- 
+Expected Interview Answer:
+	“Spring Boot performance optimization can be done at multiple levels — application startup, database, JVM, APIs, microservice communication, threading, caching, and monitoring. In production systems, we usually identify bottlenecks first using profiling and metrics, then optimize accordingly.”
+
+full:
+	
+When we talk about optimizing Spring Boot performance, optimization can happen at multiple levels such as database layer, application layer, JVM level, API design, and microservice communication. In real projects, the first step is always identifying the bottleneck using monitoring and profiling tools instead of doing random optimizations.
+
+In most applications, the database becomes the primary bottleneck, so query optimization plays a very important role. We usually optimize SQL queries, create proper indexes, avoid unnecessary joins, and use pagination for large datasets. In JPA or Hibernate, we also avoid the N+1 query problem and fetch only required data using DTO projections instead of loading complete entities.
+
+Connection pooling is another important area. Spring Boot uses HikariCP by default, which is a high-performance connection pool. We configure the pool size based on application traffic and database capacity so that database connections are reused efficiently instead of creating new connections for every request.
+
+Caching is one of the most effective ways to improve performance. Frequently accessed data can be cached using Redis or Caffeine so that repeated database calls are reduced. In many microservice applications, caching significantly reduces response time and improves scalability.
+
+For time-consuming operations, asynchronous processing helps improve application responsiveness. Instead of blocking the main request thread, operations like email sending, report generation, or event processing can be handled asynchronously using @Async, custom thread pools, or messaging systems like Kafka.
+
+At the API level, we optimize payload size and avoid sending unnecessary data in JSON responses. Compression such as GZIP can also be enabled to reduce network transfer time. Proper API pagination and lightweight DTOs help improve response performance.
+
+JVM tuning is also important for high-traffic applications. We monitor heap memory usage, garbage collection behavior, and GC pause times. Based on application load, we tune JVM parameters like heap size and garbage collector configuration. G1GC is commonly used in modern Spring Boot applications because it provides better performance for large heap sizes.
+
+In microservices architecture, performance is also affected by inter-service communication. Too many synchronous REST calls can increase latency, so in some scenarios asynchronous communication using Kafka or RabbitMQ is preferred. We also use resilience patterns like circuit breakers, retries, and bulkheads to improve stability and avoid cascading failures.
+
+Monitoring and observability are extremely important in performance optimization. We use Spring Boot Actuator, Micrometer, Prometheus, Grafana, and distributed tracing tools to monitor response times, memory usage, CPU utilization, thread counts, and API latency. Performance optimization should always be metrics-driven because without proper monitoring it is difficult to identify the real bottleneck.
+
+Overall, Spring Boot optimization is not about a single change. It is a combination of database tuning, efficient coding practices, caching, asynchronous processing, JVM tuning, proper monitoring, and optimized microservice communication.
+
+
+---------
+
+Hibernate performance optimization mainly focuses on reducing unnecessary database interaction, improving query efficiency, and managing entity loading properly. In most real-world applications, poor Hibernate configuration or improper entity design can create major performance issues even if the database itself is optimized.
+
+One of the most common performance problems in Hibernate is the N+1 query issue. This happens when Hibernate executes one query to fetch parent records and then executes additional queries for each child entity. To avoid this, we use fetch joins, entity graphs, or batch fetching so that related data is loaded efficiently in fewer queries.
+
+Lazy loading and eager loading should be used carefully. By default, relationships should generally be lazy-loaded because eager loading may fetch unnecessary data and increase memory consumption. However, if related data is always required, then fetch joins can be used to reduce multiple database calls.
+
+Fetching complete entities when only a few fields are needed also affects performance. In such cases, DTO projections are preferred because they reduce memory usage and improve query execution time. Instead of loading the entire entity object, only the required columns are fetched from the database.
+
+Batch processing is another important optimization technique. When inserting or updating large amounts of data, Hibernate should use batch inserts and batch updates instead of executing one SQL statement per row. This reduces database round trips and significantly improves performance for bulk operations.
+
+The first-level cache provided by Hibernate works at the session level and helps avoid repeated database calls within the same transaction. In applications where frequently accessed data changes less often, second-level caching using tools like Redis or Ehcache can further improve performance by reducing database hits across multiple sessions.
+
+Connection pooling also plays an important role. Spring Boot commonly uses HikariCP, which efficiently manages database connections and avoids the overhead of repeatedly opening and closing connections. Proper pool size configuration is necessary to balance throughput and database load.
+
+Query optimization is critical in Hibernate. We should avoid writing inefficient JPQL or native queries, and proper database indexing must be used for frequently searched columns. Pagination should always be applied when handling large datasets to avoid loading excessive records into memory.
+
+Hibernate generates SQL internally, so SQL logging and query analysis are useful for identifying slow queries. Tools like Hibernate statistics, Actuator metrics, and database execution plans help analyze performance bottlenecks.
+
+Another important optimization is avoiding unnecessary flushing. Hibernate automatically synchronizes entity changes with the database, but excessive flushing can impact performance. Proper transaction boundaries and controlled flushing improve efficiency.
+
+In high-performance systems, read-only transactions can also be used for query operations because Hibernate skips dirty checking for entities in read-only mode, which reduces overhead.
+
+Overall, Hibernate optimization is mainly about minimizing database round trips, controlling entity loading properly, optimizing queries, using caching effectively, and monitoring generated SQL to identify bottlenecks.
+
+
+===============================
+
+Que - What is transaction management?
+
+Ans- Transaction management is used to maintain data consistency and integrity during database operations. A transaction is basically a group of operations that are treated as a single unit of work. Either all operations should be completed successfully, or if any operation fails, all previous operations should be rolled back so that the database remains in a consistent state.
+
+For example, in a banking application, if money is deducted from one account and credited to another account, both operations must succeed together. If the credit operation fails after the debit is completed, the debit operation should also be rolled back. This is the main purpose of transaction management.
+
+In Spring Boot, transaction management is commonly handled using the @Transactional annotation. When a method is marked as transactional, Spring creates a proxy around that method. Before the method execution starts, Spring opens a database transaction. If the method completes successfully, the transaction is committed. If any runtime exception occurs, the transaction is rolled back automatically.
+
+Transaction management follows ACID properties. Atomicity ensures that all operations inside the transaction are completed together or rolled back together. Consistency ensures that the database remains in a valid state before and after the transaction. Isolation controls how multiple transactions interact with each other concurrently. Durability ensures that once a transaction is committed, the data is permanently saved even if the system crashes.
+
+Spring supports both declarative and programmatic transaction management. Declarative transaction management using @Transactional is most commonly used because it is simpler and cleaner. Programmatic transaction management is used in complex scenarios where transactions need to be controlled manually.
+
+Propagation and isolation levels are also important concepts in transaction management. Propagation defines how transactional methods behave when one transactional method calls another transactional method. For example, REQUIRED joins the existing transaction if present, while REQUIRES_NEW creates a completely new transaction.
+
+Isolation levels define how transaction data is visible to other concurrent transactions. Different isolation levels help prevent issues like dirty reads, non-repeatable reads, and phantom reads. In most applications, the default isolation level provided by the database is sufficient, but high-concurrency systems may require tuning based on business requirements.
+
+In microservices architecture, transaction management becomes more challenging because transactions may span across multiple services and databases. Traditional distributed transactions using two-phase commit are generally avoided due to performance and scalability issues. Instead, patterns like Saga are commonly used to maintain eventual consistency between microservices.
+
+Overall, transaction management is very important for ensuring reliable, consistent, and failure-safe database operations in enterprise applications.
+
+
+
+======================
+
+Que - Coding Transaction Example
+
+Ans:
+A common example of transaction management is a money transfer operation between two bank accounts. In this scenario, money should be deducted from one account and credited to another account within the same transaction. If any step fails, the entire transaction should be rolled back to maintain data consistency.
+
+```java
+@Service
+public class BankService {
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Transactional
+    public void transferMoney(Long fromAccountId, Long toAccountId, double amount) {
+
+        Account sender = accountRepository.findById(fromAccountId)
+                .orElseThrow(() -> new RuntimeException("Sender account not found"));
+
+        Account receiver = accountRepository.findById(toAccountId)
+                .orElseThrow(() -> new RuntimeException("Receiver account not found"));
+
+        if (sender.getBalance() < amount) {
+            throw new RuntimeException("Insufficient balance");
+        }
+
+        sender.setBalance(sender.getBalance() - amount);
+        receiver.setBalance(receiver.getBalance() + amount);
+
+        accountRepository.save(sender);
+        accountRepository.save(receiver);
+    }
+}
+```
+
+In this example, the @Transactional annotation ensures that both database operations are treated as a single transaction. If both save operations are completed successfully, the transaction is committed. If any exception occurs during execution, Spring automatically rolls back all database changes.
+
+For example, if the sender balance is deducted successfully but an exception occurs before updating the receiver account, Hibernate and Spring rollback the transaction so that the deducted amount is restored automatically.
+
+Internally, Spring uses AOP proxies for transaction management. When the transactional method is called, Spring opens a database transaction before method execution and commits or rolls back the transaction based on the outcome of the method execution.
+
+This approach helps maintain data consistency and prevents partial updates in enterprise applications.
+
+
+=======================
+
+Que - How to handle exception in spring boot
+
+Ans - 
+Exception handling in Spring Boot is mainly used to manage application errors gracefully and return meaningful responses to the client instead of exposing internal server details. A good exception handling mechanism improves application reliability, debugging, and user experience.
+
+In Spring Boot, exceptions can be handled at multiple levels such as method level, controller level, and global application level. For enterprise applications, global exception handling is considered the best approach because it centralizes error handling logic and avoids code duplication.
+
+The most commonly used approach is using @ControllerAdvice along with @ExceptionHandler. The @ControllerAdvice annotation acts as a global exception handler across all controllers, and @ExceptionHandler is used to handle specific exception types.
+
+For example, if a resource is not found in the database, we can create a custom exception and return a proper HTTP status code and error message to the client.
+
+```java id="y8l7qk"
+public class ResourceNotFoundException extends RuntimeException {
+
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}
+```
+
+Then we create a global exception handler:
+
+```java id="f0f4ef"
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Something went wrong");
+    }
+}
+```
+
+Now if any controller or service throws ResourceNotFoundException, Spring automatically redirects the exception to the global handler and returns a proper response to the client.
+
+This approach provides centralized exception handling and keeps controller code clean. It also helps standardize API error responses across the application.
+
+In production applications, we usually create a standard error response object containing fields like timestamp, status code, error message, and request path. This makes API debugging easier for frontend teams and external consumers.
+
+Validation exceptions can also be handled globally. For example, when using @Valid for request validation, MethodArgumentNotValidException can be handled to return user-friendly validation error messages.
+
+Another important practice is proper logging. Exceptions should be logged using SLF4J or Logback so that failures can be monitored and debugged easily without exposing sensitive internal details to clients.
+
+In microservices architecture, centralized exception handling becomes even more important because services communicate through APIs. Proper HTTP status codes, structured error responses, and correlation IDs help in tracing failures across distributed systems.
+
+Overall, exception handling in Spring Boot should focus on centralized handling, meaningful error responses, proper logging, and maintaining application stability without exposing sensitive implementation details.
+
+
+======================
+
+Que: What is global exception handling
+
+Ans:
+
+Global exception handling in Spring Boot is a centralized mechanism used to handle exceptions occurring across the entire application from a single place instead of writing exception handling code in every controller or method.
+
+Without global exception handling, each controller method would need its own try-catch blocks, which leads to code duplication and makes the application difficult to maintain. To solve this problem, Spring Boot provides @ControllerAdvice or @RestControllerAdvice for centralized exception handling.
+
+The @RestControllerAdvice annotation acts as a global exception handler for all REST controllers in the application. Inside this class, we use @ExceptionHandler methods to catch and process specific exceptions.
+
+For example, if a ResourceNotFoundException occurs anywhere in the application, the global exception handler can intercept it and return a proper HTTP response with a meaningful error message.
+
+```java id="l24vyo"
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Internal Server Error");
+    }
+}
+```
+
+In this example, if ResourceNotFoundException is thrown from any controller or service layer, Spring automatically redirects the exception to the corresponding handler method.
+
+Global exception handling provides several advantages. It centralizes error handling logic, reduces repetitive code, improves maintainability, and ensures consistent API error responses throughout the application.
+
+In real-world enterprise applications, instead of returning plain strings, we usually return a structured error response object containing details like timestamp, HTTP status code, error message, and API path. This helps frontend applications and external clients understand errors more clearly.
+
+Global exception handling is also commonly used for handling validation errors, authentication failures, database exceptions, and custom business exceptions. For example, MethodArgumentNotValidException can be handled globally to return proper validation error messages when request validation fails.
+
+In microservices architecture, global exception handling becomes very important because APIs should always return standardized responses. Proper exception handling also improves debugging, monitoring, and distributed tracing across services.
+
+Overall, global exception handling helps build clean, maintainable, and production-ready Spring Boot applications by managing all exceptions from a centralized location.
+
+
+===================
+
+Que - How to secure Rest Apis?
+
+Ans- 
+Securing REST APIs is very important in Spring Boot applications because APIs are directly exposed to external clients and unauthorized access can lead to data breaches, security vulnerabilities, and system misuse. API security mainly focuses on authentication, authorization, data protection, and preventing malicious attacks.
+
+In Spring Boot, REST APIs are commonly secured using Spring Security along with JWT authentication or OAuth2. Authentication verifies the identity of the user, while authorization determines what resources or operations the user is allowed to access.
+
+JWT-based authentication is widely used in microservices architecture because it is stateless and scalable. In this approach, after successful login, the server generates a JWT token and sends it to the client. The client includes this token in the Authorization header for every subsequent API request. Spring Security validates the token before allowing access to protected endpoints.
+
+Typically, public endpoints like login or registration are allowed without authentication, while sensitive APIs require valid authentication tokens. Role-based access control is also implemented using roles such as ADMIN, USER, or MANAGER to restrict access to specific APIs.
+
+HTTPS should always be used to secure communication between client and server. Without HTTPS, sensitive information such as passwords or tokens can be intercepted during network transmission.
+
+Input validation is another important security practice. All incoming request data should be validated to prevent attacks like SQL injection, invalid payloads, or malicious input. Spring Boot commonly uses Bean Validation with annotations like @Valid, @NotNull, and @Size for request validation.
+
+Sensitive information should never be exposed in API responses or logs. Passwords must always be encrypted using algorithms like BCrypt before storing them in the database. Plain text password storage is considered a major security risk.
+
+CORS configuration is also important when frontend and backend applications are hosted on different domains. Proper CORS policies help prevent unauthorized cross-origin requests.
+
+Rate limiting can be implemented to protect APIs from abuse, brute-force attacks, or excessive traffic. API gateways or tools like Resilience4j and Bucket4j are commonly used for this purpose.
+
+Exception handling should also be secure. Internal stack traces, database details, or server implementation details should never be exposed to clients because attackers can use that information to identify vulnerabilities.
+
+In microservices architecture, API Gateway security is commonly used. Authentication and token validation are often centralized at the gateway level so that downstream services remain simpler and more secure.
+
+Monitoring and logging are equally important for API security. Security events, failed login attempts, and suspicious activities should be logged and monitored using centralized logging and monitoring systems.
+
+Overall, securing REST APIs in Spring Boot involves implementing authentication and authorization, encrypting sensitive data, validating input, securing communication using HTTPS, preventing common attacks, and continuously monitoring the system for suspicious activity.
+
+
+======================
+
+Que - What is spring boot with docker?
+
+Spring Boot with Docker means packaging a Spring Boot application inside a Docker container so that the application can run consistently across different environments such as development, testing, staging, and production without dependency or configuration issues.
+
+Normally, when deploying a Spring Boot application, the target machine must have Java installed along with the correct environment configuration. Docker solves this problem by packaging the application along with all its dependencies, runtime, and configuration into a lightweight container. This ensures that the application behaves the same way everywhere.
+
+In a typical setup, the Spring Boot application is first packaged as a JAR file using Maven or Gradle. Then a Docker image is created using a Dockerfile. The Docker image contains the Java runtime and the Spring Boot application JAR.
+
+A simple Dockerfile for a Spring Boot application looks like this:
+
+```dockerfile id="yq8k7t"
+FROM openjdk:17
+
+COPY target/demo.jar demo.jar
+
+ENTRYPOINT ["java", "-jar", "demo.jar"]
+```
+
+In this Dockerfile, the base image contains Java 17. The Spring Boot JAR file is copied into the container, and the application starts using the java -jar command.
+
+After creating the Dockerfile, we build the Docker image using the docker build command and run the container using the docker run command.
+
+Docker provides several advantages for Spring Boot microservices. It ensures environment consistency, simplifies deployment, improves scalability, and supports container orchestration platforms like Kubernetes. It also helps in faster application startup and easier horizontal scaling in cloud-native environments.
+
+In microservices architecture, Docker is extremely useful because each microservice can run independently inside its own container with isolated dependencies. This avoids conflicts between services and allows independent deployment and scaling.
+
+Spring Boot applications are very suitable for Docker because they are self-contained and embedded with servers like Tomcat or Netty. No external application server installation is required.
+
+In production systems, Docker images are usually optimized using smaller base images like alpine or distroless images to reduce image size and improve security. Multi-stage builds are also commonly used to minimize unnecessary files inside the final image.
+
+Environment-specific configurations are generally managed using environment variables instead of hardcoding values inside the application. This makes Dockerized applications more flexible and cloud-friendly.
+
+Docker containers are often combined with tools like Kubernetes, Jenkins, and CI/CD pipelines for automated deployment, scaling, monitoring, and rolling updates.
+
+Overall, Spring Boot with Docker helps create portable, scalable, consistent, and cloud-ready applications that are easier to deploy and manage in modern microservices environments.
+
+
+==============
+
+Que - What is Kubernetes in spring boot?
+
+Ans-Kubernetes in the context of Spring Boot refers to using Kubernetes as a container orchestration platform to deploy, manage, scale, and monitor Spring Boot microservices that are packaged as Docker containers. It is not something inside Spring Boot itself, but rather an external platform that runs and manages Spring Boot applications in a cloud-native environment.
+
+In modern microservices architecture, Spring Boot applications are typically containerized using Docker and then deployed to Kubernetes clusters. Kubernetes takes care of running these containers reliably across multiple machines, ensuring high availability and scalability without manual intervention.
+
+When a Spring Boot application is deployed on Kubernetes, it runs inside a Pod, which is the smallest deployable unit in Kubernetes. A Pod can contain one or more containers, but in most cases, each Spring Boot microservice runs as a single container inside a Pod.
+
+Kubernetes provides features like automatic scaling, where the number of running instances of a Spring Boot service can increase or decrease based on traffic load. This is known as Horizontal Pod Autoscaling. It ensures that the application can handle high traffic efficiently without downtime.
+
+It also provides self-healing capabilities. If a Spring Boot container crashes or becomes unhealthy, Kubernetes automatically restarts it or replaces it with a new instance. This improves system reliability and fault tolerance.
+
+Service discovery is another important feature. Instead of manually configuring IP addresses between microservices, Kubernetes provides an internal DNS-based service discovery mechanism. This allows Spring Boot microservices to communicate with each other using service names rather than hardcoded endpoints.
+
+Configuration management in Kubernetes is handled using ConfigMaps and Secrets. ConfigMaps are used to store non-sensitive configuration data like environment variables, while Secrets are used to store sensitive information such as database credentials or API keys. Spring Boot applications can read these configurations at runtime.
+
+Kubernetes also supports rolling updates and deployments, which means new versions of a Spring Boot application can be deployed without downtime. If something goes wrong during deployment, Kubernetes can automatically roll back to the previous stable version.
+
+In addition, Kubernetes provides centralized logging and monitoring integration with tools like Prometheus, Grafana, and ELK stack, which helps in tracking performance metrics, logs, and system health of Spring Boot microservices.
+
+Overall, Kubernetes acts as an orchestration layer that manages Spring Boot microservices efficiently by providing scalability, high availability, fault tolerance, service discovery, configuration management, and automated deployment capabilities in production-grade systems.
+
+
+=========================
+
+Que - What is memory management in spring boot?
+
+Ans- Memory management in Spring Boot refers to how a Spring Boot application uses and manages JVM memory during runtime, including how objects are created, stored, cleaned up, and optimized to avoid memory leaks and performance degradation.
+
+Since Spring Boot applications run on the JVM, memory management is primarily handled by the JVM itself using heap memory, stack memory, and garbage collection. However, the way we design Spring Boot applications directly impacts how efficiently memory is used.
+
+Most application objects such as Spring beans, service classes, repositories, and entities are stored in heap memory. The JVM uses garbage collection to automatically remove objects that are no longer referenced, but improper coding practices can still lead to memory leaks if objects are unintentionally retained.
+
+In Spring Boot, memory issues often arise due to excessive object creation, improper caching, long-lived sessions, or holding large data structures in memory. For example, loading a large dataset into memory without pagination or streaming can quickly consume heap space and lead to OutOfMemoryError.
+
+Spring Boot applications also use connection pools, caches, and thread pools, all of which consume memory. If these are not configured properly, they can lead to excessive memory usage or thread exhaustion.
+
+Hibernate and JPA also play a role in memory management. If entities are loaded in large numbers without clearing the persistence context, they remain in the first-level cache (session-level cache), which can increase memory consumption. This is why batch processing and periodic flushing/clearing of sessions are important for large operations.
+
+Spring Boot provides support for caching mechanisms like Ehcache or Redis, which can either improve performance or cause memory issues if not configured with proper eviction policies. Unlimited caching without TTL (time-to-live) can lead to memory bloat.
+
+Garbage collection is a key part of memory management. The JVM automatically frees memory used by unreachable objects, but frequent object creation, heavy allocations, or memory leaks can trigger frequent GC cycles, which can degrade application performance. Common GC algorithms like G1GC are used in production Spring Boot applications for better throughput and predictable pause times.
+
+Monitoring memory usage is an important part of managing Spring Boot applications. Tools like Spring Boot Actuator, VisualVM, JConsole, and Prometheus help track heap usage, GC activity, and memory trends so that potential issues can be detected early.
+
+From a best practices perspective, memory management in Spring Boot involves writing efficient code, avoiding unnecessary object retention, using pagination for large data sets, properly configuring caches and connection pools, and monitoring JVM performance regularly.
+
+Overall, memory management in Spring Boot is not just about the framework but about understanding JVM behavior, controlling object lifecycle, optimizing data handling, and ensuring the application runs efficiently under production load without memory leaks or excessive garbage collection overhead.
+
+
+=========================
+****************************
+
+Que -  Coding : Pagination Example
+Ans-
+A pagination example in Spring Boot is commonly implemented using Spring Data JPA’s built-in support with `Pageable` and `Page`, which allows fetching data in chunks instead of loading the entire dataset at once.
+
+In a real application, pagination is important for performance because it reduces memory usage, improves response time, and avoids loading large amounts of data from the database in a single request.
+
+For example, we first create a repository that extends `JpaRepository`, which already provides pagination support out of the box.
+
+```java
+public interface UserRepository extends JpaRepository<User, Long> {
+}
+```
+
+Then in the service layer, we use the `PageRequest` object to define the page number and page size, and fetch paginated results from the repository.
+
+```java 
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public Page<User> getUsers(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return userRepository.findAll(pageable);
+    }
+}
+```
+
+In this example, `PageRequest.of(page, size)` tells Hibernate which page of data is required and how many records should be returned in each request. The repository then returns a `Page<User>` object which contains not only the data but also pagination metadata like total pages, total elements, current page number, and whether it is the last page.
+
+Finally, in the controller layer, we expose this as a REST API so that the client can request specific pages dynamically.
+
+```java 
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping
+    public Page<User> getUsers(
+            @RequestParam int page,
+            @RequestParam int size) {
+
+        return userService.getUsers(page, size);
+    }
+}
+```
+
+When a request comes like `/users?page=0&size=10`, the API returns only 10 records instead of fetching the entire dataset, which significantly improves performance when dealing with large tables.
+
+In real enterprise applications, pagination is often combined with sorting using `Sort` along with `Pageable`, and sometimes DTO mapping is used instead of returning entities directly for better API design and performance.
+
+
+--------------------------------
+
+Que - Coding : How to create a PUT api in spring boot
+
+Ans- A PUT API in Spring Boot is used to update an existing resource completely. In RESTful design, PUT is idempotent, which means if we call the same request multiple times with the same data, the result will remain the same.
+
+To create a PUT API, we typically define a REST controller, accept the updated request body using `@RequestBody`, and identify the resource using `@PathVariable`. Then we fetch the existing record from the database, update its fields, and save it back.
+
+For example, consider updating a User entity.
+
+First, we define the controller with a PUT endpoint.
+
+```java 
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(
+            @PathVariable Long id,
+            @RequestBody User updatedUser) {
+
+        User user = userService.updateUser(id, updatedUser);
+        return ResponseEntity.ok(user);
+    }
+}
+```
+
+Then in the service layer, we handle the update logic by first fetching the existing user from the database. If the user is not found, we throw an exception. Otherwise, we update the required fields and save the entity.
+
+```java 
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public User updateUser(Long id, User updatedUser) {
+
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existingUser.setName(updatedUser.getName());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setAge(updatedUser.getAge());
+
+        return userRepository.save(existingUser);
+    }
+}
+```
+
+In this example, the PUT API updates the full user record based on the provided ID. If the user exists, the fields are updated and saved; otherwise, an exception is thrown.
+
+In real-world applications, we usually use DTOs instead of directly exposing entities. We also add validation using `@Valid` to ensure request data is correct. Additionally, proper exception handling is used to return meaningful HTTP status codes like 404 for "not found" scenarios.
+
+Overall, a PUT API in Spring Boot is simply a combination of REST mapping, request handling, service-layer update logic, and repository save operation, with proper validation and error handling for production readiness.
+
+
+-----------------------
+
+Que - Coding : How to create DELETE Api in spring boot
+	 Coding: How to use @PathVariable
+    	Coding : How to use @RequestParam
+		
+Ans-
+In Spring Boot, a DELETE API is used to remove a resource from the system. It is commonly implemented using `@DeleteMapping`, and the resource is usually identified using a path variable such as an ID. The service layer handles the deletion logic, and the repository performs the actual database operation.
+
+For example, a simple DELETE API for deleting a user by ID can be written as follows:
+
+```java
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+
+        userService.deleteUser(id);
+        return ResponseEntity.ok("User deleted successfully");
+    }
+}
+```
+
+In the service layer, we first check whether the user exists. If not, we throw an exception. Otherwise, we delete the record using the repository.
+
+```java
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public void deleteUser(Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        userRepository.delete(user);
+    }
+}
+```
+
+---
+
+### How to use `@PathVariable`
+
+`@PathVariable` is used to extract values directly from the URL path. It is typically used when identifying a specific resource.
+
+For example:
+
+```java
+@GetMapping("/users/{id}")
+public ResponseEntity<String> getUser(@PathVariable Long id) {
+    return ResponseEntity.ok("User ID is: " + id);
+}
+```
+
+In this example, if the request is `/users/10`, then `id` will automatically be assigned the value `10`.
+
+We can also use multiple path variables:
+
+```java 
+@GetMapping("/users/{userId}/orders/{orderId}")
+public ResponseEntity<String> getOrder(
+        @PathVariable Long userId,
+        @PathVariable Long orderId) {
+
+    return ResponseEntity.ok("User: " + userId + ", Order: " + orderId);
+}
+```
+
+---
+
+### How to use `@RequestParam`
+
+`@RequestParam` is used to extract query parameters from the URL. It is typically used for optional inputs, filtering, pagination, or search criteria.
+
+For example:
+
+```java
+@GetMapping("/users")
+public ResponseEntity<String> getUsers(@RequestParam String name) {
+    return ResponseEntity.ok("Name filter: " + name);
+}
+```
+
+If the request is:
+
+```
+/users?name=rahul
+```
+
+Then the value `"rahul"` will be passed to the method.
+
+We can also make request parameters optional or provide default values:
+
+```java
+@GetMapping("/users")
+public ResponseEntity<String> getUsers(
+        @RequestParam(required = false, defaultValue = "all") String type) {
+
+    return ResponseEntity.ok("Type: " + type);
+}
+```
+
+We can also use multiple request parameters together for filtering and pagination:
+
+```java
+@GetMapping("/users")
+public ResponseEntity<String> getUsers(
+        @RequestParam int page,
+        @RequestParam int size) {
+
+    return ResponseEntity.ok("Page: " + page + ", Size: " + size);
+}
+```
+
+---
+
+Overall, `@PathVariable` is used for identifying specific resources in the URL path, while `@RequestParam` is used for optional query-based inputs like filters, pagination, and search criteria. In a DELETE API, `@PathVariable` is most commonly used to identify the resource that needs to be deleted.
+
+
+------------------------------------------
+
+Que - Coding : How to connect spring boot with database?
+
+Ans- 
+To connect a Spring Boot application with a database, we mainly use Spring Data JPA along with the required database driver. Spring Boot provides auto-configuration, so once we add the dependencies and configure the properties, the connection is established automatically.
+
+First, we add the required dependencies in `pom.xml`. For example, if we are using MySQL, we include Spring Data JPA and MySQL connector.
+
+```xml 
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+Next, we configure the database connection details in `application.properties`. This includes the database URL, username, password, and Hibernate settings.
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/demo_db
+spring.datasource.username=root
+spring.datasource.password=root
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+```
+
+After configuration, Spring Boot automatically creates a DataSource and manages the connection pool using HikariCP by default.
+
+Then we define an entity class that maps to a database table. For example:
+
+```java
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String email;
+
+    // getters and setters
+}
+```
+
+After that, we create a repository interface that extends `JpaRepository`. This provides built-in methods for database operations like save, findById, findAll, and delete.
+
+```java 
+public interface UserRepository extends JpaRepository<User, Long> {
+}
+```
+
+Finally, we can use this repository in the service layer to perform database operations.
+
+```java 
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+}
+```
+
+In this setup, Spring Boot automatically handles the database connection, session management, and transaction handling internally.
+
+In real-world applications, we usually also configure connection pooling settings, environment-based configurations (dev, test, prod), and use DTOs instead of exposing entities directly.
+
+Overall, connecting Spring Boot with a database is simple because of auto-configuration, and it mainly involves adding dependencies, setting properties, defining entities, and using repositories for data access.
+
+
+----------------------------
+
+Que - Coding : What is JPA repository?
+
+Ans - 
+JPA Repository in Spring Boot is an interface provided by Spring Data JPA that is used to perform database operations in a simplified way without writing boilerplate SQL queries. It is built on top of the Repository pattern and abstracts the data access layer so that developers can focus on business logic instead of writing low-level database code.
+
+In simple terms, JPA Repository acts as a bridge between the application and the database, and it provides ready-made methods for common CRUD operations like save, findById, findAll, delete, and update.
+
+To use JPA Repository, we create an interface that extends `JpaRepository`, and Spring Boot automatically provides the implementation at runtime using proxy classes.
+
+For example, consider a User entity:
+
+```java
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String email;
+
+    // getters and setters
+}
+```
+
+Then we create a repository interface:
+
+```java
+public interface UserRepository extends JpaRepository<User, Long> {
+}
+```
+
+Here, `User` is the entity type and `Long` is the type of the primary key. Without writing any implementation, we automatically get built-in methods like:
+
+* save()
+* findById()
+* findAll()
+* deleteById()
+* delete()
+* count()
+
+For example, we can use it in a service like this:
+
+```java
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+}
+```
+
+JPA Repository also supports custom query methods using method naming conventions. For example:
+
+```
+List<User> findByName(String name);
+```
+
+Spring automatically converts this into a SQL query based on the method name.
+
+We can also write custom queries using `@Query` annotation when complex queries are required.
+
+Overall, JPA Repository is a powerful abstraction that reduces boilerplate code, improves productivity, and makes database operations cleaner, more readable, and easier to maintain in Spring Boot applications.
+
+
+----------------------------------
+
+Que - Coding : How to create Entity class
+
+Ans-
+An Entity class in Spring Boot (using JPA/Hibernate) represents a table in the database. Each object of the entity class corresponds to a row in the table, and each field corresponds to a column. The entity class is used by Hibernate to perform ORM (Object Relational Mapping), so we don’t need to write SQL queries manually for basic operations.
+
+To create an entity class, we use the `@Entity` annotation, and we must define a primary key using `@Id`. Usually, we also use `@GeneratedValue` to auto-generate the primary key value.
+
+For example, a simple User entity class looks like this:
+
+```java
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "email", unique = true)
+    private String email;
+
+    private int age;
+
+    // getters and setters
+}
+```
+
+In this example, `@Entity` tells Hibernate that this class is a database entity. The `@Table` annotation is optional and is used to specify the table name. If not provided, the class name is used as the table name by default.
+
+The `@Id` annotation defines the primary key of the table, and `@GeneratedValue` defines how the primary key is generated, such as auto-increment in the database.
+
+The `@Column` annotation is used to customize column properties like name, uniqueness, and nullability. If we do not specify it, Spring Boot automatically maps fields to columns with the same name.
+
+Entity classes can also include relationships between tables using annotations like `@OneToOne`, `@OneToMany`, `@ManyToOne`, and `@ManyToMany`. For example, a User can have multiple Orders, which can be mapped using `@OneToMany`.
+
+In real-world applications, entity classes are usually kept simple and focused only on persistence. Business logic is generally avoided inside entity classes to maintain clean architecture.
+
+Overall, an entity class in Spring Boot is a core part of JPA that maps Java objects to database tables and enables ORM-based database interaction without writing raw SQL queries.
+
+
+-------------
+
+Que - Coding : How to return JSON repsone?
+
+Ans - 
+In Spring Boot, returning a JSON response is very simple because Spring Boot automatically uses Jackson (JSON converter) to convert Java objects into JSON format. Whenever we return an object from a REST controller, Spring internally serializes it into JSON and sends it as the HTTP response.
+
+To return a JSON response, we typically use `@RestController`, which is a combination of `@Controller` and `@ResponseBody`. This ensures that whatever we return from the method is directly written into the HTTP response body as JSON.
+
+For example, if we return a simple Java object, Spring Boot automatically converts it into JSON:
+
+```java
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    @GetMapping("/user")
+    public User getUser() {
+
+        User user = new User();
+        user.setId(1L);
+        user.setName("Rahul");
+        user.setEmail("rahul@example.com");
+
+        return user;
+    }
+}
+```
+
+In this example, the `User` object will be automatically converted into JSON like this:
+
+```json 
+{
+  "id": 1,
+  "name": "Rahul",
+  "email": "rahul@example.com"
+}
+```
+
+We can also return a `ResponseEntity` if we want to control HTTP status codes along with the JSON response. This is commonly used in real-world applications.
+
+```java
+@GetMapping("/user")
+public ResponseEntity<User> getUser() {
+
+    User user = new User();
+    user.setId(1L);
+    user.setName("Rahul");
+
+    return ResponseEntity.ok(user);
+}
+```
+
+If we want to return a list of objects, Spring Boot will automatically convert the list into a JSON array.
+
+```java 
+@GetMapping("/users")
+public List<User> getUsers() {
+
+    return List.of(
+        new User(1L, "Rahul", "rahul@example.com"),
+        new User(2L, "Amit", "amit@example.com")
+    );
+}
+```
+
+Spring Boot also allows customizing JSON responses using annotations like `@JsonIgnore`, `@JsonProperty`, and `@JsonInclude` from Jackson. These help control which fields should be included or excluded from the JSON output.
+
+For example, if we don’t want to expose a password field:
+
+```
+@JsonIgnore
+private String password;
+```
+
+Overall, returning JSON response in Spring Boot is very straightforward because of built-in Jackson support. We simply return Java objects from REST controllers, and Spring automatically converts them into JSON format for the client.
