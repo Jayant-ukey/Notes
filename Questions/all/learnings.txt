@@ -1,0 +1,176 @@
+
+@Transactional Annotation
+
+	- In Spring Boot, @Transactional annotation is used to manage transactions in a Spring Boot application and to define a scope of transaction. This annotation can be applied to the class level or method level. 
+	- It provides data reliability and consistency. When a method is indicated with @Transactional annotation, it indicates that the particular method should be executed within the context of that transaction.
+	- If the transaction becomes successful, then the changes made to the database are committed; if any transaction fails, all the changes made to that particular transaction can be rollback and it will ensure that the database remains in a consistent state.
+	
+	Note: To use @Transactional annotation, you need to configure transaction management. However, if you are using spring-boot-starter-data-jpa, Spring Boot auto-configures transaction management, and you do not need to explicitly add @EnableTransactionManagement. If you are not using spring-boot-starter-data-jpa or need custom transaction management, you can enable it by adding @EnableTransactionManagement to your main class of the Spring Boot application.
+	
+	
+	
+Why Do We Need Transaction Management?
+	Let's understand transactions with the above example. If a user has entered his information, the user's information gets stored in the user_info table. Now, to book a ticket, he makes an online payment, and due to some reason(system failure), the payment has been canceled, so the ticket is not booked for him. But, the problem is that his information gets stored on the user_info table. On a large scale, more than thousands of these things happen within a single day. So, it is not good practice to store a single action of the transaction(Here, only user info is stored, not the payment info).
+
+	To overcome these problems, Spring provides transaction management, which uses annotation to handle these issues. In such a scenario, the spring stores the user information in temporary memory and then checks for payment information. If the payment is successful, then it will complete the transaction; otherwise, it will roll back the transaction, and the user information will not be stored in the database.
+	
+	
+How to use @Transactional 
+	- You can use this annotation on following in the lowest to highest priority order:
+	
+	1. interface
+	2. Class
+	3. interface method
+	4. method.
+	
+	Note : If transactional annotation is present at class and as well as on method, then priority is given to the method.
+	
+	If we apply annotation at class level, then all the method which are public inside this class, will be applied with this annotation.
+	
+	WHy it gets applicable to public method only?
+	ans : When @Transactional is applied at the class level, it applies to all public methods. But due to Spring's proxy-based mechanism, it only works for external calls — not private methods, and not internal method calls. 
+	
+	Spring uses proxy-based AOP to manage transactions. These proxies only intercept:
+		Public methods
+		Called from external classes/beans
+		
+		
+	@Transactional
+	public class MyService {
+		private void doSomethingPrivate() {
+			// Not transactional
+		}
+
+		public void doSomethingPublic() {
+			// Transactional
+		}
+	}
+
+	
+------
+
+WHat is transaction:
+	Transaction manages the changes that you perform in one or more systems. These can be database, message brokers, or any other kind of software system. The main goal of a transaction is to provide ACID characteristic to ensure the consistency and validity of your data.
+	
+	
+	WHat is ACID transaction?
+	
+	https://www.geeksforgeeks.org/dbms/acid-properties-in-dbms/
+	
+	ACID is acronym that stands for atomicity, consistency, isolation and durability:
+	
+	The Four ACID Properties
+	1. Atomicity: "All or Nothing"
+	Atomicity ensures that a transaction is atomic, it means that either the entire transaction completes fully or doesn't execute at all. There is no in-between state i.e. transactions do not occur partially. If a transaction has multiple operations, and one of them fails, the whole transaction is rolled back, leaving the database unchanged. This avoids partial updates that can lead to inconsistency.
+
+	Commit: If the transaction is successful, the changes are permanently applied.
+	Abort/Rollback: If the transaction fails, any changes made during the transaction are discarded.
+	
+	
+	--
+	2. Consistency: Maintaining Valid Data States
+	Consistency ensures that a database remains in a valid state before and after a transaction. It guarantees that any transaction will take the database from one consistent state to another, maintaining the rules and constraints defined for the data. In simple terms, a transaction should only take the database from one valid state to another. If a transaction violates any database rules or constraints, it should be rejected, ensuring that only consistent data exists after the transaction.
+
+	Example: Suppose the sum of all balances in a bank system should always be constant. Before a transfer, the total balance is $700. After the transaction, the total balance should remain $700. If the transaction fails in the middle (like updating one account but not the other), the system should maintain its consistency by rolling back the transaction.
+
+	Total before T occurs = 500 + 200 = 700 .
+	Total after T occurs = 400 + 300 = 700 .
+	
+	--
+	
+	3. Isolation: Ensuring Concurrent Transactions Don't Interfere
+	(Isolation means that changes that you perform within a transaction are not visible to any other transaction until ou commit them successfully.)
+		This property ensures that multiple transactions can occur concurrently without leading to the inconsistency of the database state. Transactions occur independently without interference. Changes occurring in a particular transaction will not be visible to any other transaction until that particular change in that transaction is written to memory or has been committed.
+
+		This property ensures that when multiple transactions run at the same time, the result will be the same as if they were run one after another in a specific order. This property prevents issues such as dirty reads (reading uncommitted data), non-repeatable reads (data changing between two reads in a transaction), and phantom reads (new rows appearing in a result set after the transaction starts).
+		
+	--
+	4. Durability: Persisting Changes
+		This property ensures that once the transaction has completed execution, the updates and modifications to the database are stored in and written to disk and they persist even if a system failure occurs. These updates now become permanent and are stored in non-volatile memory. In the event of a failure, the DBMS can recover the database to the state it was in after the last committed transaction, ensuring that no data is lost.
+
+		Example: After successfully transferring money from Account A to Account B, the changes are stored on disk. Even if there is a crash immediately after the commit, the transfer details will still be intact when the system recovers, ensuring durability.
+	
+		
+	======================
+	
+	Transaction propogation :
+	for more detail (https://www.youtube.com/watch?v=b7Pev6i8fso  time 17:40)
+		If a transaction is already open and you called a method inside a method which is also the transactional method, then how physicial boundires are manage in spring?
+		
+		There are different way to decide your trasaction boundries with the help of propogation level.
+		
+		1. REQUIRED propogation - 
+			- REQUIRED is a default propogation.
+			- Spring checks if there is an active transaction, and if nothing exists, it creates a new one.
+			- Otherwise  the business logic appends to the currently active transaction.
+			
+			IMP : If exception occurs, both transactions, parent and child will be rolled back as they both use same physical transaction.
+			
+			
+		
+		2. Require_new:
+			- I want my completly own transaction.
+			- When the propagation is REQUIRES_NEW, Spring suspends the current transaction if it exists, and then creates a new one. It instructs the Spring container to always create a new inner physical transaction and not inherit an outer physical transaction's characteristics.
+			- An outer physical transaction will have its own database connection, while REQUIRES_NEW will create the inner physical transaction and will bound a new database connection to it.
+			- In a synchronous execution, while the inner physical transaction is running, the outer physical transaction is suspended and its database connection remains open. After the inner physical transaction commits, the outer physical transaction is resumed, continuing to run and commit/rollback.
+
+
+=======================================================================
+What is Synchronous and Asynchronous calls.
+
+
+Aspect					Synchronous													Asynchronous
+Definition				Caller waits for the task to complete						Caller does not wait — the task runs in the background
+Blocking				Blocking — holds the thread									Non-blocking — thread is free to do other work
+Example (Real Life)		You call someone and wait for them to finish talking		You send an email and go do something else while waiting for a reply
+Example (Code)			HTTP REST call that returns response immediately			Message sent to Kafka, response will come later via listener			
+			
+=======================================================================
+
+Microservice:
+
+ Microservice boundries:
+	Suppose you working on microservice and its online shooping platform, so it will have multiple microservice like, order service, paement service, search service, notification service etc.
+	
+	- SO every service we define boundries, means you are working on payement service you will take care of 1. initiate payment 2. process payment or 3. refund payment, you will not take care of other service. Same goes for other service.
+	
+	- As a microservice developer you should I have the knowledge on the domain on which you are working on. SO first thing which is important in microservices is DOMAIN DRIVEN DESIGN PATTERN (DDD pattern).
+	
+	
+ Microservice Communication:
+	- Suppose you have 2 service.
+		1. Order service, which deals with order creation.
+		2. Payment service, where we initiate the payment once the order is created.
+		
+	- So once the customer created the order he need to do the payment. for that thing the order service needs to communicate with payment service, for initiating the payment.
+	
+	- Communication between two service happens with the help of REST-APIs or REST web services. WHich is rest-calls.
+	
+	
+
+ Service Discovery and Design Pattern:
+	- Now we have many services like, order, discound, notification, payment and etc. We can create a jar or war of this services and deploy it on the server.
+	
+	Que : Now you have multiples service deploy on multiple servers, and each server having there own ip and port adresses, and now order service want to make a call to payment service, so how will it call the payment service? Beacause you should know the ID and port of the payment service, in order to call payment service.
+	Ans : To discover the ip's where our different different services are present we use a design pattern called as Service Discovery and Registration Design pattern.
+	
+	
+ Message Broker:
+	REST-APIs is not the only way of communication between services. 
+	Message Broker is the another way for microservice coomunication.
+	As name suggest its a broker which helps you to pass messages from one service to another service.
+	
+	- Message broker is like a middle man, suppose service A want to send message to service B. Then service A will give the message to the middle man which is broker, and this broker will send it the message to Service B.
+	Popular Message Broker -> Apache Artemis / Active MQ/ Rabbit MQ.
+	- We have Http  protocol likewise we have  AMQP (Advanced Message Queuing Protocol) for asynchromous calling used by Rabbit MQ.
+	
+	
+	
+
+	
+	
+	
+
+ 
+		
+		
