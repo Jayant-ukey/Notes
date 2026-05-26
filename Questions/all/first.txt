@@ -1,0 +1,37 @@
+Que - How you will utlize third part REST API request response in your application?
+Ans- In our microservices applications, we consume third-party REST APIs using Spring Boot clients like WebClient or sometimes Feign Client depending on the use case.
+
+The typical flow I follow is:
+
+1. Create a client layer dedicated for external API communication.
+2. Configure:
+    - Base URL
+    - Authentication
+    - Timeouts
+    - Connection pooling
+3. Send request with required headers/body.
+4. Deserialize the response into DTOs.
+5. Handle errors, retries, logging, and fallback mechanisms.
+6. Transform external response into our internal business model before returning to downstream services.
+
+For example, if we integrate with a payment gateway or shipping provider:
+- Our service calls the external API using WebClient
+- We map JSON response to Java DTOs using Jackson
+- Handle errors like:
+    - 4xx → validation/business issue
+    - 5xx → retryable/server issue
+    - timeout → circuit breaker/fallback
+
+- We use resilience patterns like:
+    - Retry
+    - Circuit Breaker
+    - Rate limiting
+    - Timeout handling through Resilience4j.
+
+In production systems, I also ensure:
+- Proper logging with correlation IDs
+- Secure handling of API keys/tokens
+- Externalized configs using application.yml or config server
+- Monitoring through Actuator/Grafana/Prometheus
+
+For synchronous communication I prefer REST APIs, and for high-volume asynchronous processing we may use Kafka/RabbitMQ.
