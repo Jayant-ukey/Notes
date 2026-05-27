@@ -35,3 +35,218 @@ In production systems, I also ensure:
 - Monitoring through Actuator/Grafana/Prometheus
 
 For synchronous communication I prefer REST APIs, and for high-volume asynchronous processing we may use Kafka/RabbitMQ.
+
+
+---
+
+Que:- L1 Cache and L2 Cache in Hibernate
+
+Short Interview Answer
+    - In Hibernate, caching is used to reduce database hits and improve performance.
+    - **L1 cache** is the **first-level cache**, enabled by default and associated with a Hibernate Session. It stores objects within the same transaction/session scope.
+    - **L2 cache** is the **second-level cache**, optional and shared across multiple sessions. It stores entities globally at SessionFactory level using providers like Ehcache or Redis.
+    - L1 cache improves performance within a single request, while L2 cache helps reduce repeated DB access across multiple requests/users.
+
+
+# Detailed Explanation
+    1. L1 Cache (First-Level Cache)
+        # Key Points:        
+            * Enabled by default
+            * Scope = Hibernate Session
+            * Cannot be disabled completely
+            * Stores entities fetched during current session
+            * If same entity requested again in same session → fetched from cache, not DB
+
+        # Example
+
+        ```java
+        Employee emp1 = session.get(Employee.class, 1);
+        Employee emp2 = session.get(Employee.class, 1);
+        ```
+
+        # What happens?
+            * First call → DB hit
+            * Second call → fetched from L1 cache
+
+        No second SQL query executed.
+
+        # Important Interview Point
+        > Every transaction/request usually has its own Hibernate Session in Spring Boot. So L1 cache exists naturally per request.
+        
+        # Internal Working
+            
+            Hibernate maintains:
+            ```java
+            Map<EntityUniqueKey, Object>
+            ```
+            inside Session.
+        
+        ---
+        
+        # Common Methods
+        
+            a. Clear cache
+                
+                ```java
+                session.clear();
+                ```
+        
+            b. Remove specific object
+        
+                ```java
+                session.evict(entity);
+                ```
+        
+        ---
+
+2. L2 Cache (Second-Level Cache)
+
+# Key Points
+    * Optional
+    * Shared across sessions
+    * SessionFactory scoped
+    * Helps in distributed/high-read systems
+    * Reduces database load significantly
+
+# Example Flow
+
+    Request 1:
+        ```java
+        employeeRepository.findById(1);
+        ```
+        
+        * DB hit
+        * Entity stored in L2 cache
+
+    Request 2
+        ```java
+        employeeRepository.findById(1);
+        ```
+        
+        * Retrieved from L2 cache
+        * No DB hit
+
+
+# Common L2 Cache Providers
+    * Ehcache
+    * Hazelcast
+    * Infinispan
+    * Redis (commonly used in microservices)
+
+
+# Spring Boot Example
+    Enable Hibernate L2 Cache
+    
+    ```properties
+    spring.jpa.properties.hibernate.cache.use_second_level_cache=true
+    spring.jpa.properties.hibernate.cache.region.factory_class=org.hibernate.cache.jcache.JCacheRegionFactory
+    ```
+
+
+# Entity Annotation
+
+```java
+@Entity
+@Cacheable
+@org.hibernate.annotations.Cache(
+    usage = CacheConcurrencyStrategy.READ_WRITE
+)
+public class Employee {
+}
+```
+
+
+# Cache Concurrency Strategies
+
+Very important interviewer topic.
+
+| Strategy             | Use Case                    |
+| -------------------- | --------------------------- |
+| READ_ONLY            | Static data                 |
+| READ_WRITE           | Frequently read and updated |
+| NONSTRICT_READ_WRITE | Occasional updates          |
+| TRANSACTIONAL        | Full transactional support  |
+
+---
+
+# Difference Between L1 and L2 Cache
+
+| Feature       | L1 Cache                   | L2 Cache                   |
+| ------------- | -------------------------- | -------------------------- |
+| Scope         | Session                    | SessionFactory             |
+| Default       | Yes                        | No                         |
+| Shared        | No                         | Yes                        |
+| Lifetime      | Per transaction/session    | Application level          |
+| Performance   | Request-level optimization | Cross-request optimization |
+| Configuration | No extra config            | Needs provider setup       |
+
+---
+
+# Real-World Usage (Very Important for 5 Years Experience)
+
+Say something like:
+
+> In production systems, we generally use L2 cache for master/reference data like country codes, configuration, roles, product categories, etc., where reads are frequent and updates are less frequent.
+>
+> We avoid caching highly volatile transactional data because cache invalidation becomes complex.
+
+This sounds experienced.
+
+---
+
+# Important Follow-Up Questions
+
+## Q1: Can stale data happen in L2 cache?
+
+Yes.
+
+Because cache may not immediately sync with DB updates.
+
+Solution:
+
+* Proper eviction strategy
+* TTL
+* Cache synchronization
+
+---
+
+## Q2: Why not cache everything?
+
+Because:
+
+* Memory overhead
+* Cache invalidation complexity
+* Stale data risk
+* Distributed consistency issues
+
+---
+
+## Q3: Is L1 cache thread-safe?
+
+No.
+
+Because Hibernate Session itself is not thread-safe.
+
+---
+
+## Q4: Does Spring Cache = Hibernate L2 Cache?
+
+No.
+
+| Spring Cache               | Hibernate L2 Cache               |
+| -------------------------- | -------------------------------- |
+| Application-level caching  | ORM-level caching                |
+| Works for methods/services | Works for entities               |
+| Uses `@Cacheable`          | Uses Hibernate cache annotations |
+
+
+
+# Interviewer-Level Strong Closing Statement
+
+> L1 cache is mainly a persistence-context optimization, whereas L2 cache is a true application-level performance optimization used to reduce repeated database access across sessions in high-throughput systems.
+
+---
+
+
+
+Send next question.
