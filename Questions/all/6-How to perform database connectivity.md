@@ -1,14 +1,3 @@
-For a **5-year experienced Java/Spring Boot candidate**, the interviewer usually expects:
-
-* JDBC basics
-* Spring Boot DB configuration
-* Connection pooling
-* ORM understanding
-* Production practices
-
-So answer should not be only “DriverManager code”.
-
----
 
 # How to Perform Database Connectivity in Java?
 
