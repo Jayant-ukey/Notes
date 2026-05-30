@@ -1,0 +1,1096 @@
+Abstract class:
+	- In abstract class we can have abstract and non-abstract method which having implementation.
+
+Interfaces:
+	- It is blueprint for class.
+	- In interface we can only have abstract methods and static constants (public static final is redudent we don't need to write it). As variable are static we can directy access the with the help of Interface name like Interface.VariableName
+	- Interface are use in order to achieve 1. Multiple inheritance and 2. Pure abstraction.
+	- interface keyword is use to make interfaces.
+	- We don't need to write public abstract in the interfaces, they are redundent means available by default (public abstract void eat)
+	- implements keyword is use in order to implement it by any class.
+
+
+Q: What is the use of having static methods in the interfaces?
+Ans : - If we are having the project having multiple interfaces, then we can make the static info method which will tell what this interface do, and it is the static method then we don't need to override it in the implementation class like abstarct methods.
+	- One important thing about static method is, it is accessible by interface.static_method_name only. It is not accessible by className.static_method_name.
+
+
+ABout default method:
+- default keyword comes in java only two times: 1. In switch case. 2.In interface for having default methods.
+- default method can have implementation inside it.
+- default method is accesssible by objects only, not by Interface directly.
+- We don't need to provide implementation of this default method in the implementaionn class - main point 
+
+Example which tells why default method is important in interface.
+Ans: 1.-Suppose we have an interface which is implemented by nearly 100 class, and if we want to add any one method, then we need to override it in all 100 classes.
+	- But if we have default method, then we can directly write it with it's implementation in the interface itself, and we don't even need to override it in that all 100 classes.
+	2. We can use this keyword also inside default methods, in order to access abstract methods and member variables, which is not possible in the static methods.
+		example:- this.any_other_abstract_method_of_interface. 
+		If we create object of class which is calling default method. and this default method is calling any other abstract method, then whatever present in that abstract method will also get callled.
+		
+		In order to get detail explanation watch - engineering digest interface timing :- 18.00
+
+-----------------------
+
+Multiple Inheritance:
+- In Java one class is not able to extend multiple classes. But one class can implements mutiple interfaces, and that's how we can achieve effective multiple inheritance in java. It is not pure but it is effective.
+- Once we implement multiple interfaces, then we need to override all the methods which are present in all this interfaces.
+
+Why multiple inheritance is not possible in java?
+- If we are extending 2 classes, and both of this classes having same method, then it will get confuse that which method need to called, and because of this ambuguity, java does not support multiple ihneritance.
+
+V.V.VIMP:
+- We can write main method in interface as it is the static method.
+- We can run that main method from interface itself. As JVM don't want to create object for main class, that's why they are static, So JVM can run this main method from interface itself.
+
+-----------------------
+
+Diff between abstract class and interface:
+- Abstract class can have instance variable, and to declare instance variable we can have constructor also. But for interface instance variable and constructor is not there.
+- One class can extend only one abstract class, Whereas one class can implement multiple interfaces.
+
+
+Recap:
+1. What is interface.
+2. Difference between interface and abstract class.
+3. How we can achieve multiple inheritance.
+4. We can have default, static and abstract methods inside interface.
+
+
+
+======================================================================================
+
+Que : Difference between hashmap and concurrent hashmap:
+
+
+In Java, both HashMap and ConcurrentHashMap are part of the Java Collections Framework, but they serve different purposes and have different characteristics.
+
+HashMap
+	Definition: HashMap is a part of the Java Collections Framework and implements the Map interface. It stores key-value pairs and allows for fast retrieval, insertion, and deletion.
+	Characteristics:
+		Not Thread-Safe: HashMap is not synchronized, which means it is not safe to use in a multithreaded environment without external synchronization.
+		Null Keys/Values: It allows one null key and multiple null values.
+		Order: It does not maintain the order of its elements.
+		Performance: Offers average O(1) time complexity for basic operations like get and put.
+
+
+Example of HashMap
+
+import java.util.HashMap;
+
+public class HashMapExample {
+    public static void main(String[] args) {
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("One", 1);
+        map.put("Two", 2);
+        System.out.println(map.get("One")); // Output: 1
+    }
+}
+
+
+--
+
+ConcurrentHashMap
+	Definition: ConcurrentHashMap is part of the java.util.concurrent package and provides a thread-safe implementation of the Map interface.
+	Characteristics:
+		Thread-Safe: It allows concurrent access by multiple threads without external synchronization. It achieves this by dividing the map into segments and locking only the segments that are being modified.
+		No Null Keys/Values: It does not allow null keys or null values.
+		Performance: Generally offers better performance in a multithreaded environment compared to other synchronized maps, as it reduces contention.
+		Order: Like HashMap, it does not maintain the order of its elements.
+
+
+Example of ConcurrentHashMap
+
+
+import java.util.concurrent.ConcurrentHashMap;
+
+public class ConcurrentHashMapExample {
+    public static void main(String[] args) {
+        ConcurrentHashMap<String, Integer> concurrentMap = new ConcurrentHashMap<>();
+        concurrentMap.put("One", 1);
+        concurrentMap.put("Two", 2);
+        System.out.println(concurrentMap.get("One")); // Output: 1
+    }
+}
+
+
+Summary
+Use HashMap when you do not need to worry about concurrent access and want to store key-value pairs efficiently.
+Use ConcurrentHashMap when you need to handle concurrent access by multiple threads without additional synchronization overhead.
+
+----------------------------------
+
+
+No, a `ConcurrentHashMap` and a `Hashtable` are not the same, even though both are part of the Java Collections Framework and serve similar purposes for storing key-value pairs.
+
+Here are some key differences:
+
+1.  Concurrency :
+   -  ConcurrentHashMap : Designed for high concurrency. It allows multiple threads to read and write simultaneously without locking the entire map. It achieves this through a technique called segmentation.
+   -  Hashtable : It is synchronized, meaning that it locks the entire table for each operation, which can lead to performance bottlenecks in a multi-threaded environment.
+
+2.  Null Values :
+   -  ConcurrentHashMap : Does not allow null keys or values.
+   -  Hashtable : Also does not allow null keys or values.
+
+3.  Performance :
+   -  ConcurrentHashMap : Generally offers better performance in a concurrent setting due to its finer-grained locking.
+   -  Hashtable : Can be slower in multi-threaded situations due to its whole-map locking mechanism.
+
+4.  Iteration :
+   -  ConcurrentHashMap : Supports a weakly consistent iterator, meaning it reflects the state of the map at the time the iterator was created and does not throw `ConcurrentModificationException` if the map is modified during iteration.
+   -  Hashtable : Its enumerations are not fail-safe; they can throw `ConcurrentModificationException` if the map is modified while iterating.
+
+In summary, while both are thread-safe maps, `ConcurrentHashMap` is generally preferred for concurrent access due to its better performance and more flexible design.
+
+
+
+===========================================================
+
+
+Process in Java
+Java Process: In Java, a process is created when you run a Java application. Each Java application runs in its own JVM, which acts as a separate process. The process contains the program’s code, data, and a separate memory space.
+Running Processes: You can start new processes using the ProcessBuilder or Runtime classes to execute external programs or scripts
+
+
+
+Detail breakdown of a process:
+
+Sure! Here’s a breakdown of the different segments and components within a process:
+
+  1.  Code Segment 
+-  Definition : This segment contains the executable code of the program. It is usually read-only to prevent accidental modification during execution.
+-  Purpose : To store the compiled code that the CPU executes.
+
+  2.  Data Segment 
+-  Definition : This area holds global and static variables. It can be further divided into initialized and uninitialized sections.
+  -  Initialized : Contains global variables that are initialized by the programmer.
+  -  Uninitialized (BSS) : Contains global variables that are declared but not initialized.
+-  Purpose : To store data that is used throughout the execution of the program.
+
+  3.  Heap 
+-  Definition : The heap is a dynamic memory area used for allocating and freeing memory at runtime.
+-  Purpose : To manage memory that needs to grow and shrink as the program runs, allowing for flexible data structures like linked lists, trees, etc.
+
+  4.  Stack 
+-  Definition : The stack is a region of memory that stores temporary variables created by functions (local variables, function parameters, return addresses).
+-  Purpose : To manage function calls and returns, including keeping track of the execution flow and providing storage for local data.
+
+  5.  Counter (Program Counter or Instruction Pointer) 
+-  Definition : This is a special register that holds the address of the next instruction to be executed in the code segment.
+-  Purpose : To ensure that the CPU knows which instruction to execute next, enabling the sequential flow of control.
+
+  6.  Registers 
+-  Definition : Registers are small, fast storage locations within the CPU used to hold temporary data and instructions during execution.
+-  Purpose : To facilitate quick access to frequently used values and instructions, improving the overall performance of the CPU.
+
+  Summary
+- The  code segment  contains the program instructions.
+- The  data segment  holds global variables.
+- The  heap  is for dynamic memory allocation.
+- The  stack  manages function calls and local variables.
+- The  counter  tracks the next instruction to execute.
+-  Registers  provide rapid access to data and instructions.
+
+These components work together to ensure efficient execution and management of processes in a computing environment.
+
+
+
+===========================================================================================================================
+
+In Java, `String`, `StringBuilder`, and `StringBuffer` are three classes used to handle string data, each with its own characteristics and use cases. Here’s a detailed comparison:
+
+  1.  String 
+
+-  Immutability : Strings are immutable, meaning once a `String` object is created, its value cannot be changed. Any operation that seems to modify a string actually creates a new `String` object.
+  
+-  Performance : Because strings are immutable, repeated modifications (like concatenation) can lead to performance issues, as new objects are created each time.
+
+-  Example :
+  ```java
+  String str1 = "Hello";
+  String str2 = str1 + " World";  // str1 remains "Hello", str2 is a new String
+  ```
+
+  2.  StringBuilder 
+
+-  Mutability : `StringBuilder` is mutable, allowing modifications to the string without creating a new object. This makes it more efficient for scenarios where you need to perform many modifications, such as appending or deleting characters.
+
+-  Thread Safety : `StringBuilder` is not synchronized, meaning it is not thread-safe. It should be used in a single-threaded environment or where thread safety is not a concern.
+
+-  Performance : Generally faster than `StringBuffer` due to the lack of synchronization overhead.
+
+-  Example :
+  ```java
+  StringBuilder sb = new StringBuilder("Hello");
+  sb.append(" World");  // Modifies the original StringBuilder object
+  String result = sb.toString();  // Converts to String
+  ```
+
+  3.  StringBuffer 
+
+-  Mutability : Like `StringBuilder`, `StringBuffer` is mutable and allows modifications without creating new objects.
+
+-  Thread Safety : `StringBuffer` is synchronized, meaning it is thread-safe. This makes it suitable for use in multi-threaded environments, but the synchronization adds some overhead, making it slower than `StringBuilder`.
+
+-  Performance : Generally slower than `StringBuilder` due to synchronization. Use `StringBuffer` when you need thread safety.
+
+-  Example :
+  ```java
+  StringBuffer sbf = new StringBuffer("Hello");
+  sbf.append(" World");  // Modifies the original StringBuffer object
+  String result = sbf.toString();  // Converts to String
+  ```
+
+  Summary of Differences
+
+| Feature                  | String               | StringBuilder         | StringBuffer          |
+|--------------------------|----------------------|-----------------------|-----------------------|
+|  Mutability            | Immutable            | Mutable               | Mutable               |
+|  Thread Safety         | Not applicable        | Not synchronized       | Synchronized          |
+|  Performance           | Slower for modifications | Faster for modifications | Slower due to synchronization |
+|  Use Case             | Constant strings, simple concatenation | Frequent modifications in single-threaded contexts | Modifications in multi-threaded contexts |
+
+  When to Use Each
+
+-  Use `String` : When you have fixed strings that won’t change, or when you need to represent constant values.
+  
+-  Use `StringBuilder` : When you need to perform many modifications to a string in a single-threaded environment for better performance.
+
+-  Use `StringBuffer` : When you need to modify strings in a multi-threaded environment where thread safety is required.
+
+Understanding these differences can help you choose the appropriate type based on your specific use case and performance requirements!
+
+
+
+=========================================================================================================================================
+
+
+In Java, `List`, `Set`, and `Map` are three core interfaces in the Java Collections Framework, each serving different purposes and data structures. Here’s a detailed overview of each:
+
+  1.  List 
+
+-  Definition : A `List` is an ordered collection (also known as a sequence) that allows duplicate elements. Elements can be accessed by their integer index (position in the list).
+
+-  Common Implementations :
+  -  ArrayList : A resizable array implementation. It offers fast random access but is slower for insertions and deletions, especially in the middle of the list.
+  -  LinkedList : A doubly-linked list implementation. It allows for fast insertions and deletions but has slower random access compared to `ArrayList`.
+
+-  Key Features :
+  - Maintains the order of elements.
+  - Allows duplicates.
+  - Elements can be accessed by index.
+
+-  Example :
+  ```java
+  List<String> list = new ArrayList<>();
+  list.add("Apple");
+  list.add("Banana");
+  list.add("Apple");  // Duplicates are allowed
+  System.out.println(list.get(0));  // Output: Apple
+  ```
+
+  2.  Set 
+
+-  Definition : A `Set` is an unordered collection that does not allow duplicate elements. It models the mathematical set abstraction.
+
+-  Common Implementations :
+  -  HashSet : The most commonly used implementation. It uses a hash table for storage and offers constant time complexity for basic operations (add, remove, contains) on average.
+  -  LinkedHashSet : Maintains a linked list of the entries in the set, preserving the insertion order.
+  -  TreeSet : Implements a navigable set using a red-black tree. It sorts the elements in their natural order or by a specified comparator.
+
+-  Key Features :
+  - No duplicate elements.
+  - No guaranteed order (except in `LinkedHashSet` and `TreeSet`).
+
+-  Example :
+  ```java
+  Set<String> set = new HashSet<>();
+  set.add("Apple");
+  set.add("Banana");
+  set.add("Apple");  // Duplicates are not allowed
+  System.out.println(set.size());  // Output: 2
+  ```
+
+  3.  Map 
+
+-  Definition : A `Map` is a collection of key-value pairs. Each key is unique, and each key maps to exactly one value.
+
+-  Common Implementations :
+  -  HashMap : The most commonly used implementation. It allows null values and one null key, and it is not synchronized.
+  -  LinkedHashMap : Maintains the insertion order of keys while providing performance similar to `HashMap`.
+  -  TreeMap : Implements a sorted map using a red-black tree. It sorts the keys in their natural order or by a specified comparator.
+
+-  Key Features :
+  - Stores key-value pairs.
+  - Keys must be unique; values can be duplicated.
+  - No direct access to values; values are accessed via keys.
+
+-  Example :
+  ```java
+  Map<String, Integer> map = new HashMap<>();
+  map.put("Apple", 1);
+  map.put("Banana", 2);
+  map.put("Apple", 3);  // Updates the value for the key "Apple"
+  System.out.println(map.get("Apple"));  // Output: 3
+  ```
+
+  Summary of Differences
+
+| Feature                  | List                     | Set                      | Map                     |
+|--------------------------|--------------------------|--------------------------|-------------------------|
+|  Order                 | Ordered                   | Unordered (except `LinkedHashSet` and `TreeSet`) | Unordered (except `LinkedHashMap` and `TreeMap`) |
+|  Duplicates            | Allowed                   | Not allowed              | Keys are unique; values can be duplicated |
+|  Access                | By index                  | Not index-based          | By key                  |
+|  Use Case              | Maintain an ordered collection with duplicates | Store unique items | Store key-value pairs |
+
+  When to Use Each
+
+-  Use `List` : When you need an ordered collection that allows duplicates and allows indexed access.
+  
+-  Use `Set` : When you need to ensure that a collection contains only unique elements, without caring about the order (or with a specific order).
+
+-  Use `Map` : When you need to associate unique keys with values, allowing for efficient retrieval based on keys.
+
+
+=========================================================================================================================================
+
+Certainly! Here’s a more detailed exploration of the  Set  interface in Java, including its characteristics, implementations, methods, and use cases.
+
+  Overview of Set
+
+-  Definition : A `Set` is a collection that does not allow duplicate elements and has no defined ordering. It models the mathematical set abstraction.
+
+  Characteristics of Set
+
+1.  Uniqueness : Sets do not allow duplicate elements. If you try to add a duplicate element, the existing element remains unchanged.
+2.  No Indexing : Unlike lists, you cannot access elements by index. Instead, you typically iterate through the set.
+3.  Implementation Dependent : The behavior regarding order and performance varies based on the specific implementation of the `Set`.
+
+  Common Implementations
+
+1.  HashSet :
+   -  Storage : Uses a hash table.
+   -  Performance : Offers average constant time complexity for basic operations (`add`, `remove`, `contains`).
+   -  Order : Does not guarantee any specific order of elements.
+   -  Example :
+     ```java
+     Set<String> hashSet = new HashSet<>();
+     hashSet.add("Apple");
+     hashSet.add("Banana");
+     hashSet.add("Apple");  // This will not be added
+     System.out.println(hashSet);  // Output: [Banana, Apple] (order may vary)
+     ```
+
+2.  LinkedHashSet :
+   -  Storage : Extends `HashSet` and maintains a linked list of the entries.
+   -  Performance : Provides predictable iteration order (insertion order) while maintaining average constant time complexity.
+   -  Use Case : When you need a set that maintains the order of insertion.
+   -  Example :
+     ```java
+     Set<String> linkedHashSet = new LinkedHashSet<>();
+     linkedHashSet.add("Apple");
+     linkedHashSet.add("Banana");
+     linkedHashSet.add("Orange");
+     System.out.println(linkedHashSet);  // Output: [Apple, Banana, Orange]
+     ```
+
+3.  TreeSet :
+   -  Storage : Implements a navigable set using a red-black tree.
+   -  Performance : Provides log(n) time complexity for basic operations.
+   -  Order : Maintains elements in their natural order or by a specified comparator.
+   -  Use Case : When you need sorted elements.
+   -  Example :
+     ```java
+     Set<String> treeSet = new TreeSet<>();
+     treeSet.add("Banana");
+     treeSet.add("Apple");
+     treeSet.add("Orange");
+     System.out.println(treeSet);  // Output: [Apple, Banana, Orange]
+     ```
+
+  Key Methods in the Set Interface
+
+-  add(E e) : Adds the specified element to the set if it is not already present.
+-  remove(Object o) : Removes the specified element from the set if it is present.
+-  contains(Object o) : Returns `true` if the set contains the specified element.
+-  size() : Returns the number of elements in the set.
+-  isEmpty() : Returns `true` if the set contains no elements.
+-  clear() : Removes all elements from the set.
+-  iterator() : Returns an iterator over the elements in the set.
+
+  Example of Set Operations
+
+Here’s a simple example demonstrating common operations with a `Set`:
+
+```java
+import java.util.HashSet;
+import java.util.Set;
+
+public class SetExample {
+    public static void main(String[] args) {
+        Set<String> fruitSet = new HashSet<>();
+
+        // Adding elements
+        fruitSet.add("Apple");
+        fruitSet.add("Banana");
+        fruitSet.add("Orange");
+        fruitSet.add("Apple");  // Duplicate, won't be added
+
+        // Size of the set
+        System.out.println("Size: " + fruitSet.size());  // Output: 3
+
+        // Check if set contains an element
+        System.out.println("Contains Banana? " + fruitSet.contains("Banana"));  // Output: true
+
+        // Iterating over the set
+        for (String fruit : fruitSet) {
+            System.out.println(fruit);
+        }
+
+        // Remove an element
+        fruitSet.remove("Banana");
+        System.out.println("After removal: " + fruitSet);  // Output: [Apple, Orange]
+
+        // Clear the set
+        fruitSet.clear();
+        System.out.println("Is the set empty? " + fruitSet.isEmpty());  // Output: true
+    }
+}
+```
+
+  Use Cases for Set
+
+-  Unique Collections : When you need to store a collection of unique items, such as user IDs, product SKUs, etc.
+-  Membership Testing : Fast checks for the presence of an item (like checking if an element exists).
+-  Mathematical Operations : Operations like union, intersection, and difference can be easily implemented with sets.
+
+  Conclusion
+
+The `Set` interface is a powerful part of the Java Collections Framework, providing unique collections with various implementations suited for different use cases. Understanding the differences between `HashSet`, `LinkedHashSet`, and `TreeSet` allows you to choose the right type based on your specific requirements for performance and ordering.
+
+
+=========================================================================================================================================
+
+
+In Java, a `Map` is an interface that represents a collection of key-value pairs. Each key is unique, and each key maps to exactly one value. The `Map` interface is part of the Java Collections Framework and is implemented by several classes, the most common being `HashMap`, `TreeMap`, and `LinkedHashMap`.
+
+  Common Map Implementations
+
+1.  HashMap : 
+   - Implements the `Map` interface using a hash table.
+   - Allows null values and one null key.
+   - No guaranteed order of the elements.
+
+   ```java
+   import java.util.HashMap;
+
+   public class Example {
+       public static void main(String[] args) {
+           HashMap<String, Integer> map = new HashMap<>();
+           map.put("Alice", 30);
+           map.put("Bob", 25);
+           map.put("Charlie", 35);
+
+           // Accessing a value
+           System.out.println("Alice's age: " + map.get("Alice"));
+
+           // Iterating over the map
+           for (String key : map.keySet()) {
+               System.out.println(key + ": " + map.get(key));
+           }
+       }
+   }
+   ```
+
+2.  TreeMap :
+   - Implements the `Map` interface using a red-black tree.
+   - Sorted in natural order of keys or by a provided comparator.
+   - Does not allow null keys.
+
+   ```java
+   import java.util.TreeMap;
+
+   public class Example {
+       public static void main(String[] args) {
+           TreeMap<String, Integer> map = new TreeMap<>();
+           map.put("Alice", 30);
+           map.put("Bob", 25);
+           map.put("Charlie", 35);
+
+           // Iterating in sorted order
+           for (String key : map.keySet()) {
+               System.out.println(key + ": " + map.get(key));
+           }
+       }
+   }
+   ```
+
+3.  LinkedHashMap :
+   - Maintains insertion order while providing the performance benefits of `HashMap`.
+   - Allows null values and one null key.
+
+   ```java
+   import java.util.LinkedHashMap;
+
+   public class Example {
+       public static void main(String[] args) {
+           LinkedHashMap<String, Integer> map = new LinkedHashMap<>();
+           map.put("Alice", 30);
+           map.put("Bob", 25);
+           map.put("Charlie", 35);
+
+           // Iterating in insertion order
+           for (String key : map.keySet()) {
+               System.out.println(key + ": " + map.get(key));
+           }
+       }
+   }
+   ```
+
+  Common Operations
+
+-  Put a value : `map.put(key, value)`
+-  Get a value : `map.get(key)`
+-  Remove a value : `map.remove(key)`
+-  Check if a key exists : `map.containsKey(key)`
+-  Get the size : `map.size()`
+-  Clear all entries : `map.clear()`
+
+  Example Usage
+
+Here's a simple program that demonstrates various operations with a `HashMap`.
+
+```java
+import java.util.HashMap;
+
+public class MapExample {
+    public static void main(String[] args) {
+        HashMap<String, Integer> scores = new HashMap<>();
+
+        // Adding entries
+        scores.put("Math", 85);
+        scores.put("English", 90);
+        scores.put("Science", 95);
+
+        // Retrieving an entry
+        System.out.println("Math score: " + scores.get("Math"));
+
+        // Iterating over the map
+        for (String subject : scores.keySet()) {
+            System.out.println(subject + ": " + scores.get(subject));
+        }
+
+        // Checking the size of the map
+        System.out.println("Total subjects: " + scores.size());
+
+        // Removing an entry
+        scores.remove("English");
+        System.out.println("After removing English, total subjects: " + scores.size());
+    }
+}
+```
+
+  Conclusion
+
+Using a `Map` in Java allows you to efficiently store and manipulate key-value pairs. Depending on your specific needs (like ordering and null handling), you can choose the appropriate implementation of the `Map` interface.
+
+
+=============================================
+Coding ques:
+
+
+1. How do you remove leading and trailing spaces from a string in Java?
+
+The String class contains two methods to remove leading and trailing whitespaces: trim() and strip(). 
+The strip() method was added to the String class in Java 11. The strip() method uses the Character.isWhitespace() method to check if the character is a whitespace. 
+This method uses Unicode code points, while the trim() method identifies any character with a codepoint value less than or equal to U+0020 as a whitespace character.
+
+
+The strip() method is the recommended way to remove whitespaces because it uses the Unicode standard. 
+The following example code shows how to use the strip() method to remove whitespaces:
+
+
+String s = "  abc  def\t";
+s = s.strip();
+System.out.println(s);
+
+-------------------------------------
+
+2. How do you sort an array in Java?
+
+The Arrays utility class has many overloaded sort() methods to sort primitive and to object arrays.
+If you are sorting a primitive array in the natural order, then you can use the Arrays.sort() method.
+
+<code>
+import java.util.Arrays;
+
+class Main {
+   	public static void main(String[] args){
+	    int[] arr = {4,1,3,9,7,-1};
+	    Arrays.sort(arr);
+	    System.out.println(Arrays.toString(arr));
+	    
+	}
+}
+</code>
+
+However, if you want to sort an array of objects, then the object must implement the Comparable interface. If you want to specify the sorting criteria,
+then you can pass the Comparator for the sorting logic.
+
+=============================================
+1. Memory
+2. Types of reference
+3. Singelton class
+4. Functional Interface
+5. Lambda Expression
+6. Collection
+7. Collections
+8. Stream Api
+9. Process
+10. Multithreading vs Multitaksing
+
+
+
+=================================================
+
+Comparator vs Comparable
+
+1. Core Difference
+	Comparable
+		Found in java.lang package
+		Used to define natural ordering of objects.
+		Implemented inside the class itself.
+	
+	Comparator
+		Found in java.util package
+		Used to define custom ordering.
+		Implemented outside the class (separate class or lambda).
+		
+2. Method Difference
+	Comparable → compareTo(T obj)
+	Comparator → compare(T o1, T o2)
+	
+3. When to Use
+	- Use Comparable
+		When there is one natural way to sort
+		Example: sorting by ID, name, etc.
+
+	- Use Comparator
+		When you need multiple sorting logics
+		Example: sort employees by salary, age, or name
+	
+	
+A polished summary (what interviewers love):
+“Comparable defines the natural ordering inside the class using compareTo(), while Comparator defines custom ordering externally using compare(),
+ and allows multiple sorting strategies.”
+
+Example:
+
+class Employee implements Comparable<Employee> {
+    int id;
+
+    public int compareTo(Employee e) {
+        return this.id - e.id;
+    }
+}
+
+--
+
+class SalaryComparator implements Comparator<Employee> {
+    public int compare(Employee e1, Employee e2) {
+        return e1.salary - e2.salary;
+    }
+}
+
+
+==========================================================
+Thread:
+
+-> Here main thing is first talk about multithreading, then what is thread, what are the benfits of mulitthreading, and then how to implement multithreading.
+
+1. What is a Thread?
+A thread is the smallest unit of execution within a process. A process can contain multiple threads that share the process's resources like memory and file handles.
+Each thread has its own stack but shares the heap memory space of the process.
+
+2. Benefits of Multithreading
+Improved Performance: Multithreading allows you to use CPU resources more efficiently, especially in multi-core processors, by executing tasks in parallel.
+Responsiveness: In GUI applications (like in Java Swing or JavaFX), you can keep the UI responsive while performing background tasks (e.g., data fetching or file processing).
+Better Resource Utilization: By breaking down a task into smaller pieces and running them in parallel, you can make better use of system resources, reducing idle times.
+
+
+3. Key Concepts in Multithreading
+Thread: A thread is the path of execution in a program. The Thread class in Java is used to create and manage threads.
+Concurrency: Concurrency doesn’t necessarily mean that the threads are running simultaneously, but they may be interleaved by the operating system (in the case of single-core CPUs) or run simultaneously (in multi-core CPUs).
+Parallelism: True simultaneous execution of multiple threads, typically enabled on multi-core processors.
+
+
+4. Thread Lifecycle
+A thread in Java follows several states throughout its lifecycle:
+
+- New: When a thread is created but not yet started.
+- Runnable: When a thread is ready to run and waiting for CPU time.
+- Blocked: When a thread is blocked (e.g., waiting for I/O operations or synchronization).
+- Waiting: When a thread is waiting indefinitely for another thread to perform a particular action.  {Here indefinite means -> The thread waits without a specified timeout period.}
+- Terminated: When a thread completes its task or is stopped.
+
+
+
+5. Creating Threads in Java
+There are two main ways to create and start threads in Java:
+
+a) By Extending the Thread Class
+You can create a custom thread by subclassing the Thread class and overriding its run() method.
+
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread is running");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyThread thread1 = new MyThread();
+        thread1.start();  // Starts the thread and invokes the run() method
+    }
+}
+----
+
+b) By Implementing the Runnable Interface
+Alternatively, you can implement the Runnable interface and pass it to a Thread object.
+
+class MyRunnable implements Runnable {
+    public void run() {
+        System.out.println("Thread is running");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyRunnable runnable = new MyRunnable();
+        Thread thread1 = new Thread(runnable);
+        thread1.start();  // Starts the thread and invokes the run() method
+    }
+}
+
+
+Prefer Runnable or Callable over extends Thread: Implementing the Runnable interface (or Callable if a result needs to be returned) is generally preferred 
+												 as it separates the task logic from the threading mechanism, promoting better design and flexibility.
+
+
+6. Thread Synchronization
+When multiple threads access shared resources (e.g., a variable, file, or database), you can encounter race conditions, where the outcome depends on the timing or sequence of thread execution.
+To avoid this, you can use synchronization to ensure that only one thread at a time can access a critical section of code.
+
+Example : Synchronized block used while creating singelton object.
+
+
+7. Executor Framework
+Java provides the Executor Framework for managing and controlling thread execution in a more flexible and powerful way. 
+The ExecutorService interface provides methods for managing thread pools, scheduling tasks, and more.
+
+
+8. Handling Thread Exceptions
+If an exception occurs in a thread, it won’t propagate to the main thread. You must handle exceptions within the thread:
+
+class MyRunnable implements Runnable {
+    public void run() {
+        try {
+            // Code that might throw an exception
+            throw new RuntimeException("Exception in thread");
+        } catch (Exception e) {
+            System.out.println("Exception handled: " + e.getMessage());
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new MyRunnable());
+        t1.start();
+    }
+}
+
+
+----
+9. Thread Communication
+Threads can communicate using wait(), notify(), and notifyAll() methods, which are useful in certain thread synchronization scenarios like producer-consumer problems.
+
+Example of wait/notify:
+class Printer {
+    synchronized void print(String message) {
+        try {
+            System.out.println(message);
+            wait();  // Waits until notified
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    synchronized void notifyPrinter() {
+        notify();  // Notify waiting threads to continue
+    }
+}
+
+public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        Printer printer = new Printer();
+
+        Thread t1 = new Thread(() -> printer.print("Hello from thread 1"));
+        Thread t2 = new Thread(() -> printer.print("Hello from thread 2"));
+
+        t1.start();
+        t2.start();
+
+        Thread.sleep(1000);  // Wait for some time before notifying
+        printer.notifyPrinter();  // Notify waiting threads
+    }
+}
+
+
+----
+10. Common Thread Management Concepts
+Daemon Threads: These are low-priority threads that run in the background. They’re used for background tasks, and the JVM can terminate them when no non-daemon threads are running.
+
+Thread daemonThread = new Thread(() -> System.out.println("Daemon Thread"));
+daemonThread.setDaemon(true);
+daemonThread.start();
+
+
+Thread Pools: A thread pool is a collection of reusable threads. 
+			Using thread pools is preferred over creating new threads directly because it reduces the overhead of thread creation and destruction.
+
+
+===============================================
+
+- Difference between wait(), notify() and notifyAll().
+
+1. wait()
+Purpose: Causes the current thread to release the lock and enter a waiting state until it is notified by another thread.
+Important: wait() should always be called inside a synchronized block or method. If a thread doesn’t hold the lock on the object, it will throw an IllegalMonitorStateException.
+
+2. notify()
+When a thread calls notify() on an object, it wakes up one of the threads that is currently in the waiting state for that object.
+It does not release the lock until the notify() method completes, allowing the notified thread to attempt to acquire the lock.
+
+Important: After calling notify(), the thread that called it doesn’t immediately release the lock. It only releases the lock once the synchronized block ends
+
+
+3. notifyAll()
+When a thread calls notifyAll() on an object, all threads waiting on that object's monitor are awakened. 
+Each thread will then compete to acquire the lock before continuing execution.
+
+============================================
+
+Here is the time complexity of common operations like insert, delete, and search for arrays, linked lists, and trees in Java:
+
+Arrays:
+Insert:
+At the end: O(1) — Inserting at the end of the array is typically O(1) if there's space available.
+At the beginning or middle: O(n) — Inserting at the beginning or in the middle requires shifting all subsequent elements.
+
+Delete:
+At the end: O(1) — Deleting the last element is O(1).
+At the beginning or middle: O(n) — Deleting from the beginning or middle requires shifting elements to fill the gap.
+
+Search:
+Unsorted array: O(n) — Linear search requires checking each element.
+Sorted array: O(log n) — Binary search can be used for sorted arrays to reduce the time complexity.
+
+Linked List:
+Insert:
+At the beginning: O(1) — Inserting at the beginning is constant time.
+At the end: O(n) — Inserting at the end requires traversal to the last node (if we don’t maintain a tail pointer).
+At a specific position: O(n) — Inserting at a specific position requires traversal to find the location.
+
+Delete:
+At the beginning: O(1) — Deleting the first element is constant time.
+At the end: O(n) — Deleting the last element requires traversal of the list.
+At a specific position: O(n) — Deleting at a specific position requires traversal.
+
+Search:
+Unsorted Linked List: O(n) — A linear search is required.
+Sorted Linked List: O(n) — Even though it's sorted, a linear search is still required in a singly linked list.
+
+Binary Search Tree (BST):
+Insert:
+Average case: O(log n) — The tree is balanced, so insertion involves traversing a path from the root to the appropriate leaf, which is logarithmic.
+Worst case: O(n) — If the tree becomes unbalanced (like a linked list), insertion becomes linear.
+
+Delete:
+Average case: O(log n) — Deleting a node requires searching for it and adjusting the tree structure, which takes logarithmic time.
+Worst case: O(n) — In the worst case of an unbalanced tree, deletion takes linear time.
+
+Search:
+Average case: O(log n) — The tree is balanced, so search takes logarithmic time.
+Worst case: O(n) — In the worst case (unbalanced tree), searching can take linear time.
+Self-Balancing Binary Search Trees (e.g., AVL, Red-Black Tree):
+For self-balancing trees (like AVL or Red-Black trees), the height of the tree is always kept at log n, ensuring better performance in all cases.
+
+Insert: O(log n)
+Delete: O(log n)
+Search: O(log n)
+Hash Tables:
+Insert: O(1) — Inserting a key-value pair typically takes constant time, assuming a good hash function and handling collisions well.
+Delete: O(1) — Deleting an entry by key is also constant time.
+Search: O(1) — Searching for a key typically takes constant time.
+However, in the worst case (if many keys hash to the same bucket), the time complexity can degrade to O(n) for all operations.
+
+================================================================
+
+
+
+What is Dependency Injection (DI) in Spring Boot?
+
+Dependency Injection is a design pattern used to implement Inversion of Control (IoC), 
+where the control of creating and managing object dependencies is transferred from the objects 
+themselves to an external framework or container (in this case, Spring).
+
+
+Why use Dependency Injection?
+	Loose coupling: Classes depend on abstractions (interfaces) rather than concrete implementations.
+	Easier testing: You can easily replace dependencies with mocks.
+	Better code maintainability and readability
+	Centralized configuration: Spring manages object lifecycle.
+	
+
+How does it work in Spring Boot?
+	Spring Boot automatically creates and manages beans (objects) and injects them where required, using annotations like:
+		@Component, @Service, @Repository — marks a class as a Spring-managed bean.
+		@Autowired — injects the dependency automatically.
+		@Configuration and @Bean — define beans explicitly in configuration classes.
+		
+		
+In brief:
+	Dependency Injection = Giving an object the objects it needs, instead of creating them itself.
+	Spring Boot handles DI automatically, reducing boilerplate code and making your app more modular.
+	
+
+What does "dependency" mean here?
+	In the context of Dependency Injection (DI), a dependency is simply an object or component that another object needs to function properly.
+
+More concretely:
+	Suppose you have a class Car.
+	The Car needs an Engine to run.
+	Here, the Engine is a dependency of the Car because Car depends on it.
+	
+	
+
+What is Loose Coupling?
+Loose coupling means that components or classes in a system have little or no knowledge of the details of 
+other components they interact with. They depend on abstractions (like interfaces) rather than concrete implementations.
+
+
+interface Engine {
+    void start();
+}
+
+class PetrolEngine implements Engine {
+    public void start() {
+        System.out.println("Petrol engine started");
+    }
+}
+
+class Car {
+    private Engine engine;
+
+    public Car(Engine engine) {
+        this.engine = engine;
+    }
+
+    void drive() {
+        engine.start();
+        System.out.println("Car is driving");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Engine petrol = new PetrolEngine();  // You can swap this with any Engine implementation
+        Car car = new Car(petrol);
+        car.drive();
+    }
+}
+
+
+=========================
+
+Java 11 Features
+
+1. HTTP Client (Standardized):
+	The new java.net.http.HttpClient API became a standard part of the JDK, offering a modern, asynchronous, 
+	and non-blocking client for sending HTTP/1.1 and HTTP/2 requests and handling responses
+	
+	
+2. New String Methods:
+	Several utility methods were added to the String class, including isBlank(), lines(), strip(), stripLeading(), stripTrailing(),
+	and repeat(), simplifying common string manipulations.
+	
+3. File I/O Enhancements:
+	New methods like Files.writeString() and Files.readString() were introduced for easier reading and writing of strings to and from files.
+	
+4. Local-Variable Syntax for Lambda Parameters:
+	The var keyword, introduced in Java 10 for local variable type inference, could now be used in lambda expressions, improving readability and allowing for annotations on lambda parameters.
+	
+5. Deprecations and Removals:
+	Several modules, including Java EE and CORBA modules, were removed.
+	
+6. Running Single-File Source-Code Programs:
+	Java 11 simplified the execution of single-file Java programs, allowing them to be run directly using the java command without explicit compilation
+	(java MyProgram.java).
+	
+	
+-------
+
+Java 17 features
+
+Mostly related to Mac
+
+---
+
+Java 8 features:
+
+- Function interface
+- Lambda Expression
+- Strea APIS
+- default and static method 
+- method reference
+- Optional class
+- Date time package
+
+
+=============================================
+
+
+Feature				Spring Framework												Spring Boot
+Type				Core framework (toolkit)									Extension built on top of Spring
+Configuration		Manual (XML or Java-based)									Auto-configuration (minimal setup)
+Startup Effort		High (lots of boilerplate)									Low (starts quickly with defaults)
+Deployment			Requires external servlet container (e.g., Tomcat)			Embedded server (e.g., Tomcat, Jetty)
+Learning Curve		Steeper														Easier for beginners
+Use Case			Full control/custom setup									Quick microservice/API development
+Opinionated			No															Yes (gives defaults and conventions)
+
+	
+	
+	
+	
+	
+===================================
+
+
+3. Problem-Solving and Algorithms
+A strong developer can apply their knowledge to solve real-world problems.
+	Question: Design a system to shorten URLs (like Bitly). What data structures would you use, and how would you handle collisions?
+	Question: Given a list of intervals, merge all overlapping intervals. For example, [[1,3],[2,6],[8,10],[15,18]] should become [[1,6],[8,10],[15,18]].
+	Question: How would you implement a simple in-memory cache with an eviction policy (e.g., Least Recently Used)?
+
+4. System Design and Microservices
+A developer with 4-5 years of experience should have some exposure to system design.
+	Question: You need to design a RESTful API for an e-commerce platform. Describe the design principles you would follow, including authentication, versioning, and error handling.
+	Question: Explain the benefits and drawbacks of a microservices architecture. How would you handle inter-service communication?
+
+
+5. 
+	
+	
