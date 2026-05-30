@@ -1,7 +1,18 @@
+Example: What is Multithreading?
+✅ What is it?
+Multithreading is the ability of a program to execute multiple threads simultaneously.
+
+✅ Why do we use it?
+To improve performance and utilize CPU efficiently, especially for parallel tasks.
+
+✅ How do we use it?
+
+Follow what, why and how structure for answers.
+
 05-06
 ------
 
-Temperory variable stored in stack.
+Both stack and heap are created by JVM and stored in RAM
 
 -> Heap memory is always larger than stack
 
@@ -15,13 +26,12 @@ Temperory variable stored in stack.
   
   example : String stringLiteral = "24"
   
-  Here stringLiteral is present in stack which is holding the refernce for vaue "24".
+  Here stringLiteral is present in stack which is holding the refernce for value "24".
   This "24" will be present in the string pool of heap memory.
   
   
   
 Summery 1 -> 
-(Both stack and heap are created by JVM and stored in RAM)
 
 1. There will be one method in the program then a dedicated area will get allocated for that particular method in the stack memory which is called as frame.
 
@@ -90,12 +100,14 @@ If JVM finds out that heap memeory getting filled so fast then JVM runs the garb
 
 =========================================================
 
-Stack -> It stores the reference os object.
+Stack -> It stores the reference of object.
 Heap -> It stores the object.
 
 
 TYPES OF Reference
 ------------------
+Java has four main reference types (Strong, Soft, Weak, Phantom) that control how the Garbage Collector (GC) treats objects, 
+allowing developers to manage memory for caches, resource cleanup, and preventing memory leaks by specifying an object's reachability
 
 *Strong reference : Person obj = new Person();
 
@@ -312,7 +324,8 @@ diagram:
 Here if we have 2 threads T1, T2. and even though they are not come concurrently.
 
 Suppose T1 thread come, and its computation happens at core1. So it creates the object for DBConnection in L1 cache.
-After that thread 2 come and it's computation happens at core2, and found that object is still null(considering the scenario where cache1 and cache2 not sync up yet). After finding in the cache 2 it gets null, so it will go to memory and check whether object is still null or anything assign to it. Lets say in memory object its not get updated yet, then it will show null there. SO in that case multiple object get created because of caching, and this issue is solved by volatile.
+After that thread 2 come and it's computation happens at core2, and found that object is still null(considering the scenario where cache1 and cache2 not sync up yet). After finding in the cache 2 it gets null, so it will go to memory and check whether object is still null or anything assign to it.
+Lets say in memory object its not get updated yet, then it will show null there. SO in that case multiple object get created because of caching, and this issue is solved by volatile.
 
 
 => Here Volatile is solving 2 issue one is of caching and another one is of ordering that we are seeing here.
@@ -341,7 +354,7 @@ public class DBConnection{
 		private static final DBConnection INSTANCE_OBJECT = new DBConnection();
 	}
 	
-	public static DBConnection.getInstance(){
+	public static DBConnection getInstance(){
 		return DBConnectionHelper.INSTANCE_OBJECT;
 	}
 }
@@ -376,6 +389,11 @@ IMMUTABLE Class
 
 - Strings are immutable, means if we assigned any value that cannot be changed.
 
+- An immutable class in Java is a class whose instances cannot be modified after they are created
+
+why to use immutable classes?
+- Immutable classes primarily used to ensure thread safety, prevent accidental data modification, and enable efficient caching
+
 As per notes:
 - We cannot change the value of an object once it is created.
 - Declare class as 'final' so that it cannot be extended.
@@ -383,7 +401,7 @@ As per notes:
 - And class members are initialized only once using constructor.
 - There should not be any setters method, which is generally use to change the value.
 - Just getter methods. and return copy of the member variable.
-- Exaple : String, Wrapper classes etc.
+- Example : String, Wrapper classes etc.
 
 
 final class MyImmutable{
@@ -402,7 +420,7 @@ final class MyImmutable{
 	}	
 	
 	public List<Object> getPetName(){
-		//this is required because making list final means you can not now point it to new list, but still can add, delete value in it. So thats why we send the copy of it.
+		//this is required because making list final means you can not now point it to new list. So thats why we send the copy of it.
 		
 		return new ArrayList<>(petNameList);
 		//Here we are sending the copy of list.
@@ -440,7 +458,11 @@ Ans: - If an interface contains only 1 abstract method that is known as function
 - @FunctionalInterface keyword can be used at top of the interface (But its optional)
 
 
-You cna write functional interface in below 2 types:-
+- Functional interfaces were introduced in Java 8 primarily to enable functional programming in an object-oriented language 
+  by providing target types for lambda expressions and method references
+
+
+You can write functional interface in below 2 types:-
 
 @FunctionalInterface
 public interface Bird{
@@ -531,7 +553,7 @@ Bird eagleObj = new Eagle();
 eagleObj.canFly("Vertical");
 
 
-2. Using "anonymous class"
+2. Using "anonymous class" (Practice)
 
 public class Main{
 	psvm(){
@@ -843,6 +865,12 @@ public class Main{
 
 Collection
 -----------
+Short Notes:
+- What is JCF, why it is getting use? 
+- Parent Interface and Sub Interfaces
+- Iterable interafce
+- Various methods present
+- Collections class.
 
 Q: What is Java collection Framework ?
 Ans: - It was added in java 1.2.
@@ -1135,16 +1163,22 @@ If do not have the key present - it will add new key-value mapping.
 - To acces subInterface : first parent interface . then sub interface.
 
 example : Map.Entry (here Map - parent interface, Entry- sub interface)
-
+ 
 
 
 ---
 
 Internal working of hashmap:
+	- HashMap<K, V> stores key–value pairs and provides O(1) average-time complexity for put() and get() operations.
+
+	- Internally, it uses:
+		An array of buckets
+		Each bucket contains nodes (linked list or red-black tree)
 
 - Map has sub interface called Entry<K, V>
 - Node<K, V> implements this Entry interface.
 
+HashMap contains an array of Node objects.
 -This Node having 4 things/variables:
  1. hash
  2. key
@@ -1358,6 +1392,10 @@ Ans: - We can consider stream as a pipeline, through which our collection elemen
 - While elements passes through pipelines, it perform various operations like sorting, filtering etc.
 - Useful when deals with bulk processing.(Actually we cannot find much difference between if else and this streams until and unless bulk processing can happen. Actually streams can do parallel processing.)
  
+ 
+Java streams, introduced in Java 8, are primarily used to enable functional-style operations on sequences of elements 
+(like collections or arrays), resulting in more concise, readable, and maintainable code. They provide a powerful and flexible way to process data declaratively. 
+
 ---
 
 There are 3 steps to perform stream operations.
@@ -1400,8 +1438,6 @@ psvm(){
 	
 	sysout("Employee with salary > 3000 "+count);
 }
-
-
 
 
 -Above code using streams:
@@ -1683,6 +1719,17 @@ Terminal Operations:
 
 Terminal operatoins are the once that produces the result. It triggers the processing of the stream.
 
+1. forEach()
+2. toArray()
+3. reduce(BinaryOperator<T> accumulator)
+4. collect(Collector<T, A, R> collector)
+5. min(Comparator<T> comparator) and max(Comparator<T> comparator):
+6. count()
+7. anyMatch(Predicate<T> predicate)
+8. allmatch(Predicate<T> predicate)
+9. noneMatch(Predicate<T> predicate)
+10. findFirst()
+11. findAny()
 
 1. forEach(Consumer<T> action) : Perform action on each element of the stream. Do not returns any value.
 
@@ -2117,4 +2164,30 @@ Multithreading:
 - Inside each task we can create multiple threads. Which is called as multithreading.
 - In multithreading they share the resources like memory, data segment code segment.
 
+
+==========
+
+Multithreading in Java is the ability to run multiple threads (lightweight, independent execution paths) concurrently within a single program, 
+allowing for simultaneous execution of tasks, better CPU utilization, and increased application responsiveness, achieved by extending the Thread class 
+or implementing the Runnable interface. It's like having several chefs (threads) in one kitchen (program) working on different dishes (tasks) at the same time. 
+
+Key Concepts:
+Thread: The smallest unit of processing, a separate flow of execution within a program that can run independently.
+Concurrency: Multiple threads appear to run at the same time, sharing the same memory space (unlike separate processes).
+Multitasking: Multithreading extends multitasking, allowing a single application to perform several operations concurrently, like playing music while downloading files. 
+
+
+--
+
+Cover topics :
+1. Atomic integer
+2. How to create thread safe enviroenment
+3. Comparable Comparator documentation
+4. Exeception Handling
+
+playlists : https://www.youtube.com/watch?v=FFfJeb8Ec6Y
+
+https://www.youtube.com/watch?v=e3_6-5DIqmU&list=PLtF2R5clJLATRAY7R8E3L6UBbxE2PDT62&index=1
+
+https://www.youtube.com/watch?v=PwiuAebCruY&list=PLyHJZXNdCXscmvjfObckNAXlwuWtlK3mO
 
