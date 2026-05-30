@@ -1,0 +1,53 @@
+1. What is spring Boot
+2. What are features of spring boot
+3. What are the advantages of spring boot
+4. What is Dependecy Injection
+5. What is an IOC container
+6. What are statretr dependencies.
+7. What is spring Initializer
+8. How do you start a spring boot application.
+9. 
+11. Difference between @controller and @RestController
+12. What is @RequestMapping
+13. Difference between @GetMapping and @PostMapping.
+14. What is Spring Boot Actuator.
+15. What are Actuator endpoints.
+16. What is @AutoWired?
+17. What is @SpringBootApplication.
+18. What is @ComponentScan
+19. What is @Service and @Repository
+20. What is dependecy management.
+21. How does auto-configuration work?
+
+22. Coding Simple REST API
+23. Coding Depndency Injection
+24. Coding Post API
+25. Coding Exception Handling
+
+26. What is @ConditionalOnClass?
+27. What is @CondiotionalOnProperty?
+28. What is @Profile?
+
+29. What is microservice architecture?
+30. What is Spring Cloud?
+31. what is externalized configuration?
+32. How to optimize spring boot performace? how to optimize hibernate performace?
+33. What is transaction management?
+34. Coding Transaction Example
+35. What is global exception handling
+
+36. How to secure Rest Apis?
+37. What is spring boot with docker?
+38. What is Kubernetes in spring boot?
+39. What is memory management in spring boot?
+40. Coding : Pagination Example.
+41. Coding : How to create a PUT api in spring boot
+42. Coding : How to create DELETE Api in spring boot
+43. Coding: How to use @PathVariable
+44. Coding : How to use @RequestParam
+45. Coding : How to connect spring boot with database?
+46. Coding : What is JPA repository?
+47. Coding : How to create Entity class
+48. Coding : How to use @Service layer
+49. Coding : How to call service from controller
+50. Coding : How to return JSON repsone?
