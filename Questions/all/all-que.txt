@@ -1,0 +1,256 @@
+=========================================
+CORE JAVA
+=========================================
+
+--- OOPs ---
+
+1. Why OOPS are important?
+2. Diffenrce between abstract class and interface OR Difference between Abstract Class and Interface.
+3. Can an abstract class implement multiple interfcaes and also extend another abstract class simeltaneoulsy OR Can an Abstract Class implement multiple Interfaces and extend another Abstract Class simultaneously?
+
+--- JDK / JVM / JRE ---
+
+4. Difference between jdk, jvm and jre
+5. Can we install JRE separetly without jdk? If yes then how it will impact Java developement and execution?
+
+--- Class Loading ---
+
+6. If a staic block throws an exception, what happens to the class loading process?
+
+--- Exception Handling ---
+
+7. How do you handle exceptions in Java?
+8. What are the different types of exceptions in Java?
+9. Apart from try-catch, there is also a finally block. Do you know about it?
+10. You mentioned that the finally block is always executed. Are there situations where it may not execute? If yes, how?
+
+--- Java 8 & Functional Interfaces ---
+
+11. Can you tell me a few features of Java 8?
+12. What are functional interfaces in Java?
+13. If you are designing a custom operation to be passed to multiple utility methods, how can a functional interface help, and how would you use a lambda expression?
+14. What are the roles of Predicate, Function, and Consumer in Java?
+
+--- Java 8 Coding / Streams ---
+
+15. Suppose you have a list of employees and need to filter employees whose age is greater than 60. How would you do this using Lambda Expressions or Streams?
+16. I have provided a list of skill sets. Can you write a Java 8 program to find all the skills from the list of lists?
+17. Now that you have all the skills, can you find the skills that start with the character 'S'?
+18. Write a Java Stream program to calculate the sum of a list.
+19. Write a Java Stream program to find the first non-repeating number from a list.
+20. Given a list of numbers, how would you check whether all numbers are even using Java 8 Streams?
+21. Given a list of words, how would you find the first word that starts with the character 'B' using Streams?
+
+--- Collections ---
+
+22. Do you know collections in Java?
+23. What is the difference between HashMap and ConcurrentHashMap?
+24. What is the difference between ArrayList and LinkedList?
+25. When should you choose ArrayList over LinkedList, and vice versa?
+
+--- Multithreading & Concurrency ---
+
+26. Do you know threading in Java? OR What is Threading in Java?
+27. What are the different ways to create a thread in Java?
+28. Can you show me how to create a thread by extending the Thread class and then start that thread?
+29. Can you tell me when we should use Runnable and when we should use Thread?
+30. What are the different states of a thread in Java? OR What are the different phases/states in a Thread Life Cycle?
+31. Can a thread be started again after it has completed execution?
+32. If not, why can't a thread be restarted?
+33. What happens if you try to start an already started thread?
+34. Can you explain what a deadlock situation is? OR What is a deadlock?
+35. How can you avoid a deadlock situation? OR How can you avoid a deadlock?
+36. Do you know the wait() and notify() methods?
+37. If you are writing to a file from multiple threads simultaneously, what synchronization techniques can you apply to ensure thread-safe behavior?
+38. What is a race condition?
+39. How can a race condition be prevented?
+
+--- JVM & Garbage Collection ---
+
+40. How does garbage collection work in Java?
+41. If you notice that garbage collection is taking significant time in production, how would you analyze GC logs and tune the JVM for better performance?
+
+--- Serialization ---
+
+42. What are transient fields in Java?
+43. If you mark a field as transient in a Serializable class, what happens when the object is deserialized, and how would you restore that field?
+
+--- Design Patterns & SOLID ---
+
+44. Do you know the design patterns in Java? OR How comfortable are you with design patterns?
+45. Can you explain what is meant by SOLID principles?
+46. What is the difference between Factory and Abstract Factory design patterns?
+47. Write a program for singelton design pattern.
+
+--- Output Based Question ---
+
+48. What will be the output of the following code snippet?
+
+public class Test {
+    public static void main(String[] args) {
+        for(int i = 0; i < 5; ) {
+            System.out.println("Hello World");
+        }
+    }
+}
+
+=========================================
+SPRING FRAMEWORK
+=========================================
+
+--- Core Spring ---
+
+1. WHat is @Service , @Componenet?
+2. Can a class can be annoted with both @Service and @Componenet annotation?
+3. What is the difference between @Bean and @Component annotations?
+4. If you have a third-party class that you cannot annotate with @Component, how can you register it as a Spring bean?
+5. What is the difference between eager initialization and lazy initialization in Spring?
+6. In a large application where startup time is slow, how would you optimize bean loading using lazy initialization?
+7. What is the role of @Value annotation in Spring Boot?
+8. What is the role of @ConfigurationProperties annotation in Spring Boot?
+
+=========================================
+SPRING BOOT
+=========================================
+
+--- Basics ---
+
+1. How to run spring boot application?
+2. What is the main annotation in spring boot? and why?
+3. WHich annotations are used in your projects?
+4. What are Profiles in Spring Boot?
+
+--- Project Structure ---
+
+5. Let us consider implementing a Spring Boot Employee Management application with CRUD operations. What would your project structure look like?
+6. What will be the packaging structure? What layers/packages would you design?
+
+--- Database Integration ---
+
+7. How to use 2 separate daabases in spring boot?
+8. How do you connect your Spring Boot application with the database using Spring Data JPA?
+9. How do you connect to a database in a Spring Boot application?
+10. What configurations are required for database connectivity?
+11. How do you perform CRUD operations (Create, Read, Update, Delete) in Spring Boot using JPA?
+12. What are Entity classes?
+13. What is the purpose of JpaRepository?
+14. What is the purpose of CrudRepository?
+
+--- Exception Handling ---
+
+15. How do you handle exception in spring boot and which annotations used for exceptions?
+16. How does exception handling work in Spring Boot REST APIs?
+17. If you want to return a custom error message with an HTTP status code for specific exceptions, how would you implement centralized exception handling?
+
+--- Testing ---
+
+18. How do you test your application?
+19. How can you ensure 100% test coverage in a spring boot application?
+
+--- Performance ---
+
+20. Suppose an API that reads all employees from the database is taking a lot of time. How would you optimize its performance?
+21. How does caching work in Spring Boot?
+22. How do you handle pagination in Spring Data JPA?
+23. If any problem in your application in running how would you find it?
+
+=========================================
+REST API
+=========================================
+
+1. Differnece between SOAP and REST.
+2. Why do some financial services still prefer SOAP over REST?
+3. What is HATEOAS in REST?
+4. If you are designing a REST API for a product catalog, how would you use HATEOAS to improve client interaction with your API?
+5. What is the difference between @RequestParam, @PathVariable, and @RequestBody?
+6. If you are designing a REST endpoint to update user profile details, which annotation would you use for:
+   - User ID?
+   - Query parameters?
+   - JSON request body?
+7. What will be the status code when you try to delete a resource from the server?
+8. Is it 201 or 204 for "No Content"?
+
+=========================================
+SPRING SECURITY
+=========================================
+
+1. What is Authentication?
+2. What is Authorization?
+3. What is the difference between Authentication and Authorization?
+
+=========================================
+MICROSERVICES
+=========================================
+
+--- Architecture ---
+
+1. What are the steps to create microservices.
+2. Can you tell me a little about your project architecture? OR Can you explain the architecture of your project? OR Explain your Microservices Architecture.
+3. How do these microservices communicate with each other? OR How do Microservices communicate with each other?
+4. You mentioned API Gateway. What are the features that you have implemented in the API Gateway?
+5. How do Spring Boot services help in building a Microservices architecture?
+
+--- Scalability & Session Management ---
+
+6. How to use in session method in spring boot?
+7. How can you maintain a session in a stateless REST API while ensuring scalability?
+8. You have experience working with microservices architecture, right?
+9. How do you handle the load on these microservices?
+10. How do you manage load balancing?
+
+--- Fault Tolerance & Resilience ---
+
+11. How do you handle failures in your microservices?
+12. Let us consider Microservice 1 wants to communicate with Microservice 2, but Microservice 2 is down. In that case, what will your response be to the client?
+13. What is the Circuit Breaker pattern?
+14. Have you used Resilience4j or Hystrix?
+15. If your API depends on an external service that occasionally fails, what would you do?
+
+=========================================
+DTOs & API DESIGN
+=========================================
+
+1. What are DTOs, and why are they used?
+2. If your controller is exposing entity objects directly to clients, what risks does that create, and how do DTOs solve those problems?
+
+=========================================
+DATABASE / SQL
+=========================================
+
+1. What is the purpose of indexes in a database?
+2. What are the different types of joins available in databases?
+3. You mentioned using both relational databases and MongoDB. What is the difference between SQL and NoSQL databases?
+
+=========================================
+ANGULAR
+=========================================
+
+1. Explain the concept of Data Binding in Angular.
+2. How do you handle Routing in Angular?
+3. How do Angular components communicate with each other?
+4. What is the difference between ngOnInit() and Constructor?
+5. Which gets called first: Constructor or ngOnInit()?
+6. How do you pass data to REST APIs from Angular?
+7. How do you consume REST APIs in Angular?
+
+=========================================
+PROJECT / AGILE / SDLC
+=========================================
+
+1. What are the tools used for project developement.
+2. What is agile and what is SDLC.
+3. What is current company sprint duration?
+4. Can you tell me about yourself, your technical skill set, and the projects you have worked on?
+5. What are your day-to-day activities?
+
+=========================================
+ENVIRONMENT
+=========================================
+
+1. Which version of JDK are you using?
+
+=========================================
+HR / INTERVIEW CLOSING
+=========================================
+
+1. Do you have any questions for me?
