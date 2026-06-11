@@ -1,84 +1,39 @@
 # Que: If you are designing a custom operation to be passed to multiple utility methods, how can a functional interface help, and how would you use a lambda expression?
 
-This is a good Java 8 interview question because it tests whether you understand the practical use of **functional interfaces** and **lambda expressions**.
+For interviews, it's usually better to answer at a **conceptual level first**, then give a simple example if asked. Interviewers are often checking whether you understand *why* functional interfaces exist, not whether you can write a large code sample.
 
-### Concept
+A strong interview answer would be:
 
-A **functional interface** defines a contract for a single operation (it contains exactly one abstract method).
+> A functional interface helps when I want to pass a piece of behavior or logic to a method. Since it has only one abstract method, it can be implemented using a lambda expression. This allows me to write generic utility methods and pass different operations without creating multiple implementation classes.
+>
+> For example, if I have a utility method that processes two numbers, I can define a functional interface called `Operation` with a method like `perform(int a, int b)`. Then, while calling the utility method, I can pass different lambda expressions such as `(a, b) -> a + b` for addition or `(a, b) -> a * b` for multiplication. This makes the code more reusable, concise, and flexible.
 
-Instead of creating multiple classes that implement the interface, we can use **lambda expressions** to provide the implementation inline and pass behavior as a parameter.
-
-This allows utility methods to become more generic and reusable.
-
----
-
-### Example
-
-Suppose I want to perform different mathematical operations using the same utility method.
-
-#### Functional Interface
+If the interviewer asks for a code example, then write:
 
 ```java
 @FunctionalInterface
-public interface Operation {
+interface Operation {
     int perform(int a, int b);
 }
-```
 
-#### Utility Class
-
-```java
-public class Calculator {
-
-    public static int execute(int a, int b, Operation operation) {
-        return operation.perform(a, b);
-    }
+public static int execute(int a, int b, Operation op) {
+    return op.perform(a, b);
 }
+
+// Usage
+execute(10, 5, (a, b) -> a + b); // Addition
+execute(10, 5, (a, b) -> a * b); // Multiplication
 ```
 
-#### Using Lambda Expressions
+### What interviewers expect to hear
 
-```java
-public class Main {
-    public static void main(String[] args) {
+Mention these keywords:
 
-        int sum = Calculator.execute(10, 5, (a, b) -> a + b);
+* **Single Abstract Method (SAM)**
+* **Lambda expression**
+* **Pass behavior as a parameter**
+* **Code reusability**
+* **Less boilerplate code**
+* **Strategy pattern-like behavior**
 
-        int multiplication = Calculator.execute(10, 5, (a, b) -> a * b);
-
-        int max = Calculator.execute(10, 5, (a, b) -> Math.max(a, b));
-
-        System.out.println(sum);            // 15
-        System.out.println(multiplication); // 50
-        System.out.println(max);            // 10
-    }
-}
-```
-
----
-
-### Why is this useful?
-
-Without lambdas, we would need separate implementation classes:
-
-```java
-class AddOperation implements Operation {
-    public int perform(int a, int b) {
-        return a + b;
-    }
-}
-```
-
-With lambdas, we can pass the implementation directly:
-
-```java
-(a, b) -> a + b
-```
-
-This reduces boilerplate code and makes the utility method highly reusable.
-
----
-
-### Interview Answer (Concise)
-
-> If I need to pass different behaviors to multiple utility methods, I can define a functional interface with a single abstract method representing that behavior. The utility method accepts the functional interface as a parameter. Using Java 8 lambda expressions, I can provide the implementation inline without creating separate classes. This promotes code reuse, makes the code cleaner, and follows a strategy-like approach where behavior can be changed at runtime.
+A concise 30-second answer is often ideal in a Java interview unless they specifically ask you to elaborate.
