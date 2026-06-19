@@ -3,6 +3,7 @@
 # Microservices Components — Interview Answer
 
 Microservices architecture breaks a large monolithic application into smaller independently deployable services, where each service handles a specific business capability.
+
 Spring Cloud - Spring Cloud is a suite of tools and frameworks that simplifies building and managing distributed applications in a microservices architecture.
 
 A typical microservices ecosystem contains the following major components:
