@@ -170,6 +170,16 @@ In distributed systems, failures are common.
 
 Circuit breaker prevents cascading failures.
 
+{
+A circuit breaker in microservices is a design pattern used to detect failures and prevent cascading issues. When a dependent service goes down or becomes slow, the circuit breaker "trips" and halts further calls, failing fast and allowing the system to recover gracefully.
+
+The 3 Primary StatesA circuit breaker operates as a state machine with three core phases:
+1. Closed: The system operates normally. Requests flow freely between microservices, and the breaker monitors for errors or latency.
+2. Open: If failures exceed a predefined threshold (e.g., 50% error rate in a 10-second window), the circuit trips. All calls to the failing service are immediately rejected without making a network request, preventing resource exhaustion.
+3. Half-Open: After a set timeout, a limited number of test requests are allowed to pass through. If they succeed, the circuit returns to the Closed state; if they fail, it goes back to Open.
+
+}
+
 Example:
 
 * Payment Service is down
