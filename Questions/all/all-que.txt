@@ -254,3 +254,24 @@ HR / INTERVIEW CLOSING
 =========================================
 
 1. Do you have any questions for me?
+
+=========================================
+MANAGERIAL / INTERVIEW CLOSING
+=========================================
+1. A critical production issue you resolved.
+2. A situation where you took ownership beyond your responsibilities.
+3. A situation where you helped a teammate or coordinated across teams.
+4. Have you mentored junior team members? Even informal mentoring counts.
+5. How do you handle conflicts within the team?
+6. Why Are You Looking for a Change?
+Example: "I have gained valuable experience in my current role. At this stage, I am looking for broader responsibilities, exposure to larger programs, and opportunities to contribute at a higher level while continuing to grow professionally."
+
+
+
+
+Good Questions to Ask the Manager At the end:
+
+1. What are the key expectations for this role in the first few months?
+2. Is the role primarily development, support, or a mix of both?
+3. What are the current challenges the team is working on?
+4. How is success measured for a Senior Consultant in this team?
