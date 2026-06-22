@@ -925,3 +925,274 @@ This is **thread-safe by default**, handles serialization correctly out of the b
 **Good thing to mention if asked "which approach would you use?":** "For most production code, I'd actually reach for a Spring-managed singleton bean (`@Component`/`@Service`, default scope) rather than hand-rolling this pattern — the framework handles the lifecycle. But if I needed to implement it manually, I'd prefer the enum-based approach for its simplicity and built-in safety guarantees."
 
 ---
+
+Great additional questions. Let me answer these in a natural, confident **5-year experienced developer tone** — concise, trade-off aware, not textbook-listy.
+
+---
+
+## Difference between Process and Thread
+
+A **process** is a completely independent program in execution — it has its own memory space, its own heap, its own resources. A **thread** is a unit of execution *within* a process — multiple threads share the same heap and memory space of their parent process, but each has its own stack and program counter.
+
+**Practical distinction I'd give in an interview:**
+
+> "Think of a process like a separate house — it has its own everything, no sharing. Threads are like people living in the same house — they share the kitchen and living room (heap memory), but each person has their own bedroom (stack). Communication between threads is fast because they share memory, but that shared access is also what causes threading bugs like race conditions. Communication between processes is slower — you need IPC mechanisms like sockets or pipes — but they're completely isolated, so one crashing doesn't bring down the other."
+
+| Aspect | Process | Thread |
+|---|---|---|
+| Memory | Own separate memory space | Shares heap with sibling threads |
+| Communication | IPC (sockets, pipes, shared memory) — slower | Direct shared memory — faster but risky |
+| Isolation | High — one crash doesn't affect others | Low — one thread can corrupt shared state for all |
+| Creation overhead | Heavy — OS allocates separate resources | Lightweight — shares parent process resources |
+| Context switching | Expensive | Cheaper than process switching |
+| Example | Two separate JVM processes running | Multiple threads inside one Spring Boot app |
+
+**Real-world context worth mentioning:** In a typical Spring Boot application, you're always dealing with threads — one JVM process, multiple threads handling HTTP requests concurrently. You'd only think about separate processes if you were doing microservices communication, running separate JVM instances, or using something like `ProcessBuilder` to spawn an OS-level process.
+
+---
+
+## Pros and Cons of Extending Thread, Implementing Runnable, and Using ExecutorService
+
+This is a judgment question — they want to see that you know *when to use what*, not just *what each is*.
+
+### Extending Thread
+
+```java
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Task running");
+    }
+}
+new MyThread().start();
+```
+
+**Pros:**
+- Simple, straightforward for quick/throwaway tasks.
+- Direct access to thread methods like `getName()`, `getPriority()` without needing `Thread.currentThread()`.
+
+**Cons:**
+- Wastes your one inheritance slot — Java has single inheritance, so if you extend `Thread`, you can't extend anything else. This is a real design constraint.
+- Tightly couples your *task logic* with the *thread mechanism* — bad separation of concerns.
+- Not reusable — the same `Thread` object can't be restarted or submitted to a thread pool.
+
+**Verdict:** I'd only use this in truly throwaway/demo code. Never in production.
+
+---
+
+### Implementing Runnable
+
+```java
+class MyTask implements Runnable {
+    public void run() {
+        System.out.println("Task running");
+    }
+}
+new Thread(new MyTask()).start();
+// or: new Thread(() -> System.out.println("Task")).start();
+```
+
+**Pros:**
+- Frees up your inheritance slot — your class can still extend something else.
+- Clean separation — the task (`Runnable`) is decoupled from the thread mechanism.
+- Reusable — same `Runnable` can be submitted to multiple threads or an `ExecutorService`.
+- Works naturally with lambdas since `Runnable` is a functional interface.
+
+**Cons:**
+- Still creating raw threads manually if not used with `ExecutorService` — managing raw threads is error-prone at scale (no pooling, no lifecycle management, no built-in exception handling).
+- `Runnable` can't return a result or throw checked exceptions — for that, you need `Callable`.
+
+**Verdict:** Better than extending `Thread`, but still incomplete on its own for real applications. Always pair with `ExecutorService` rather than raw `new Thread(runnable).start()`.
+
+---
+
+### Using ExecutorService
+
+```java
+ExecutorService executor = Executors.newFixedThreadPool(10);
+executor.submit(() -> System.out.println("Task running"));
+executor.shutdown();
+```
+
+**Pros:**
+- **Thread pooling** — reuses threads instead of creating/destroying them per task, which is expensive. This is huge for performance under load.
+- **Lifecycle management** — proper shutdown, task queuing, rejection policies when the queue is full.
+- **`Future` support** — `submit()` returns a `Future`, so you can get results back from async tasks, check if they're done, or cancel them.
+- Supports `Callable` — tasks that return values and throw checked exceptions.
+- Built-in thread pool strategies: fixed, cached, scheduled, single-threaded, work-stealing.
+- Production-grade — this is what every real Java application uses.
+
+**Cons:**
+- Slightly more setup/boilerplate than raw threads.
+- Need to be careful about proper shutdown (`shutdown()` + `awaitTermination()`) to avoid resource leaks.
+- Misconfigured pool sizes can cause issues — too small causes queuing/latency, too large causes context-switching overhead.
+
+**Verdict:** This is the right default for any real application. I wouldn't manage raw threads manually in production code.
+
+---
+
+**Summary table — how I'd frame the final answer:**
+
+| Approach | Use when | Avoid when |
+|---|---|---|
+| Extend Thread | Never, really — maybe demos | Any real codebase |
+| Implement Runnable | Simple task definition, paired with ExecutorService | You need a return value (use Callable instead) |
+| ExecutorService | Always — production code, concurrent task execution | Truly single-threaded throwaway scripts |
+
+---
+
+## What is ExecutorService?
+
+`ExecutorService` is a higher-level thread management framework in `java.util.concurrent` that abstracts away raw thread creation and management. Instead of manually creating and starting threads, you submit *tasks* to it and it handles execution using a managed thread pool.
+
+```java
+ExecutorService executor = Executors.newFixedThreadPool(5);
+
+// Submit a Runnable (no return value)
+executor.submit(() -> System.out.println("Task 1"));
+
+// Submit a Callable (returns a Future)
+Future<Integer> future = executor.submit(() -> {
+    return 42;
+});
+
+System.out.println(future.get()); // blocks until result is ready → 42
+
+executor.shutdown(); // graceful shutdown, completes pending tasks
+```
+
+**Key methods to know:**
+- `submit()` — submits a task, returns a `Future`.
+- `execute()` — like submit but for `Runnable` only, no `Future` returned.
+- `shutdown()` — stops accepting new tasks, lets pending ones finish.
+- `shutdownNow()` — attempts to stop all tasks immediately.
+- `awaitTermination()` — blocks until all tasks complete after shutdown.
+
+**Built-in factory methods via `Executors`:**
+- `newFixedThreadPool(n)` — fixed number of threads; good for CPU-bound tasks.
+- `newCachedThreadPool()` — grows/shrinks dynamically; good for short-lived I/O-bound tasks.
+- `newSingleThreadExecutor()` — single thread, tasks execute sequentially.
+- `newScheduledThreadPool(n)` — for delayed or periodic task execution.
+
+**Production note worth mentioning:** In real applications (especially Spring), you'd typically use Spring's `@Async` with a configured `ThreadPoolTaskExecutor` rather than managing `ExecutorService` manually — but understanding the underlying mechanics is what makes you able to configure and debug it properly.
+
+---
+
+## What is Thread Scope?
+
+**Thread scope** refers to data or state that is **local and private to a specific thread** — not shared with other threads, even though they run in the same JVM process.
+
+The primary mechanism in Java is **`ThreadLocal<T>`**:
+
+```java
+ThreadLocal<String> threadLocal = new ThreadLocal<>();
+
+// Thread 1
+threadLocal.set("User-A");
+System.out.println(threadLocal.get()); // "User-A"
+
+// Thread 2 (simultaneously)
+threadLocal.set("User-B");
+System.out.println(threadLocal.get()); // "User-B" — completely independent
+```
+
+Each thread gets its own isolated copy of the value — setting it in one thread has zero effect on another thread's copy.
+
+**Real-world use cases (this is where 5-year experience shows):**
+- **Security context per request** — Spring Security stores the authenticated user (`SecurityContextHolder`) in a `ThreadLocal` so each request thread knows who's logged in without passing it through every method call.
+- **Database transactions** — Spring's `@Transactional` uses `ThreadLocal` internally to bind a DB connection to the current thread, so all repository calls within a transaction use the same connection.
+- **Request-scoped data** — storing a request ID or correlation ID for logging, so every log line from the same request carries the same ID.
+
+**Important gotcha to mention — this is a 5-year level answer:**
+> "In thread-pool environments (which is every real app), threads are reused across requests. If you set a `ThreadLocal` value and don't clean it up after your task finishes, the next task running on that same thread will see stale data from the previous request. This is a real source of subtle bugs, especially security bugs if it's user/session data. Always call `threadLocal.remove()` in a `finally` block when you're done."
+
+---
+
+## What is a Constructor?
+
+A constructor is a special method that gets called automatically when an object is created with `new`. Its purpose is to **initialize the object's state**.
+
+```java
+class User {
+    String name;
+    int age;
+
+    User(String name, int age) {  // constructor
+        this.name = name;
+        this.age = age;
+    }
+}
+
+User u = new User("Alice", 30); // constructor called here
+```
+
+**Key characteristics:**
+- Same name as the class.
+- No return type — not even `void`.
+- If you don't define any constructor, Java provides a **default no-arg constructor** automatically. The moment you define *any* constructor yourself, Java stops providing that default — so if you still need a no-arg constructor, you must define it explicitly.
+- Can use `this()` to call another constructor in the same class (constructor chaining), or `super()` to call the parent class constructor.
+
+---
+
+## Can we have multiple constructors in a class?
+
+Yes — this is **constructor overloading**, and it's very common in practice.
+
+```java
+class User {
+    String name;
+    int age;
+    String email;
+
+    // Minimal constructor
+    User(String name) {
+        this.name = name;
+        this.age = 0;
+        this.email = "not provided";
+    }
+
+    // Full constructor
+    User(String name, int age, String email) {
+        this.name = name;
+        this.age = age;
+        this.email = email;
+    }
+
+    // Constructor chaining — cleaner way
+    User(String name, int age) {
+        this(name, age, "not provided"); // calls the full constructor
+    }
+}
+```
+
+The compiler distinguishes them by **signature** — the number and types of parameters. Return type is irrelevant (constructors have none).
+
+**Practical note worth mentioning:** When a class has many optional fields, multiple constructors can get messy fast (telescoping constructor problem). That's exactly the scenario where the **Builder pattern** earns its place — instead of 5 overloaded constructors, you get a clean, readable construction API. Frameworks like Lombok's `@Builder` or Java records handle this elegantly too.
+
+---
+
+## Why can't constructors be overridden?
+
+Two reasons, one conceptual and one technical:
+
+**Conceptual reason:** Overriding means a subclass provides a different implementation of a method that exists in the parent class, called via polymorphism at runtime. Constructors aren't inherited — a subclass doesn't inherit its parent's constructors, so there's nothing to override in the first place.
+
+```java
+class Animal {
+    Animal() { System.out.println("Animal created"); }
+}
+
+class Dog extends Animal {
+    Dog() { System.out.println("Dog created"); }
+    // This is NOT overriding Animal() — it's a completely separate constructor
+}
+```
+
+**Technical reason:** A constructor's job is tightly bound to the specific class it belongs to — it initializes *that class's* state. Polymorphic dispatch (the mechanism that makes overriding work) doesn't apply to constructors because you always know at compile time exactly which constructor you're calling — `new Dog()` always calls `Dog`'s constructor, never resolved at runtime like a virtual method call.
+
+**What you CAN do instead:**
+- Use `super()` inside a subclass constructor to explicitly call a specific parent constructor.
+- Use factory methods or abstract factory patterns when you need polymorphic object creation behavior — that's the proper design solution for the problem overriding constructors would otherwise try to solve.
+
+**Good closing line:** "Constructors and methods serve fundamentally different purposes — methods define behavior that can be specialized by subclasses, constructors define initialization that's always class-specific. That's why inheritance applies to one but not the other."
+
+---
