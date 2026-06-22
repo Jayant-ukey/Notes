@@ -1209,7 +1209,7 @@ Good Spring questions — these come up in almost every Java Developer interview
 
 ---
 
-## Why do we use @Qualifier with @Autowired?
+## 1. Why do we use @Qualifier with @Autowired?
 
 **The problem it solves first (always lead with the problem):**
 
@@ -1314,7 +1314,7 @@ This is a genuinely elegant production pattern — no `@Qualifier` needed, and a
 
 ---
 
-## Difference between @Controller and @RestController
+## 2. Difference between @Controller and @RestController
 
 **Short answer first:**
 `@RestController` = `@Controller` + `@ResponseBody` on every method. That's literally it at the annotation level — but the practical difference is significant.
@@ -1377,7 +1377,7 @@ Good questions — these span design patterns and database fundamentals, both co
 
 ---
 
-## Observer Design Pattern
+## 3. Observer Design Pattern
 
 **Lead with the problem, not the definition:**
 
@@ -1502,7 +1502,7 @@ class EmailNotifier {
 
 ---
 
-## Difference between SQL and NoSQL
+## 4. Difference between SQL and NoSQL
 
 **Lead with the core distinction:**
 
