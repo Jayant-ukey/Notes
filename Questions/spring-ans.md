@@ -1204,3 +1204,364 @@ This is a small but commonly-missed distinction — a good one to get crisp.
 **One-liner to close with:** *"`hasRole()` is really just a convenience wrapper around `hasAuthority()` that adds the `ROLE_` prefix automatically — they're not fundamentally different mechanisms, just different naming conventions for the same underlying authority-check system."*
 
 ---
+
+Good Spring questions — these come up in almost every Java Developer interview. Let me answer these in a clean, 5-year experienced tone.
+
+---
+
+## Why do we use @Qualifier with @Autowired?
+
+**The problem it solves first (always lead with the problem):**
+
+`@Autowired` injects a bean by **type**. That works fine when there's only one bean of that type in the Spring context. But the moment you have **two or more beans of the same type**, Spring doesn't know which one to inject — and throws a `NoUniqueBeanDefinitionException` at startup.
+
+```java
+@Component
+class EmailNotificationService implements NotificationService {
+    public void send(String msg) { /* send email */ }
+}
+
+@Component
+class SMSNotificationService implements NotificationService {
+    public void send(String msg) { /* send SMS */ }
+}
+
+@Service
+class OrderService {
+    @Autowired
+    NotificationService notificationService; 
+    // Spring panics here — which one? Email or SMS?
+}
+```
+
+**`@Qualifier` is how you tell Spring exactly which bean you want:**
+
+```java
+@Service
+class OrderService {
+
+    @Autowired
+    @Qualifier("emailNotificationService") // bean name — by default, class name in camelCase
+    NotificationService notificationService;
+}
+```
+
+**You can also give beans explicit names to make it cleaner:**
+
+```java
+@Component("emailService")
+class EmailNotificationService implements NotificationService { }
+
+@Component("smsService")
+class SMSNotificationService implements NotificationService { }
+
+@Service
+class OrderService {
+
+    @Autowired
+    @Qualifier("emailService")
+    NotificationService notificationService;
+}
+```
+
+**Alternatives worth mentioning — shows broader awareness:**
+
+- **`@Primary`** — marks one bean as the default choice when multiple candidates exist. Good when one implementation is used 90% of the time and `@Qualifier` is only needed for the exceptions.
+
+```java
+@Component
+@Primary // used by default unless @Qualifier overrides
+class EmailNotificationService implements NotificationService { }
+```
+
+- **Constructor injection with `@Qualifier`** — which is actually the recommended style in modern Spring (over field injection):
+
+```java
+@Service
+class OrderService {
+    private final NotificationService notificationService;
+
+    @Autowired
+    public OrderService(@Qualifier("emailService") NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
+}
+```
+
+**Experience-level answer to add:**
+> "In real projects I've found that needing `@Qualifier` frequently is often a design smell — it usually means the interface is too broad and the implementations are diverging enough that they probably shouldn't share the same interface. But for genuinely interchangeable implementations like notification channels or payment gateways, `@Qualifier` or a Strategy pattern with a map of beans is the clean solution."
+
+**Strategy pattern with bean map — bonus answer if they push further:**
+
+```java
+@Service
+class OrderService {
+    private final Map<String, NotificationService> services;
+
+    @Autowired
+    public OrderService(Map<String, NotificationService> services) {
+        // Spring auto-populates: {"emailNotificationService": ..., "smsNotificationService": ...}
+        this.services = services;
+    }
+
+    public void notify(String channel, String msg) {
+        services.get(channel).send(msg);
+    }
+}
+```
+
+This is a genuinely elegant production pattern — no `@Qualifier` needed, and adding a new notification channel just means adding a new `@Component`, zero changes to `OrderService`.
+
+---
+
+## Difference between @Controller and @RestController
+
+**Short answer first:**
+`@RestController` = `@Controller` + `@ResponseBody` on every method. That's literally it at the annotation level — but the practical difference is significant.
+
+**`@Controller` — for traditional MVC (returns views):**
+
+```java
+@Controller
+public class PageController {
+
+    @GetMapping("/home")
+    public String homePage(Model model) {
+        model.addAttribute("username", "Alice");
+        return "home"; // returns VIEW NAME — Spring looks for home.html / home.jsp
+    }
+}
+```
+
+- The return value is treated as a **view name** — Spring hands it to a view resolver (Thymeleaf, JSP, etc.) to render an HTML page.
+- Used in traditional server-side rendered web applications.
+- If you want a specific method to return data (JSON/XML) instead of a view, you add `@ResponseBody` to that individual method.
+
+**`@RestController` — for REST APIs (returns data):**
+
+```java
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        return userService.findById(id); 
+        // returns User object directly — Spring serializes it to JSON automatically
+    }
+}
+```
+
+- The return value is written **directly to the HTTP response body** as JSON (or XML) — no view resolution involved.
+- Uses Jackson (bundled with Spring Boot) to automatically serialize Java objects to JSON.
+- `@ResponseBody` is implicitly applied to every method — you don't need to add it manually.
+
+**Side by side:**
+
+| Aspect | @Controller | @RestController |
+|---|---|---|
+| Introduced | Spring 2.5 | Spring 4.0 |
+| Returns | View name (resolved to HTML page) | Data directly in response body (JSON/XML) |
+| `@ResponseBody` needed? | Yes, per method if returning data | No — applied globally to all methods |
+| Use case | Server-side rendered UI (Thymeleaf, JSP) | REST APIs consumed by frontend/mobile/other services |
+| Typical modern usage | Less common — SPAs have made this rarer | This is what most modern Spring Boot apps use |
+
+**Experience-level nuance worth adding:**
+> "In modern Spring Boot applications, especially with React or Angular frontends, `@RestController` is almost always what you're writing. `@Controller` still has its place if you're doing server-side rendering with Thymeleaf — for example, admin portals or simple form-based apps where you don't need a separate frontend. But in most microservice or API-first architectures, it's `@RestController` throughout."
+
+**One follow-up they might ask:** *"Can you use both in the same application?"*
+Yes — absolutely. A typical pattern is `@RestController` for all `/api/**` endpoints returning JSON, and `@Controller` for a handful of page routes if you have any server-rendered views (like a login page or admin dashboard).
+
+---
+Good questions — these span design patterns and database fundamentals, both common at the 5-year level. Let me answer in that experienced, practical tone.
+
+---
+
+## Observer Design Pattern
+
+**Lead with the problem, not the definition:**
+
+> "Observer pattern solves a specific problem — you have one object whose state changes, and multiple other objects need to react to that change, but you don't want the first object to be tightly coupled to all the things watching it."
+
+**Real-world analogy:**
+Think of a YouTube channel. When a creator uploads a video, all subscribers get notified automatically. The creator doesn't know or care *who* is subscribed — they just publish. Subscribers come and go independently. That's Observer.
+
+**Core structure:**
+- **Subject (Observable)** — the object being watched. Maintains a list of observers, notifies them when state changes.
+- **Observer** — the interface that all watchers implement, with an `update()` method.
+- **Concrete Observers** — actual classes that react to the change in their own way.
+
+```java
+// Observer interface
+interface Observer {
+    void update(String event);
+}
+
+// Subject
+class OrderService {
+    private List<Observer> observers = new ArrayList<>();
+
+    public void addObserver(Observer o) {
+        observers.add(o);
+    }
+
+    public void removeObserver(Observer o) {
+        observers.remove(o);
+    }
+
+    private void notifyObservers(String event) {
+        for (Observer o : observers) {
+            o.update(event);
+        }
+    }
+
+    // When order is placed, notify everyone
+    public void placeOrder(String orderId) {
+        System.out.println("Order placed: " + orderId);
+        notifyObservers("ORDER_PLACED: " + orderId);
+    }
+}
+
+// Concrete Observers
+class EmailNotifier implements Observer {
+    public void update(String event) {
+        System.out.println("Email sent for: " + event);
+    }
+}
+
+class InventoryService implements Observer {
+    public void update(String event) {
+        System.out.println("Inventory updated for: " + event);
+    }
+}
+
+class InvoiceService implements Observer {
+    public void update(String event) {
+        System.out.println("Invoice generated for: " + event);
+    }
+}
+
+// Wiring it together
+public class Main {
+    public static void main(String[] args) {
+        OrderService orderService = new OrderService();
+
+        orderService.addObserver(new EmailNotifier());
+        orderService.addObserver(new InventoryService());
+        orderService.addObserver(new InvoiceService());
+
+        orderService.placeOrder("ORD-1001");
+        // Output:
+        // Order placed: ORD-1001
+        // Email sent for: ORDER_PLACED: ORD-1001
+        // Inventory updated for: ORDER_PLACED: ORD-1001
+        // Invoice generated for: ORDER_PLACED: ORD-1001
+    }
+}
+```
+
+**Key design benefit (say this explicitly):**
+> "`OrderService` has zero knowledge of `EmailNotifier`, `InventoryService`, or `InvoiceService`. Tomorrow if you add an `SMSNotifier`, you just implement `Observer` and register it — `OrderService` doesn't change at all. That's the open/closed principle in action."
+
+**Where you actually see this in the real world:**
+
+- **Java's built-in** — `java.util.Observable` (deprecated) and `EventListener` pattern in Swing/AWT are Observer implementations.
+- **Spring's `ApplicationEvent` / `@EventListener`** — Spring's entire event system is Observer pattern. You publish an event, multiple listeners react independently.
+
+```java
+// Spring version — cleaner, no manual observer management
+@Component
+class OrderService {
+    @Autowired
+    ApplicationEventPublisher publisher;
+
+    public void placeOrder(String orderId) {
+        publisher.publishEvent(new OrderPlacedEvent(orderId));
+    }
+}
+
+@Component
+class EmailNotifier {
+    @EventListener
+    public void handle(OrderPlacedEvent event) {
+        System.out.println("Email sent for: " + event.getOrderId());
+    }
+}
+```
+
+- **Reactive Programming** — RxJava, Spring WebFlux — are essentially Observer pattern at their core, applied to streams of data.
+- **Message brokers** — Kafka, RabbitMQ conceptually follow the same idea at a distributed system level (producers publish, consumers react independently).
+
+**When to use it:**
+- When one event needs to trigger multiple independent reactions.
+- When you want to add/remove reactions without touching the source object.
+- When the source shouldn't know or care about who's listening.
+
+**When NOT to use it (5-year answer):**
+> "Observer can get messy if overused — if everything is talking to everything through events, the flow becomes hard to trace and debug. I've seen codebases where every action publishes an event and the business logic is scattered across 15 listener classes — that's when it becomes a maintenance problem. It's powerful but should be used deliberately, not as a default wiring mechanism."
+
+---
+
+## Difference between SQL and NoSQL
+
+**Lead with the core distinction:**
+
+> "SQL and NoSQL aren't really competitors — they're optimized for fundamentally different shapes of problems. SQL is about structured, relational data with strong consistency guarantees. NoSQL is about flexibility, scale, and specific access patterns where the relational model is either overkill or actively gets in the way."
+
+---
+
+### SQL (Relational Databases)
+
+Examples: MySQL, PostgreSQL, Oracle, SQL Server.
+
+- Data stored in **tables** with rows and columns, with a fixed schema defined upfront.
+- **Relationships** between tables via foreign keys — the relational model.
+- **ACID** transactions — Atomicity, Consistency, Isolation, Durability — guaranteed. Either the whole operation succeeds or none of it does.
+- **Normalization** — data is structured to minimize redundancy.
+- Query language is standardized — SQL works similarly across all relational DBs.
+- Scales well **vertically** (bigger machine) but horizontal scaling (sharding across machines) is complex.
+
+**Best for:** Financial systems, order management, anything where data integrity and complex relationships matter — "I need to join orders with customers with products and apply a transaction across all three."
+
+---
+
+### NoSQL (Non-relational Databases)
+
+Examples vary by type:
+- **Document stores** — MongoDB, CouchDB (JSON-like documents)
+- **Key-Value stores** — Redis, DynamoDB (fast lookup by key)
+- **Column-family stores** — Cassandra, HBase (wide-column, great for time-series/analytics)
+- **Graph databases** — Neo4j (relationships are first-class citizens — social networks, recommendation engines)
+
+- **Schema-flexible** — each record can have different fields. No ALTER TABLE nightmares.
+- **Horizontally scalable by design** — built to distribute data across many nodes.
+- **Eventual consistency** by default in many (though some offer tunable consistency) — trades strict consistency for availability and partition tolerance (CAP theorem).
+- Optimized for **specific access patterns** — you design your data model around how you query, not around normalization.
+
+**Best for:** High-volume, high-velocity data — user activity logs, product catalogs with varying attributes, real-time leaderboards, session storage, recommendation engines.
+
+---
+
+### Side by side:
+
+| Aspect | SQL | NoSQL |
+|---|---|---|
+| Data model | Tables, rows, columns | Documents, key-value, columns, graphs |
+| Schema | Fixed, defined upfront | Flexible, dynamic |
+| Relationships | Native — foreign keys, joins | Either embedded or handled in application code |
+| Transactions | Full ACID support | Varies — eventual consistency common, some support ACID (MongoDB 4+) |
+| Scaling | Primarily vertical | Primarily horizontal |
+| Query language | Standardized SQL | DB-specific APIs |
+| Consistency | Strong by default | Tunable — often eventual |
+| Best for | Complex relationships, financial data, reporting | Scale, flexibility, specific access patterns |
+
+---
+
+**The 5-year answer that separates you from a fresher:**
+
+> "The choice isn't really SQL vs NoSQL — it's about picking the right tool for the data shape and access pattern. In most real applications I've worked on, we actually use both. MySQL or PostgreSQL for the core transactional data — orders, users, payments — where integrity matters. Redis for caching and session storage where speed matters more than persistence. Maybe MongoDB for a product catalog where each product has wildly different attributes and you don't want 50 nullable columns. The mistake is treating one as universally better than the other."
+
+**CAP Theorem — mention briefly if they seem engaged:**
+> "NoSQL's design tradeoffs are often explained through the CAP theorem — you can guarantee at most two of Consistency, Availability, and Partition tolerance simultaneously. SQL databases traditionally prioritize consistency. Many NoSQL databases prioritize availability and partition tolerance, accepting eventual consistency — which is fine for things like showing a user's follower count, but not fine for a bank balance."
+
+---
