@@ -1196,3 +1196,292 @@ class Dog extends Animal {
 **Good closing line:** "Constructors and methods serve fundamentally different purposes — methods define behavior that can be specialized by subclasses, constructors define initialization that's always class-specific. That's why inheritance applies to one but not the other."
 
 ---
+
+## Que- What is CompletableFuture — Complete Guide
+
+This is a topic where a strong answer at 5-YOE level means covering **what it is, why it exists, how it works, and real practical usage** — not just a definition.
+
+---
+
+## Why CompletableFuture exists — start here (context matters)
+
+Before `CompletableFuture` (Java 8), we had `Future` (Java 5). Understand the problem `Future` had first, because interviewers often ask "what's wrong with `Future`" as a lead-in:
+
+```java
+// Old way — Future
+ExecutorService executor = Executors.newFixedThreadPool(5);
+Future<String> future = executor.submit(() -> fetchDataFromDB());
+
+// Problems with Future:
+String result = future.get();  // BLOCKS the calling thread — you're stuck waiting
+                               // no way to attach a callback "do this when done"
+                               // no way to chain multiple async steps
+                               // no way to combine multiple futures easily
+                               // exception handling is clunky (wrapped in ExecutionException)
+```
+
+**`Future` was a promise with no way to act on it without blocking.** `CompletableFuture` solves all of this.
+
+---
+
+## What is CompletableFuture?
+
+**Definition:** `CompletableFuture<T>` (introduced in Java 8) is a class that represents a **future result of an asynchronous computation**, with a rich API for:
+- **Non-blocking callbacks** — "when this completes, do that"
+- **Chaining** — run steps sequentially without blocking
+- **Combining** — wait for multiple async tasks together
+- **Exception handling** — handle errors inline in the pipeline
+- **Manual completion** — you can complete it programmatically
+
+It implements both `Future<T>` (backward compat) and `CompletionStage<T>` (the rich async pipeline interface).
+
+---
+
+## Core usage patterns — go through each one
+
+### Pattern 1 — Creating a CompletableFuture
+
+```java
+// Run async task, no return value
+CompletableFuture<Void> cf1 = CompletableFuture.runAsync(() -> {
+    System.out.println("Running in: " + Thread.currentThread().getName());
+});
+
+// Run async task, WITH return value
+CompletableFuture<String> cf2 = CompletableFuture.supplyAsync(() -> {
+    return fetchEmployeeFromDB(1L);  // runs in ForkJoinPool.commonPool() by default
+});
+
+// With your own executor (preferred in production — don't rely on common pool)
+ExecutorService executor = Executors.newFixedThreadPool(10);
+CompletableFuture<String> cf3 = CompletableFuture.supplyAsync(() -> {
+    return fetchEmployeeFromDB(1L);
+}, executor);
+```
+
+**Important production note (say this — shows seniority):** By default `supplyAsync` uses `ForkJoinPool.commonPool()` — this is shared across the entire JVM including parallel streams. In a Spring Boot application under load, you should always pass your own `ExecutorService` to keep async tasks isolated and properly sized.
+
+---
+
+### Pattern 2 — Chaining (`thenApply`, `thenAccept`, `thenRun`)
+
+```java
+CompletableFuture<String> pipeline = CompletableFuture
+    .supplyAsync(() -> fetchEmployee(1L))          // step 1: fetch employee (async)
+    .thenApply(emp -> enrichWithDepartment(emp))   // step 2: transform result (sync, same thread)
+    .thenApply(emp -> convertToDTO(emp));          // step 3: convert to DTO
+```
+
+| Method | Input | Output | Use when |
+|---|---|---|---|
+| `thenApply(fn)` | Takes result | Returns new result | Transform the value (like `map`) |
+| `thenAccept(fn)` | Takes result | Returns `Void` | Consume the result, no return |
+| `thenRun(fn)` | No input | Returns `Void` | Run something after, don't care about result |
+
+```java
+CompletableFuture
+    .supplyAsync(() -> fetchEmployee(1L))
+    .thenAccept(emp -> sendWelcomeEmail(emp))  // consume result
+    .thenRun(() -> System.out.println("Pipeline complete"));  // fire and forget
+```
+
+**`thenApplyAsync` vs `thenApply` — mention this distinction:**
+```java
+.thenApply(fn)       // runs the function on the SAME thread that completed the previous stage
+.thenApplyAsync(fn)  // runs the function on a DIFFERENT thread (from executor/commonPool)
+```
+In a Spring Boot web context, `thenApply` could run on the HTTP request thread — for lightweight transformations that's fine; for heavy work, use `thenApplyAsync` with your own executor.
+
+---
+
+### Pattern 3 — Combining multiple futures
+
+**`thenCompose` — sequential dependency (flatMap equivalent):**
+Use when step 2 depends on step 1's result, and step 2 is itself async:
+
+```java
+// BAD — nested futures: CompletableFuture<CompletableFuture<Department>>
+CompletableFuture<CompletableFuture<Department>> nested =
+    CompletableFuture.supplyAsync(() -> fetchEmployee(1L))
+                     .thenApply(emp -> fetchDepartmentAsync(emp.getDeptId()));
+
+// GOOD — thenCompose flattens it: CompletableFuture<Department>
+CompletableFuture<Department> flat =
+    CompletableFuture.supplyAsync(() -> fetchEmployee(1L))
+                     .thenCompose(emp -> fetchDepartmentAsync(emp.getDeptId()));
+```
+
+**`thenCombine` — two independent futures, combine their results:**
+Use when two tasks are independent and you need both results together:
+
+```java
+CompletableFuture<Employee> empFuture = CompletableFuture.supplyAsync(() -> fetchEmployee(1L));
+CompletableFuture<Department> deptFuture = CompletableFuture.supplyAsync(() -> fetchDepartment(10L));
+
+CompletableFuture<String> combined = empFuture.thenCombine(deptFuture,
+    (emp, dept) -> emp.getName() + " works in " + dept.getName()
+);
+```
+
+Both run **in parallel** — combined result is available when **both** complete.
+
+**`allOf` — wait for ALL futures to complete:**
+```java
+CompletableFuture<Employee> f1 = CompletableFuture.supplyAsync(() -> fetchEmployee(1L));
+CompletableFuture<Employee> f2 = CompletableFuture.supplyAsync(() -> fetchEmployee(2L));
+CompletableFuture<Employee> f3 = CompletableFuture.supplyAsync(() -> fetchEmployee(3L));
+
+CompletableFuture<Void> allDone = CompletableFuture.allOf(f1, f2, f3);
+allDone.thenRun(() -> {
+    // all three are done here
+    List<Employee> results = List.of(f1.join(), f2.join(), f3.join());
+});
+```
+
+**`anyOf` — complete as soon as ANY one finishes:**
+```java
+CompletableFuture<Object> firstDone = CompletableFuture.anyOf(f1, f2, f3);
+// useful for redundant calls — take whichever responds first
+```
+
+---
+
+### Pattern 4 — Exception Handling
+
+```java
+CompletableFuture<String> cf = CompletableFuture
+    .supplyAsync(() -> {
+        if (someCondition) throw new RuntimeException("DB connection failed");
+        return fetchEmployee(1L);
+    })
+    .exceptionally(ex -> {
+        // handle exception, return fallback value
+        System.out.println("Error: " + ex.getMessage());
+        return "Default Employee";
+    });
+```
+
+**`handle` — always runs, whether success or failure (like finally + transform):**
+```java
+.handle((result, ex) -> {
+    if (ex != null) {
+        log.error("Failed: ", ex);
+        return "fallback";
+    }
+    return result.toUpperCase();
+});
+```
+
+**`whenComplete` — always runs, but doesn't transform the result:**
+```java
+.whenComplete((result, ex) -> {
+    if (ex != null) log.error("Task failed", ex);
+    else log.info("Task succeeded: {}", result);
+    // result passes through unchanged to next stage
+});
+```
+
+| Method | Transforms result? | Handles exception? | Use when |
+|---|---|---|---|
+| `exceptionally` | Yes (on error only) | Yes | Provide fallback on failure |
+| `handle` | Yes (always) | Yes | Transform result OR handle error in one step |
+| `whenComplete` | No (passes through) | Yes (observes only) | Side effects — logging, metrics |
+
+---
+
+### Pattern 5 — Manual completion
+
+```java
+CompletableFuture<String> cf = new CompletableFuture<>();
+
+// somewhere else, complete it manually
+cf.complete("result");          // completes successfully
+cf.completeExceptionally(new RuntimeException("failed"));  // completes with error
+
+// useful for bridging callback-based APIs into CompletableFuture pipelines
+```
+
+---
+
+## Real-world Spring Boot example — where CompletableFuture actually matters
+
+```java
+@Service
+public class EmployeeDashboardService {
+
+    @Async("taskExecutor")
+    public CompletableFuture<Employee> getEmployee(Long id) {
+        return CompletableFuture.completedFuture(employeeRepo.findById(id).orElseThrow());
+    }
+
+    @Async("taskExecutor")
+    public CompletableFuture<Department> getDepartment(Long id) {
+        return CompletableFuture.completedFuture(departmentRepo.findById(id).orElseThrow());
+    }
+
+    // Combine two independent DB calls in parallel instead of sequential
+    public EmployeeDashboardDTO getDashboard(Long empId, Long deptId) {
+        CompletableFuture<Employee> empFuture = getEmployee(empId);
+        CompletableFuture<Department> deptFuture = getDepartment(deptId);
+
+        return empFuture.thenCombine(deptFuture,
+            (emp, dept) -> new EmployeeDashboardDTO(emp, dept)
+        ).join();  // .join() is like .get() but throws unchecked exception
+    }
+}
+```
+
+**Why this is better:** Without `CompletableFuture`, these two DB calls run sequentially (total time = call1 + call2). With `CompletableFuture.thenCombine`, they run **in parallel** (total time = max(call1, call2)) — a real measurable improvement when each call takes 100-200ms.
+
+---
+
+## `get()` vs `join()` — common follow-up
+
+| | `get()` | `join()` |
+|---|---|---|
+| Exception thrown | Checked — `ExecutionException`, `InterruptedException` (must catch) | Unchecked — `CompletionException` |
+| Use in streams | Can't use directly in lambdas (checked exception) | Can use in streams/lambdas cleanly |
+
+```java
+// get() — verbose
+try { result = cf.get(); }
+catch (ExecutionException | InterruptedException e) { ... }
+
+// join() — cleaner in pipelines
+result = cf.join();
+
+// In streams, join() is the only real option:
+List<Employee> results = futures.stream()
+    .map(CompletableFuture::join)  // get() wouldn't compile here without try-catch
+    .collect(Collectors.toList());
+```
+
+---
+
+## Quick summary mental model
+
+```
+supplyAsync()       →  start an async task that returns a value
+runAsync()          →  start an async task with no return value
+thenApply()         →  transform the result (map)
+thenCompose()       →  chain another async step (flatMap)
+thenCombine()       →  merge two independent futures
+allOf()             →  wait for all
+anyOf()             →  take first to finish
+exceptionally()     →  handle error, provide fallback
+handle()            →  transform result or error
+whenComplete()      →  observe result/error, pass through unchanged
+join() / get()      →  block and get the final result
+```
+
+---
+
+### Likely follow-ups:
+- "What's the difference between `thenApply` and `thenCompose`?" (map vs flatMap — explained above)
+- "What thread does the callback in `thenApply` run on?" (same thread that completed the stage, unless you use `thenApplyAsync`)
+- "How does `@Async` relate to `CompletableFuture` in Spring Boot?"
+- "What happens if you call `join()` on the main thread — doesn't that block?"
+
+The last one is a sharp follow-up worth preparing for — the honest answer is yes, `join()` blocks the calling thread, so in a truly reactive/non-blocking system you'd use **Project Reactor (`Mono`/`Flux`)** instead. `CompletableFuture` is async but not fully non-blocking end-to-end — that distinction matters in modern Spring WebFlux contexts. Worth a sentence if it comes up.
+
+---
