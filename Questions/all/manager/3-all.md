@@ -1,6 +1,3 @@
-Here are well-crafted, interview-ready answers for all 9 questions for an Infosys Managerial Round (Java Developer):
-
----
 
 ## 1. Why are you changing jobs?
 
@@ -76,7 +73,6 @@ Use this **structure:**
 
 ---
 
-Here are powerful, interview-ready answers for all 8 questions:
 
 ---
 
@@ -195,7 +191,7 @@ Frontend (Angular/React)
 
 ---
 
-Here are detailed, interview-ready answers for all 5 behavioral questions:
+5 behavioral questions:
 
 ---
 
@@ -278,7 +274,7 @@ Here are detailed, interview-ready answers for all 5 behavioral questions:
 ---
 
 
-Here are powerful, honest, and interview-ready answers for all 5 pressure & deadline management questions:
+5 pressure & deadline management questions:
 
 ---
 
@@ -385,7 +381,7 @@ Here are powerful, honest, and interview-ready answers for all 5 pressure & dead
 
 ---
 
-Here are honest, confident, and well-crafted answers for all 6 career & company fit questions:
+6 career & company fit questions:
 
 ---
 
