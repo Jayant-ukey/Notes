@@ -573,6 +573,7 @@ public class Main{
 
 Q: what is lambda expression?
 => Lambda expression is a way to implement functional interface.
+A lambda expression in Java is a short, anonymous block of code that accepts parameters and returns a value, serving as a concise implementation of a functional interface without the need for verbose boilerplate code.
 
 Q; Why we need lambda expression to implement functional interface if we already have 2 methods?
 Ans: In functional interface we know that only one abstract method is there. So why we need to perform any extra things? like writing method name and then inside that method provide implementation all that thing.
