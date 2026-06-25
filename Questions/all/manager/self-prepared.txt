@@ -1,0 +1,84 @@
+What was the toughest production issue you handled?
+-> SO for one of the release it went in to production, after going into production, som e of the the client whose usage where higher than some other clients, was getting an
+issue with there system, such like all the port where getting held, and getting port exhaustion issue, because of which application getting crash.
+That's was the toughest issue that I handled, intially in order to resolve it quickly we resatred the application, so that ample amount of port will be available for them,
+but after checking the code, I find out there are many places in the application where HttpConnection has made, but not got close, to I close them properly by using try with resurce
+and share this fix as a patch, after that it got resolve the issue. SO this was one of the toughest production issue I handled.
+
+
+
+Why are you changing job?
+
+I worked nearly 4 years in GlobalLogic, and I think I spend enough time in current organization, and want to explore other company work culture, and want to broader my 
+experience, whwere I can put myself in other challenges, and get to learn again how to tackle the newly comin challenges, that I didn't get the chance to face in current project.
+
+
+How do you handle tight deadlines?
+
+I divide the task which got assigned to me in the smaller task, and check whether there is dependency or any blocker early, so that I can raise it early to the other teammates
+such as devops or member which work on other service, so that they could done the work and I didn't need to wait for larger time later. 
+After that I pick the task which having higher priority and will try to complete it on time.
+
+
+4. Describe a conflict in your team.
+So one time 2 testers raise tickets for similar problem but with bit different description and it point to the same problem, so we where trating it as 2 different 
+problem tickets, and get it assigned to 2 different developers, so both the developers solve it but used different ways, and both where efficient.
+SO both where stick to there own solution they where not getting agree with each other solution, so my lead told me to review there code,
+So I reviewed it, after reviewing both the code I found both are correct, but I checked one developer using exisitng methods that where getting use, so it's reusing the 
+already availabe methods, whereas other one created completely new implementation, so I found the developer which is using exisitng functionality code is more cleaner
+and efficinet, then I give the review comment, and took the meet which includes my lead, I told both the approches correct but why I select this one by teeling Pros, and
+then the other dveloper also got agrree that's how I solve the conflict in team.
+
+
+5. 5. How do you communicate with clients?
+I usually listen to there requirements first, what they actually want, then I do the analysis before commiting anything about which I don't have proper idea, I ask for some time
+so I can analyse the things before commiting. I provide them the resular staus and updates, and if any blockers are there then I also highlight it.
+and when dealing with non-thecnical clients I mostly avoid technical jargon, and tell them in terms of impact that we are made. I also document the meeting discussion
+and send meeting summary.
+
+
+
+6. 
+What is your biggest achievement in the last project?
+-> Biggest achivement is I increase the efficiency of one of the service to it max. So there is one services in our project, on which no developer had work. It was created at the
+very beginning of the project and then no one touch it, everyone aware about it funcationlity, but no one knows how exactly it get work. But client have reported
+this service is not working properly, so the function of this service is cleaning the unused previous data from the system and database. and It was not clining the data properly.
+Client system where getting cleaned via script which mostly ran by the support team members. So I got the work to look into this issue. SO I went through the code and 
+understand the functionality properly. and resolve this issue, now the service is working properly, it was a long running issue which I resolved so that's the biggest achivement for me.
+
+
+7. Are you comfortable learning new technologies?
+Yes, I worked on POCs as well, where I need to work on new technologies which include AWS services, So I quickly learn it, for learning I use the documentation of AWS.
+and where I am not able to undestand it properly so for that I took help from our internal linkdin platform, from there I understood the things, and quickly learn it.
+and at the end I have succeesfully use the AWS services in my poc. SO yes I am good at learning new technologies.
+
+
+8.  Explain Your Current Project End-to-End
+My current project is LifeImage Local APplication in the healthcare sector. The core purpose of the application is to share the medical images such as X-Rays, MRIs
+and other medical docuemnts from one hospital to other, orr with the different group present in the same hospital. 
+The backend of the application is built on Java and Spring Boot, with PostgreSQL / MySQL / Oracle as the database. 
+The application is hosted on GCP and we use Jenkins for CI/CD and Splunk for log monitoring and alerting.
+My role as a Senior Software Engineer involves designing REST APIs, implementing new features, resolving production issues, and improving security and performance of the application. 
+Our team consists of backend developers, frontend developers, a QA team, a Scrum Master, and a Product Owner. We follow Agile Scrum with 2-week sprints and I actively participate in sprint planning, daily standups, and backlog grooming.
+One of my key contributions to this project was the port exhaustion fix, a performance improvement, a security enhancement, which directly improved stability, performance, client satisfaction.
+
+
+
+ What Was the Toughest Production Issue You Handled?
+
+"One of the toughest production issues I handled was a port exhaustion problem that surfaced after a release went live.
+After the deployment, we started noticing that clients with higher usage volumes were experiencing application crashes. On investigation, we found that the system was running into port exhaustion — all available ports were getting held up and the application had no ports left to establish new connections, causing it to crash.
+The immediate priority was to restore service availability. We restarted the application to release the held ports and bring the system back online for the affected clients.
+Once the system was stable, I did a thorough root cause analysis by going through the codebase. I identified that there were multiple places in the code where HttpConnections were being opened but never properly closed. These unclosed connections were accumulating over time, holding onto ports and eventually exhausting the available pool — which only became visible under higher client load.
+The fix I implemented was to properly close all HttpConnections using the try-with-resources pattern in Java, which ensures connections are automatically closed even if an exception occurs. I applied this fix across all the affected areas, packaged it as a patch, and deployed it.
+After the patch was released, the port exhaustion issue was completely resolved and the application has been stable ever since.
+The key lesson I took from this was the importance of resource management in Java and how issues that seem invisible in low-traffic environments can become critical failures at scale. After this, I also advocated for adding connection-related metrics to our Splunk monitoring dashboard so such issues could be caught earlier in the future."
+
+
+
+Que - What was your contribution compared to the team's contribution?
+Ans - 1. We are 5 developers, So I am the first contatcing person for all my Juniors, If I not able to give them the proper suggestions then only they reach out to RM
+	2. Handled Chekmarx meeting where I need to interact with app security team, so I am the contact person for them.
+	3. In the absence of my RM, I am the person who give the sprint review presentation.
+	4. Modules such as Janitor, and EHR are handled by me.
+	
