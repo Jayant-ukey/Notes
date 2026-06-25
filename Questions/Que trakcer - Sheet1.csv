@@ -1,0 +1,177 @@
+,,,,,,,,
+Sr.No.,Type,Que,,Concept,Last Attempt,Diff Level,,
+,,,,,,,,
+1,Stream ,Filter Even Numbers from a List,,filter method,25-10-25,Easy,,"Error Faced : error: bad operand types for binary operator '%' list.stream().filter(n -> (n%2)==0).forEach(n -> System.out.println(n)); ^ first type: Object second type: int
+
+Because I wasnt declare List as List<Integer>. So it was considering it as List<> i.e. as object only"
+2,,Find the maximum number from a list of integers.,,"stream().max(Integer::compareTo).orElseThrow()  //Integer implements Comparable, and Comparable overrides compareTo() method.",25-10-25,Medium,"Inside max we need to pass the Comparator as we are using stream.
+Otherwise instead of stream we can use intStream like -> (list.stream().mapToInt(Integer::intValue).max().orElseThrow()",
+3,,Sort a list of integers in descending order.,,sorted(Comparator.reverseOrder()),25-10-25,Medium,,
+,,,,,,,,
+4,Comparable,Write a Java class that implements Comparable for a class called Book based on the book's title.,,"Use Comparable //Note: If you try to print list while sorting it will give void, so first sort then print.",26-10-25,Medium,https://medium.com/@priyasrivastava18official/java-interview-questions-comparator-and-comparable-related-questions-98816e91a88f,"Trick to remember method -> As Comparator having to in it's wording so its extends compare not CompareTo, and Comparable don't have to so it overrider compareTo."
+5,Comparator,Create a Comparator for the Book class to sort by the author's name.,,"Solve it using 1. Comparator, 2. Using Lambda
+ Using Stream : -> bookList.stream()
+                .sorted((b1,b2) -> b1.author.compareTo(b2.author))
+                .forEach(k -> System.out.println(k));
+
+3. Using static and anyonomus inner class 
+4. comparing method (check que 8)",26-10-25,Medium,"Know the diff, and remeber to use comparing not compare.
+// 1. Using Comparator:  bookList.sort(Comparator.comparing((b -> b.author)));
+// 2. Using Method reference: bookList.sort(Comparator.comparing(Book::getAuthor));
+//3. Using Lmabda:   bookList.sort((b1, b2)-> b1.title.compareTo(b2.title));
+
+Imp Mehtods:
+Comparator.comparing,
+Comparator.thenComparing","compare is the utiltiy method present in the wrapper class, whereas wrapper class implements comparable interface."
+6,,How would you sort a list of objects that are already sorted by one attribute but you want to sort them by another attribute,,"Use thenComparing method avavilable for Comparator
+list.sort(Comparator.comparing((Book b) -> b.id).thenComparing((Book b) -> b.name));",26-10-25,Medium,"Here what it means, if author name is same, in that case the second comparison would be base on id, likewise.
+comparing() is a static helper method introduced in Java 8.
+Comparator<Book> idComp = Comparator.comparing(b -> b.getId());",If firstsort is equal in that case only it jump to second sort.
+7,,"In a system that allows for dynamic sorting criteria (e.g., user can choose sort by age or name), how would you design the sorting mechanism?",,Create a separat method which takes list and Comparator as an input parameter,26-10-25,Medium,,
+8,,How to handle null values when implementing compare methods.,,"Use nullsFirst() or nullsLast()
+static Comparator<Employee> NameSort = Comparator.comparing(e -> e.name, Comparator.nullsLast(String::compareTo));",26-10-25,Medium,"For String -> list.sort(Comparator.comparing(b -> b.name, Comparator.nullsLast(Comparator.naturalOrder())));
+
+For int  -> list.sort(Comparator.nullsFirst(Comparator.comparing(b -> b.age)));","If any other method we want to implement in comparator, then we need to pass it as parameter -> Comparator.comparing(b -> b.auth, Comparator.nullsFirst(String::compareTo));"
+9,, Write the code how the streams will be used to sort the person object based on name and age ?,,,26-10-25,Easy,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+10,HashMap, What are the different ways of creating a HashMap in Java?,,"1. Normal Way, 2. Default load factor and diff initial capacity
+3. Diff load factor and capacity, 4. Copy another Map",27-10-25,Easy,https://javaconceptoftheday.com/java-hashmap-programs-and-examples/,
+11,,What are the different methods to insert key-value pairs into a HashMap?,,"put, putIfAbsent(), putAll",27-10-25,Easy,Understand how to use forEach method,
+12,,How do you check whether given key or value exist in a HashMap?,,"containsKey(), containsValue()",27-10-25,Easy,,
+,,,,,,,,
+13,, How do you extract a list of only keys or a list of only values or a list of all entries from a given HashMap?,,"entrySet(), values() , keySet()",28-10-25,Medium,Require handson in order to understand fro where package came,
+14,, How do you extract a value associated with a given key from a HashMap?,,,28-10-25,Easy,,
+15,,How do you find out the number of key-value mappings present in a HashMap?,,,28-10-25,Easy,,
+16,,How do you update an existing value of a key with a new value in a HashMap?,,"replace(key, value) , replace(key, oldValue, newValue)",28-10-25,Easy,,
+,,,,,,,,
+17,,"Given a studentNameMarksMap having name of students as keys and their marks in mathematics as values, give required grace marks and pass those students who have scored above 30. Passing marks is 35?",,"        for(String val : studentNameMarksMap.keySet()){
+            if(studentNameMarksMap.get(val)>30 && studentNameMarksMap.get(val) < 35){
+                studentNameMarksMap.replace(val, 35);
+            }
+        }
+-------------------------------------------------------
+Using replaceAll method, which have the return type:
+studentNameMarksMap.replaceAll((key, value) -> {
+                                            if (value < 35 & value >= 30) 
+                                            { 
+                                                value = value + (35 - value); 
+                                                return value;
+                                            } 
+                                            return value;
+                                            });",28-10-25,Medium,"We can use Lambda expression in forEach and replaceAll method, the reason as below:
+1. void forEach(BiConsumer<? super K, ? super V> action)
+    @FunctionalInterface
+      public interface BiConsumer<T, U> {
+         void accept(T t, U u);
+      }
+    Exactly one abstract method → functional interface
+    Therefore lambda => (key, value) -> System.out.println(key + "" : "" + value)
+
+2. void replaceAll(BiFunction<? super K, ? super V, ? extends V> function)
+     @FunctionalInterface
+       public interface BiFunction<T, U, R> {
+           R apply(T t, U u);
+       }
+ -> One abstract method → functional interface
+",
+18,, How do you remove all the entries from a HashMap at a time?,,clear(),28-10-25,Easy,,
+19,,"Given medicinesExpDateMap having name of medicines as keys and their expiry date as values, how do you remove all the medicines from medicinesExpDateMap if they have gone past their expiry date?",,"LocalDate, entrySet, removeIf",28-10-25,Medium,"In order to avoid concurrentHashMap Exception, you can use iterator, and directly perform operation on iterator.
+Iterator<String> it = map.keySet().iterator();
+
+       while(it.hasNext()){
+        String str = it.next();
+        if(map.get(str).isBefore(LocalDate.now())){
+            it.remove();
+        }
+       }  ",
+20,,"Find the frequency of each element of an array using HashMap?
+OR
+Find the frequency of each character of a string using HashMap?",,"        char[] arr = str.toCharArray();
+        HashMap<Character, Integer> map = new HashMap<>();
+        for(char c : arr){
+            if (c != ' ')
+                map.put(c, map.getOrDefault(c,0)+1);
+        }
+--------------------------------------------------------------------------------------------",29-10-25,Medium(You can skip this if you are solving next one),,
+21,,How do you find the most frequent element or second most frequent element or top 3 most frequent elements in an array using HashMap?,,"comparingByValue() is commonly used with Java Streams, particularly with the sorted() intermediate operation, to sort Map.Entry objects.
+It provides a concise and readable way to sort a Map by its values.",29-10-25,Hard,"Que - 12
+https://javaconceptoftheday.com/java-hashmap-programs-and-examples/",
+22,,How do you remove a key-value pair from the HashMap?,,"Cover both the cases - 1. Contain only key.
+2. Contain key as well as value.",29-10-25,Easy,,
+23,,How do you sort a given HashMap based on keys or based on values,,"1. Map.Entry.comparingByKey(Comparator.reverseOrder())
+2. Map.Entry.comparingByValue(Comparator.reverseOrder())",29-10-25,Easy,,
+24,,"Given an array of strings, group anagrams together in a HashMap",,,29-10-25,Hard,Que: 15,
+25,,"Given a sentence, create wordCountMap having words of that sentence as keys and their number of occurrences as value? And also find out the most frequent word in the given sentence?",,"Remember how to split sentence, and whether to use forward slash or backward.split(""\\s+"")",02-11-25,Medium,"When you caught in Optional, then in that case you need to use entry.get().getKey(), if you not using Optional then directly use entry.getKey().",
+26,,"Given two subjectStudentMaps having subject names as keys and number of students studying that subject as values, merge them into single subjectStudentMap. If the keys are same, sum the values?",,"1. Solve by iterating over each element of map1, if it present in map2, then add marks, else simply add that subject.
+2. Using merge method which is used in forEach, prob no 17",02-11-25,Medium,,
+,,,,,,,,
+27,Stream,"Count strings starting with a specific prefix, e.g., “A”.",,,17-11-25,Easy,,
+28,, Find the first non-repeated character in a string.,,char ans = str.chars().mapToObj(ch -> (char) ch).filter(ch -> str.indexOf(ch)==str.lastIndexOf(ch)).findFirst().orElseThrow();,17-11-25,Hard,"When to use optional, and how to create character stream understand it.
+Some Stream methods naturally use Optional:
+findFirst()
+findAny()
+max()
+min()
+reduce() (without identity)",
+29,,Convert all strings in a list to uppercase.,,,17-11-25,Easy,,
+30,,Calculate the sum of all numbers in a list.,,"int sum = numbers.stream()
+    .mapToInt(Integer::intValue)
+    .sum();",18-11-25,Medium,"How to convert List<Integer> into int(primitive type) using intValue method, understand about it.",
+31,, Check if any string in a list contains “API”.,,"filter(str -> str.contains(""API""))",18-11-25,Medium,String have contains method,
+32,,Identify duplicate elements in a list.,,Use HashSet -> e.g. numbers.stream().filter(no -> !set.add(no)).,18-11-25,Medium,,
+33,,Group Strings by Length,,"Map<Integer, List<String>> map = words.stream().collect(Collectors.groupingBy(String::length));",18-11-25,Medium,"Remeber method groupingBy, and what parameter it accepts",
+34,,"Given a list of lists, flatten it into a single list.",,listOfLists.stream().flatMap(List::stream).collect(Collectors.toList());,18-11-25,Medium,Inside flatMap need to use stream only.,
+35,,Concatenate all strings in a list into a single string.,,,18-11-25,Easy,,
+36,,Find the longest string in a list.,,Use reduce and ternary operator,18-11-25,Hard,,
+37,,Count the frequency of each character in a string.,,"Ways of using groupingBy 1. groupingBy(Classifier) 2. groupingBy(Classifier, Collector downstream)
+Map<Character, Long> ans = str.chars().mapToObj(ch -> (char)ch).collect(Collectors.groupingBy(ch -> ch, Collectors.counting()));",19-11-25,Medium,"1. In groupingBy we can pass 2 parameters. -> groupingBy(Classifier, Collector downstream)
+2. Collectors having counting method, and it expect Long.",
+38,,Use parallel streams to compute the sum of numbers.,,,19-11-25,Easy,,
+39,,Create a custom collector to join strings with a delimiter.,,"Here they specified to use Collector, otherwise we can take help of reduce terminal function.
+String joined = words.stream().collect(Collectors.joining("", ""));",19-11-25,Hard,1. How to use joining method of Collector.,
+40,,Remove null values from a list.,, filter(Objects::nonNull) or filter(str -> str!=null),19-11-25,Medium,Try to solve this problem using nonNull method present in the Objects.,
+41,,Calculate the average of a list of integers.,,"double average = numbers.stream().mapToInt(Integer::intValue)
+    .average()
+    .orElse(0.0);",19-11-25,Easy,,
+42,,Convert a list of strings into a map with the string as the key and its length as the value.,,"Map<String, Integer> wordLengthMap = words.stream()
+    .collect(Collectors.toMap(word -> word, String::length));",19-11-25,Medium,Collectors.toMap function which accepts Keymapper and valueMappper.,
+43,,Partition a list of numbers into even and odd.,,"Map<Boolean, List<Integer>> partitioned = numbers.stream()
+    .collect(Collectors.partitioningBy(n -> n % 2 == 0));",19-11-25,Hard,Collectors.partioningBy method,
+44,, Find the 3rd largest element in a list.,,"int ans = numbers.stream().sorted(Comparator.reverseOrder())
+                         .distinct().skip(2).findFirst().orElse(0);",19-11-25,Medium,"Here we are dealing with Wrapper class only, hence we not converted it to intStream().
+remeber about skip method, not limit.
+IMP :- When you want to use stream method use wrapper class only, and if you want to use functions like sum(), average() in that case convert it into intStream().",
+45,,Find all strings that are palindromes in a list.,,List<String> ans = words.stream().filter(str -> str.equals(new StringBuilder(str).reverse().toString())).collect(Collectors.toList());,19-11-25,Medium,"reverse method is present for StringBuilder, and to covert StringBuilder into String we use toString() method.",
+46,,Reverse each string in a list.,,,19-11-25,Easy,Can skip if done prev que,
+47,,"Given a map, filter entries with values greater than 10 and collect keys into a list.",,"List<String> ans = map.keySet().stream().filter(s -> map.get(s) > 10).collect(Collectors.toList());
+                                                     OR
+map.entrySet().stream()
+    .filter(entry -> entry.getValue() > 10)
+    .map(Map.Entry::getKey)
+    .collect(Collectors.toList());",19-11-25,Medium,Main logic is of how we can get keys.,
+48,,Remove duplicates from a list,,,19-11-25,Easy,,
+49,,Find the most frequent character in a string.,,"char ans = input.chars().mapToObj(ch -> (char)ch)
+                       .collect(Collectors.groupingBy(c -> c, Collectors.counting()))
+                       .entrySet().stream().max(Map.Entry.comparingByValue())
+                       .map(Map.Entry::getKey)
+                       .orElseThrow();",19-11-25,Hard,,
+50,,Find common elements between two lists.,,"List<Integer> common = list1.stream()
+    .filter(list2::contains)
+    .collect(Collectors.toList());",19-11-25,Easy,Collection having contains method,
+51,,Calculate the sum of squares of all even numbers in a list.,,"int sumOfSquares = numbers.stream()
+    .filter(n -> n % 2 == 0)
+    .mapToInt(n -> n * n)
+    .sum();",19-11-25,Medium,"If you haven't understand about intStream and Wrapper class stream, then this is where you will understand it clearly.",
+52,, Partition strings into palindromes and non-palindromes.,,"Map<Boolean, List<String>> partitioned = words.stream()
+    .collect(Collectors.partitioningBy(word -> word.equals(new StringBuilder(word).reverse().toString())));",19-11-25,Medium,"Don't forget method name is partioningBy , not partitionBy.",
+53,,Skip the first 3 elements and limit the result to the next 2.,,,19-11-25,Easy,Understhand when to use skip and when limit.,
+54,,Create a array of words from a sentence ,,"String[] word = sentence.split("" "");",19-11-25,Medium,,
+55,,Find the longest word in a sentence using Streams.,,"String longestWord = Arrays.stream(sentence.split("" ""))
+    .max(Comparator.comparingInt(String::length))
+    .orElse(null);",19-11-25,Hard,"Understand:
+1. How to create an array of words from sentence..
+2. Comparator.comapringInt() method.
+3. How to create stream using Array. ",
+56,,Concatinate two list into one list sing stream,,,,Medium,,
