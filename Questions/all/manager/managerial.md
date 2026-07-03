@@ -169,3 +169,51 @@ Your points are all **valid and strong**, but they are written in a rough bullet
 > Overall, I see my role as a combination of **technical ownership, team mentorship, and stakeholder communication** — which I believe is what differentiates a senior contributor from the rest of the team.
 
 ---
+
+## 1. What is a REST API?
+
+**Concise answer to give:**
+
+"REST (Representational State Transfer) is an architectural style for designing networked applications. A REST API exposes resources (like Users, Orders, Products) via URIs, and clients interact with them using standard HTTP methods — GET (read), POST (create), PUT/PATCH (update), and DELETE (remove).
+
+Key principles of REST are:
+- **Statelessness** — each request contains all the info needed; the server doesn't store client session state.
+- **Client-Server separation** — front-end and back-end evolve independently.
+- **Uniform interface** — consistent resource naming and standard HTTP verbs/status codes.
+- **Cacheable** — responses can define whether they're cacheable to improve performance.
+- **Resource-based** — everything is treated as a resource, identified by a URL, and represented typically as JSON."
+
+---
+
+## 2. What is your role in Agile methodology?
+
+This is really asking: *"How do you function as an individual contributor within Scrum/Agile ceremonies?"* Don't just define Agile — describe your actual involvement. Structure it like this:
+
+- **Daily Standups:** You share what you did yesterday, what you're doing today, and any blockers.
+- **Sprint Planning:** You estimate story points/effort for tickets, break down tasks, and commit to sprint scope with the team.
+- **Development:** You pick up user stories, write code, unit tests, raise PRs for peer review.
+- **Sprint Review/Demo:** You demo completed features to stakeholders/Product Owner.
+- **Retrospective:** You give feedback on what went well/what didn't, and suggest process improvements.
+- **Backlog grooming/refinement:** You help clarify requirements, flag technical risks or dependencies early.
+
+**Sample line:** *"As a developer, I actively participate in all Scrum ceremonies — I estimate and pick up stories in sprint planning, give daily status updates, ensure code quality through reviews and unit testing, and contribute ideas during retrospectives to improve team velocity and processes."*
+
+If you've ever informally mentored juniors, coordinated with QA, or interacted directly with the Product Owner to clarify requirements — mention it. That signals leadership potential, which matters a lot in a managerial round.
+
+---
+
+## 3. How was the 2-week sprint duration decided?
+
+This one's a bit of a trick question — as a developer, you typically **don't decide** sprint length alone. It's usually decided collaboratively (Scrum Master + Product Owner + team), based on factors like:
+
+- **Team size and velocity** — smaller/newer teams often prefer shorter sprints for tighter feedback loops.
+- **Nature of the project** — fast-changing requirements favor shorter sprints (1–2 weeks); stable, well-defined work can support 3–4 week sprints.
+- **Release cadence** — if the business needs frequent releases, shorter sprints help.
+- **Stakeholder feedback frequency** — 2 weeks is a common sweet spot: long enough to complete meaningful work, short enough to get regular feedback and course-correct.
+- **Team's estimation maturity** — teams new to Agile often start with 2 weeks as a balanced default before adjusting up/down based on retrospective learnings.
+
+**Honest, strong answer:** *"Typically the sprint duration is decided by the Scrum Master and Product Owner, often in consultation with the team, based on project complexity and how frequently we need stakeholder feedback. In my project, we settled on 2 weeks because it struck a good balance — enough time to deliver a meaningful chunk of functionality, while still being short enough to adapt quickly to changing priorities. It wasn't a single developer's call; it came out of team discussion and was fine-tuned over a few retrospectives."*
+
+This shows maturity — you understand it's a **team decision**, not something you unilaterally decide, which is exactly the kind of self-awareness managers look for.
+
+---
