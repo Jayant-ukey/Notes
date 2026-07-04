@@ -266,9 +266,96 @@ MANAGERIAL / INTERVIEW CLOSING
 6. Why Are You Looking for a Change?
 Example: "I have gained valuable experience in my current role. At this stage, I am looking for broader responsibilities, exposure to larger programs, and opportunities to contribute at a higher level while continuing to grow professionally."
 
+=============================================
+
+Real-World Debugging & Production Scenarios
+
+Your Spring Boot application suddenly becomes slow after deployment. Where do you start debugging?
+A @Transactional method executes successfully, but data is only partially saved / fails to roll back. Why?
+API response time increases, but CPU and memory look completely normal. What could be wrong?
+Database connections start getting exhausted during peak traffic. What would you check?
+A scheduled job runs twice / executes multiple times after scaling, even though configured only once.
+Your application works perfectly locally but fails in production.
+Kafka consumers are healthy, but message lag keeps increasing.
+Retry logic starts creating duplicate transactions during failures.
+One slow database query starts affecting the entire application / multiple services.
+Cache improves performance initially, but users later receive stale data.
+APIs randomly return 500 errors (or requests time out) even though logs/infra look healthy.
+JVM memory usage slowly increases every day. How would you investigate it?
+Thread pools become exhausted while server resources (CPU) still look healthy/low.
+Health checks pass, but users continue facing failures.
+One external service becomes slow and all APIs are impacted — how do you prevent cascading failure?
+Autoscaling creates more instances/pods, but response time still keeps increasing.
+A deployment suddenly increases 4xx errors instead of 5xx, or increases latency without a traffic increase.
+Logs exist everywhere, but tracing one request across services is still difficult.
+Message ordering breaks between asynchronous services.
+The application works fine for hours and then suddenly becomes unstable.
+APIs work in staging but fail behind the production gateway.
+Circuit breakers are configured, but cascading failures still happen.
+The same Kafka event gets processed twice — how do you avoid duplicate message processing?
+When would you choose a monolith instead of microservices?
+
+Design / Core Concepts (deeper)
+25. How do you design a class so that it is easy to unit test?
+26. Explain Dependency Injection in depth, including its purpose and real-world use cases.
+27. Explain the relationship between equals() and hashCode(), and how they work with HashMap/Hashtable.
+28. Does a Java object get promoted to different heap generations? Explain the JVM heap memory lifecycle.
+HashMap Internals
+29. Explain HashMap internal working.
+30. How does hashing work internally?
+31. How are collisions handled?
+32. What happens during HashMap resizing (rehashing)?
+33. What is the default initial capacity and load factor?
+34. Mutable keys in HashMap — what's the issue?
+Exceptions & Collections
+35. What are Custom Exceptions in Java?
+36. What happens if a collection is modified while iterating?
+37. How does ConcurrentModificationException occur?
+38. Write a coding example demonstrating Fail-Fast vs Fail-Safe behavior.
+39. Predict/explain the output of a given code snippet (Collections/Exception based) — identify the issue.
+40. Checked exceptions (as a distinct topic).
+41. Exception handling using @ControllerAdvice.
+SOLID / ACID
+42. Which SOLID principles have you implemented in your project?
+43. Explain ACID properties with a banking transaction example.
+44. How does rollback work (DB-level)?
+Circuit Breaker / Resilience
+45. What are the different states of a Circuit Breaker?
+CI/CD & Deployment
+46. Explain your CI/CD pipeline.
+47. What are the stages in your deployment pipeline?
+48. Which deployment strategy do you follow in your project?
+49. Explain Blue-Green Deployment.
+Kafka
+50. Why are offsets important?
+51. What happens if a consumer crashes before committing the offset?
+Java 17 / Modern Java
+52. Java 17 features.
+53. var keyword and its limitations.
+54. Effectively final variables.
+55. Record class and data handling.
+56. Optional class.
+57. Private methods in interfaces.
+58. Types of interface methods.
+59. Default method conflict resolution.
+60. synchronized vs ReentrantLock.
+61. volatile keyword.
+62. volatile vs Atomic classes.
+63. CompletableFuture.
+64. Stream vs Parallel Stream.
+65. Stream vs flatMap.
+66. Reverse a string without using predefined methods.
+Spring Security / REST (deeper)
+67. Spring Security fundamentals.
+68. Spring Security implementation.
+69. Security in distributed microservices.
+70. What is the @Transactional annotation used for?
+71. What are the different HTTP status codes, and when do you use them? (general, beyond 201/204)
+72. What is a REST API, and where have you implemented REST calls in your project?
+73. What kind of security have you implemented for your REST APIs?
 
 
-
+=================================================
 Good Questions to Ask the Manager At the end:
 
 1. What are the key expectations for this role in the first few months?
