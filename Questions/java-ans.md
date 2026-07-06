@@ -22,7 +22,7 @@ OOP (Object-Oriented Programming) matters because it helps manage complexity in 
 | Variables | Can have instance variables (any access modifier) | Variables are implicitly `public static final` (constants) |
 | Constructors | Can have constructors | Cannot have constructors |
 | Inheritance | A class can extend only **one** abstract class | A class can implement **multiple** interfaces |
-| Access Modifiers | Methods can be public, protected, private | Methods are implicitly public (until Java 9, which added private methods for internal use) |
+| Access Modifiers | Methods can be public, protected, private | Methods are implicitly public (until Java 9, which added private methods for internal use - https://beginnersbook.com/2018/05/java-9-private-methods-in-interfaces-with-examples/) |
 | When to use | When classes share a common base with some shared implementation | When unrelated classes need to guarantee certain behavior (a "contract") |
 
 **Key conceptual answer:** Use an **abstract class** when there's an "is-a" relationship with shared state/behavior. Use an **interface** when you want to define a capability/contract that unrelated classes can implement (like `Comparable` or `Runnable`).
