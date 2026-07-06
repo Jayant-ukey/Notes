@@ -89,37 +89,77 @@ The abstract class isn't required to implement all the abstract/interface method
 
 ## 6. If a static block throws an exception, what happens to the class loading process?
 
-This is a sharper question — good that you're prepping it.
+If a **static initialization block throws an exception**, the **class initialization fails**. As a result:
 
-When a **static initializer block** throws an exception:
+1. The class is **not initialized successfully**.
+2. The JVM throws an **`ExceptionInInitializerError`** if the exception was unchecked (or wraps the cause).
+3. The class cannot be used normally after the failed initialization.
+4. Any subsequent attempt to use the class results in a **`NoClassDefFoundError`** because the JVM remembers that initialization previously failed.
 
-1. The JVM wraps it in an **`ExceptionInInitializerError`** (which extends `Error`, not `Exception`).
-2. **Class initialization fails permanently.** The class is marked as "erroneous" and will **never be successfully initialized** in that JVM instance.
-3. Any subsequent attempt to use that class — even in a `try-catch` — will throw a **`NoClassDefFoundError`**, not the original exception.
+### Example
 
 ```java
-class Demo {
-    static int x = 10 / 0; // ArithmeticException in static init
+class Test {
+    static {
+        System.out.println("Static block executing...");
+        int x = 10 / 0; // ArithmeticException
+    }
+
+    static void display() {
+        System.out.println("Hello");
+    }
 }
 
-public class Test {
+public class Main {
+    public static void main(String[] args) {
+        Test.display();
+    }
+}
+```
+
+### Output
+
+```
+Static block executing...
+Exception in thread "main" java.lang.ExceptionInInitializerError
+Caused by: java.lang.ArithmeticException: / by zero
+```
+
+### If you try to use the class again
+
+```java
+public class Main {
     public static void main(String[] args) {
         try {
-            Demo d = new Demo();
+            Test.display();
         } catch (Throwable t) {
-            System.out.println(t); // java.lang.ExceptionInInitializerError
+            System.out.println(t);
         }
-        
+
         try {
-            Demo d2 = new Demo(); // Second attempt
+            Test.display();
         } catch (Throwable t) {
-            System.out.println(t); // java.lang.NoClassDefFoundError
+            System.out.println(t);
         }
     }
 }
 ```
 
-**Why this matters:** Static blocks run once, when the class is loaded — there's no "retry." This is why it's risky to put anything that can fail (I/O, parsing, network calls) inside a static block without careful exception handling *within* the block itself.
+Output:
+
+```
+Static block executing...
+java.lang.ExceptionInInitializerError
+java.lang.NoClassDefFoundError: Could not initialize class Test
+```
+
+### Why does this happen?
+
+The JVM initializes a class **only once**. If initialization fails, the JVM marks the class as having failed initialization. It does not retry initialization in the same class loader, and later uses of that class fail with `NoClassDefFoundError`.
+
+### Interview answer
+
+> If a static block throws an exception during class initialization, the JVM aborts the initialization and throws an `ExceptionInInitializerError`. The class is not initialized successfully. Any subsequent attempt to use that class with the same class loader results in a `NoClassDefFoundError` because the JVM remembers that the class initialization previously failed.
 
 ---
 
