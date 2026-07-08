@@ -1205,7 +1205,529 @@ This is a small but commonly-missed distinction — a good one to get crisp.
 
 ---
 
-Good Spring questions — these come up in almost every Java Developer interview. Let me answer these in a clean, 5-year experienced tone.
+These are common questions in Spring Boot interviews. For a **5-year experienced Java/Spring Boot developer**, interviewers expect both conceptual understanding and practical experience.
+
+---
+
+# 6. How is a JWT token created? Which method is used?
+
+### Answer
+
+JWT (**JSON Web Token**) is a compact, secure token used for **authentication and authorization** in stateless applications.
+
+A JWT consists of three parts:
+
+```
+Header.Payload.Signature
+```
+
+Example:
+
+```
+eyJhbGciOiJIUzI1NiJ9.
+eyJzdWIiOiJqb2huIiwiZXhwIjoxNzE4NTQ0MDB9.
+KxR6X...
+```
+
+### JWT Creation Flow
+
+1. User logs in with username and password.
+2. Spring Security authenticates the user.
+3. If authentication is successful, the server creates a JWT.
+4. The JWT is returned to the client.
+5. The client sends the token in every request:
+
+   ```
+   Authorization: Bearer <JWT Token>
+   ```
+6. The server validates the token before processing the request.
+
+---
+
+### Which method is used?
+
+If using the **JJWT (io.jsonwebtoken)** library:
+
+```java
+String token = Jwts.builder()
+        .setSubject(username)
+        .claim("role", "ADMIN")
+        .setIssuedAt(new Date())
+        .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+        .signWith(SignatureAlgorithm.HS256, secretKey)
+        .compact();
+```
+
+The important methods are:
+
+* `Jwts.builder()`
+* `setSubject()`
+* `claim()`
+* `setExpiration()`
+* `signWith()`
+* `compact()` → Generates the JWT string.
+
+For newer versions of JJWT:
+
+```java
+String token = Jwts.builder()
+        .subject(username)
+        .signWith(secretKey)
+        .compact();
+```
+
+---
+
+### How is JWT validated?
+
+```java
+Claims claims = Jwts.parserBuilder()
+        .setSigningKey(secretKey)
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
+```
+
+If the signature is invalid or the token is expired, validation fails.
+
+---
+
+### Interview Follow-up Questions
+
+#### Why is JWT stateless?
+
+Because the server **does not store session information**. All required user information is contained in the token itself.
+
+---
+
+#### Can JWT be modified?
+
+No.
+
+If someone modifies the payload, the **signature no longer matches**, and token validation fails.
+
+---
+
+#### What information should not be stored in JWT?
+
+Never store:
+
+* Passwords
+* Credit card information
+* Sensitive personal data
+
+JWT payload is **Base64 encoded**, not encrypted.
+
+---
+
+#### Difference between Authentication and Authorization
+
+* **Authentication:** Verifies who the user is.
+* **Authorization:** Determines what the user is allowed to access.
+
+JWT is used for both by identifying the user and carrying roles/permissions.
+
+---
+
+# 7. Explain `@Transactional`
+
+### Answer
+
+`@Transactional` is a Spring annotation used to manage **database transactions** automatically.
+
+It ensures that a group of database operations either:
+
+* **All succeed (COMMIT)**, or
+* **All fail (ROLLBACK)**.
+
+This helps maintain data consistency.
+
+---
+
+### Example
+
+```java
+@Service
+public class PaymentService {
+
+    @Transactional
+    public void transferMoney() {
+
+        accountRepository.withdraw();
+
+        accountRepository.deposit();
+    }
+}
+```
+
+If `deposit()` throws an exception:
+
+* `withdraw()` is rolled back.
+* No partial update remains in the database.
+
+---
+
+### Transaction Lifecycle
+
+```
+Transaction Starts
+
+↓
+
+Execute SQL Queries
+
+↓
+
+Success?
+   |
+Yes → COMMIT
+No  → ROLLBACK
+```
+
+---
+
+## Where can `@Transactional` be used?
+
+* Method level (most common)
+* Class level (applies to all public methods)
+
+Example:
+
+```java
+@Transactional
+@Service
+public class EmployeeService {
+}
+```
+
+---
+
+## Default rollback behavior
+
+By default, Spring rolls back on:
+
+* `RuntimeException`
+* `Error`
+
+It does **not** roll back on checked exceptions unless configured.
+
+Example:
+
+```java
+@Transactional(rollbackFor = Exception.class)
+```
+
+Now it rolls back for checked exceptions as well.
+
+---
+
+## Important Attributes
+
+### 1. propagation
+
+Controls how transactions behave when one transactional method calls another.
+
+Example:
+
+```java
+@Transactional(propagation = Propagation.REQUIRED)
+```
+
+Common propagation types:
+
+* **REQUIRED** (Default): Joins the existing transaction or creates a new one.
+* **REQUIRES_NEW**: Suspends the current transaction and starts a new one.
+* **SUPPORTS**: Uses an existing transaction if present; otherwise runs without one.
+* **MANDATORY**: Requires an existing transaction; otherwise throws an exception.
+* **NOT_SUPPORTED**: Suspends any existing transaction and executes without one.
+* **NEVER**: Fails if a transaction already exists.
+* **NESTED**: Creates a nested transaction (savepoint support required).
+
+---
+
+### 2. isolation
+
+Controls how concurrent transactions interact.
+
+```java
+@Transactional(isolation = Isolation.READ_COMMITTED)
+```
+
+Common isolation levels:
+
+* `READ_UNCOMMITTED`
+* `READ_COMMITTED`
+* `REPEATABLE_READ`
+* `SERIALIZABLE`
+
+Higher isolation reduces concurrency issues but can impact performance.
+
+---
+
+### 3. readOnly
+
+```java
+@Transactional(readOnly = true)
+```
+
+Optimizes transactions that only read data.
+
+---
+
+### 4. timeout
+
+```java
+@Transactional(timeout = 10)
+```
+
+Rolls back the transaction if it exceeds 10 seconds.
+
+---
+
+# Frequently Asked Interview Questions on `@Transactional`
+
+### 1. Why does `@Transactional` not work on private methods?
+
+Spring uses **AOP proxies**. Proxy-based interception only works for methods invoked through the proxy, typically **public** methods. Private methods are not intercepted, so transaction management is not applied.
+
+---
+
+### 2. Why does `@Transactional` not work during self-invocation?
+
+```java
+public void methodA() {
+    methodB();   // Direct call
+}
+
+@Transactional
+public void methodB() {
+}
+```
+
+`methodB()` is called directly within the same class, bypassing the Spring proxy, so the transaction is not applied.
+
+---
+
+### 3. Can we use `@Transactional` on REST Controllers?
+
+It is possible, but it is **not recommended**. Transactions are generally handled in the **service layer**, where business logic resides.
+
+---
+
+### 4. What happens if an exception occurs?
+
+* `RuntimeException` → Rollback by default.
+* Checked exception → No rollback by default unless you specify `rollbackFor`.
+
+---
+
+### 5. Difference between `REQUIRED` and `REQUIRES_NEW`
+
+* **REQUIRED:** Joins the current transaction if one exists; otherwise starts a new one.
+* **REQUIRES_NEW:** Always starts a completely new transaction and suspends any existing transaction.
+
+Example:
+
+* Saving an order and writing an audit log.
+* You might use `REQUIRES_NEW` for the audit log so it is committed even if the main order transaction is rolled back.
+
+---
+This is one of the most frequently asked **Spring Boot + Hibernate/JPA** interview questions. For a **5-year experienced Java developer**, interviewers expect you to explain not only the definitions but also performance implications and when to use each.
+
+---
+
+# 8. Explain Lazy Loading vs Eager Loading in JPA
+
+### Answer
+
+In JPA, **fetching** defines **when related entities are loaded from the database**.
+
+There are two fetch strategies:
+
+* **Lazy Loading (`FetchType.LAZY`)**
+* **Eager Loading (`FetchType.EAGER`)**
+
+---
+
+## 1. Lazy Loading (`FetchType.LAZY`)
+
+In Lazy Loading, the related entity is **not loaded immediately**. It is fetched **only when it is accessed for the first time**.
+
+### Example
+
+```java
+@Entity
+public class Department {
+
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    private List<Employee> employees;
+}
+```
+
+If you execute:
+
+```java
+Department dept = departmentRepository.findById(1L).get();
+```
+
+Hibernate executes:
+
+```sql
+SELECT * FROM department WHERE id = 1;
+```
+
+No query is executed for `employees`.
+
+Only when you call:
+
+```java
+dept.getEmployees();
+```
+
+Hibernate executes another query:
+
+```sql
+SELECT * FROM employee WHERE department_id = 1;
+```
+
+### Advantages
+
+* Better performance when related data is not always needed.
+* Reduces unnecessary database queries and memory usage.
+* Suitable for large collections.
+
+---
+
+## 2. Eager Loading (`FetchType.EAGER`)
+
+In Eager Loading, related entities are **loaded immediately** along with the parent entity.
+
+### Example
+
+```java
+@Entity
+public class Employee {
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Department department;
+}
+```
+
+When you execute:
+
+```java
+Employee emp = employeeRepository.findById(1L).get();
+```
+
+Hibernate loads both the employee and its department immediately.
+
+---
+
+### Advantages
+
+* Related data is available immediately.
+* Useful when the associated data is always required.
+
+---
+
+## Comparison
+
+| Feature          | Lazy Loading                              | Eager Loading                                    |
+| ---------------- | ----------------------------------------- | ------------------------------------------------ |
+| Data loading     | On demand                                 | Immediately                                      |
+| Performance      | Better when related data is rarely used   | Can be slower if unnecessary data is fetched     |
+| Memory usage     | Lower                                     | Higher                                           |
+| Database queries | Multiple queries may be executed          | Often uses joins or additional immediate queries |
+| Best for         | Large collections, optional relationships | Frequently accessed relationships                |
+
+---
+
+## Default Fetch Types in JPA
+
+| Relationship  | Default Fetch Type |
+| ------------- | ------------------ |
+| `@ManyToOne`  | `EAGER`            |
+| `@OneToOne`   | `EAGER`            |
+| `@OneToMany`  | `LAZY`             |
+| `@ManyToMany` | `LAZY`             |
+
+---
+
+## What is `LazyInitializationException`?
+
+A common interview question.
+
+It occurs when a lazy-loaded entity is accessed **after the Hibernate session has been closed**.
+
+Example:
+
+```java
+Department dept = departmentRepository.findById(1L).get();
+
+// Transaction ends here
+
+dept.getEmployees(); // Throws LazyInitializationException
+```
+
+Since the persistence context is closed, Hibernate cannot load the `employees` collection.
+
+### How to avoid it?
+
+* Access the lazy association within an active transaction.
+* Use a `JOIN FETCH` query when you know the related data is needed.
+* Map entities to DTOs inside the service layer.
+* Avoid changing everything to `EAGER`, as that can create performance problems.
+
+---
+
+## Why is Lazy Loading generally recommended?
+
+In real-world applications, loading all related data every time can significantly impact performance.
+
+For example:
+
+* An `Order` may have 500 `OrderItem` records.
+* If a screen only displays the order number and customer name, loading all items is unnecessary.
+
+Using **Lazy Loading** ensures those items are fetched only if they are actually needed.
+
+---
+
+## Interview Follow-up Questions
+
+### 1. Which fetch type do you prefer?
+
+**Answer:** In most cases, **`LAZY`**. It gives better control over performance. If related data is always required, I use `JOIN FETCH` or an `EntityGraph` instead of making every association `EAGER`.
+
+---
+
+### 2. Can Lazy Loading cause the N+1 query problem?
+
+**Yes.**
+
+Example:
+
+* One query loads 10 departments.
+* Then Hibernate executes 10 additional queries to load employees for each department.
+
+This results in **1 + N** queries.
+
+### How do you solve it?
+
+* Use `JOIN FETCH`.
+* Use `@EntityGraph`.
+* Fetch only the required data with DTO projections.
+
+---
+
+### 3. Why is `FetchType.EAGER` generally discouraged?
+
+Because it may load data that isn't needed, causing:
+
+* Unnecessary database access
+* Increased memory usage
+* Slower response times
+* More complex SQL queries
 
 ---
 
