@@ -458,6 +458,224 @@ This is an open invitation to demonstrate breadth. Structure your answer around 
 
 ---
 
+Below are interview-ready answers that are appropriate for a **5-year Java developer**.
+
+---
+
+## 19. What is Bootstrap ClassLoader?
+
+**Answer:**
+
+Bootstrap ClassLoader is the **parent of all class loaders in Java**. It is responsible for loading the core Java classes required by the JVM.
+
+It loads classes from the JDK's core libraries such as:
+
+* `java.lang.*`
+* `java.util.*`
+* `java.io.*`
+
+For example, classes like `String`, `Object`, `Integer`, and `ArrayList` are loaded by the Bootstrap ClassLoader.
+
+It is implemented in **native code (C/C++)**, so it is not a Java object.
+
+### Class Loader Hierarchy
+
+```
+Bootstrap ClassLoader
+        ↓
+Extension (Platform) ClassLoader
+        ↓
+Application (System) ClassLoader
+```
+
+### Real-world Example
+
+When we write:
+
+```java
+String name = "John";
+```
+
+The `String` class is loaded by the **Bootstrap ClassLoader**.
+
+### Interview Follow-up
+
+**Q:** Can we access Bootstrap ClassLoader in Java?
+
+**Answer:**
+No. Since it is implemented in native code, calling
+
+```java
+String.class.getClassLoader();
+```
+
+returns **null**, which represents the Bootstrap ClassLoader.
+
+---
+
+## 20. Explain the `volatile` keyword.
+
+**Answer:**
+
+The `volatile` keyword is used in multithreaded programming to ensure that **changes made by one thread are immediately visible to other threads**.
+
+Normally, each thread may cache a variable locally, causing other threads to read stale values. Declaring a variable as `volatile` forces reads and writes to happen directly from main memory.
+
+Example:
+
+```java
+class Test {
+    volatile boolean flag = false;
+}
+```
+
+If one thread changes:
+
+```java
+flag = true;
+```
+
+Other threads immediately see the updated value.
+
+### Important Points
+
+* Ensures **visibility**.
+* Prevents **instruction reordering**.
+* Does **not** provide atomicity.
+
+Example:
+
+```java
+volatile int count = 0;
+
+count++;
+```
+
+`count++` is **not atomic**, so `volatile` alone is insufficient.
+
+Use `AtomicInteger` or `synchronized` for atomic operations.
+
+### When to use
+
+* Status flags
+* Shutdown signals
+* Configuration values updated by one thread and read by others
+
+---
+
+## 21. What is a synchronized block?
+
+**Answer:**
+
+A synchronized block is used to ensure that **only one thread at a time can execute a critical section of code**.
+
+Syntax:
+
+```java
+synchronized(object) {
+    // Critical section
+}
+```
+
+Example:
+
+```java
+class Counter {
+    private int count = 0;
+
+    public void increment() {
+        synchronized(this) {
+            count++;
+        }
+    }
+}
+```
+
+Here, only one thread can execute `count++` at a time.
+
+### Why use a synchronized block instead of a synchronized method?
+
+A synchronized block locks **only the required code**, while a synchronized method locks the entire method.
+
+Example:
+
+```java
+public void process() {
+    // No lock needed
+
+    synchronized(this) {
+        // Shared resource
+    }
+
+    // No lock needed
+}
+```
+
+This improves performance because the lock is held only for the critical section.
+
+### Interview Follow-up
+
+**Q:** What object is used as the lock?
+
+**Answer:**
+The object inside:
+
+```java
+synchronized(lockObject)
+```
+
+acts as the monitor lock.
+
+---
+
+## 22. Difference between `final`, `finally`, and `finalize()`
+
+| final                         | finally                                     | finalize()                                                  |
+| ----------------------------- | ------------------------------------------- | ----------------------------------------------------------- |
+| Keyword                       | Block                                       | Method                                                      |
+| Used to restrict modification | Used for exception handling                 | Used for garbage collection cleanup                         |
+| Variable cannot be reassigned | Executes whether an exception occurs or not | Called by the Garbage Collector before reclaiming an object |
+| Method cannot be overridden   | Used with `try-catch`                       | Deprecated and should not be used                           |
+| Class cannot be inherited     | Ensures resource cleanup                    | Removed from modern Java practices                          |
+
+### `final` Example
+
+```java
+final int age = 25;
+
+// age = 30; // Compile-time error
+```
+
+### `finally` Example
+
+```java
+try {
+    System.out.println("Try");
+} finally {
+    System.out.println("Finally");
+}
+```
+
+The `finally` block executes even if an exception occurs (except in cases such as JVM termination).
+
+### `finalize()` Example
+
+```java
+@Override
+protected void finalize() {
+    System.out.println("Cleanup");
+}
+```
+
+This method was intended for cleanup before garbage collection, but it is **deprecated** because:
+
+* Its execution is unpredictable.
+* It impacts performance.
+* It is not guaranteed to run.
+
+Today, resource management should use **try-with-resources** or explicit cleanup methods like `close()`.
+
+---
 Now we're into Multithreading — one of the most heavily probed areas for Java Developer interviews, especially at mid-to-senior level. Let's go through these carefully.
 
 ## 26. What is Threading in Java?
