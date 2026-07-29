@@ -64,6 +64,17 @@ public class AppConfig {
 }
 ```
 
+
+> **"`@Component` and `@Bean` are both used to register objects as Spring beans in the IoC container, but the difference is in how the bean is created. `@Component` is applied at the class level, and Spring automatically detects and registers it through component scanning. It is mainly used for classes that we develop ourselves, such as Service, Repository, or Controller classes. `@Bean` is applied at the method level inside a `@Configuration` class. Spring invokes that method and registers the returned object as a bean. It is mainly used for third-party classes or when we need custom initialization or configuration during bean creation.`**
+
+### If the interviewer asks for the main difference:
+
+> **"`@Component` provides automatic bean registration through component scanning, whereas `@Bean` provides explicit bean creation and gives us full control over how the bean is instantiated and configured."**
+
+{
+"@Component lets Spring create the object automatically using component scanning. With @Bean, I write the object creation code myself, so I can choose the constructor, initialize properties, call configuration methods, and then return the object. This gives me complete control over how the bean is created before Spring manages it."
+}
+
 **Senior-level distinction to mention:** `@Component` is **declarative** (Spring finds and creates it for you), `@Bean` is **imperative/programmatic** (you write the factory method). This naturally leads into question 4.
 
 ---
@@ -110,38 +121,128 @@ public class ReportGeneratorService { ... }
 
 ## 6. How would you optimize bean loading using lazy initialization in a large slow-starting app?
 
-This is a **scenario/judgment question** — they want to see practical thinking, not just the `@Lazy` keyword.
+> In a large Spring application, startup can be slow because Spring creates all singleton beans eagerly by default. To optimize startup time, I would use lazy initialization for beans that are not required immediately during application startup.
+>
+> This can be done using `@Lazy` on specific beans or by enabling global lazy initialization using:
+>
+> ```properties
+> spring.main.lazy-initialization=true
+> ```
+>
+> or:
+>
+> ```java
+> @Lazy
+> @Service
+> public class ReportService {
+> }
+> ```
+>
+> With lazy initialization, Spring creates the bean only when it is first requested instead of during application startup. This reduces startup time and memory usage, especially for expensive beans like database clients, external API clients, reporting engines, or rarely used services.
+>
+> However, I would not make every bean lazy. Frequently used beans, security components, or critical infrastructure beans should remain eagerly initialized because delaying their creation can increase the response time of the first request and may postpone configuration errors until runtime.
+>
+> In a production application, I prefer selectively applying `@Lazy` only to heavy or infrequently used beans after profiling the startup time rather than enabling lazy loading globally.
 
-**Structure your answer like this:**
+---
 
-1. **Global lazy init** — Spring Boot supports a property to make *all* beans lazy by default:
-```properties
-spring.main.lazy-initialization=true
-```
-This is the fastest win for startup time — beans are only created on first use.
+### If the interviewer asks, "Which beans would you make lazy?"
 
-2. **Trade-off to mention (important — shows maturity):**
-   - Pros: faster startup, useful for local dev / large monoliths
-   - Cons: first request to each lazy bean is slower (creation cost shifts to runtime), and **misconfigurations surface late** — you lose the "fail fast" safety net. Bugs that should appear at startup now appear in production during a request.
+You can answer:
 
-3. **More targeted, senior approach (mention this — interviewers love it):**
-   - Don't blanket-lazy everything. Profile what's actually slow — DB connection pools, large bean graphs, heavy `@PostConstruct` logic, unnecessary auto-configurations.
-   - Use `@Lazy` selectively only on beans that are expensive and rarely used early (e.g., report generators, batch job beans, optional integrations).
-   - Other startup optimizations to mention alongside lazy init: excluding unused auto-configurations (`spring.autoconfigure.exclude`), using `spring-boot-actuator`'s startup tracking, switching to lighter embedded servers, or even considering **Spring Native/AOT compilation** for very large apps.
+* Reporting services
+* PDF/Excel generation services
+* Email services
+* External API clients
+* Machine learning models
+* Cache warm-up services
+* Rarely used admin modules
+
+Avoid making these lazy:
+
+* Controllers
+* Security configuration
+* Authentication providers
+* Core business services used in almost every request
+* DataSource
+* TransactionManager
+* Frequently accessed repositories
+
+---
+
+### Follow-up: "What are the disadvantages?"
+
+A good answer:
+
+* First request to the bean becomes slower because the bean is created then.
+* Configuration or dependency errors are discovered later instead of during startup.
+* If many lazy beans are initialized simultaneously, it can cause temporary latency spikes.
+* Global lazy initialization may hide application configuration issues until a specific feature is accessed.
+
+---
+
+### Interview-ready answer (1-minute version)
+
+> Spring creates singleton beans eagerly by default, which can increase startup time in large applications. To optimize startup, I use lazy initialization so that expensive or rarely used beans are instantiated only when first accessed. This can be done with `@Lazy` on individual beans or globally using `spring.main.lazy-initialization=true`. I prefer selective lazy loading for heavy services like reporting or external API clients rather than enabling it globally. This improves startup performance while avoiding delayed initialization of critical beans. The trade-off is that the first request to a lazy bean experiences a slight delay, and configuration errors may surface later during runtime.
 
 ---
 
 ## 7. Role of `@Value` in Spring Boot
 
-Injects a single property value (from `application.properties`/`.yml`, environment variables, or system properties) directly into a field, constructor, or setter.
+> **"`@Value` is used to inject values into Spring-managed beans. These values can come from `application.properties`, `application.yml`, environment variables, JVM system properties, or even default values. It helps externalize configuration so we don't hardcode values in the application."**
+
+### Example
+
+**application.properties**
+
+```properties
+server.port=8080
+app.name=EmployeeService
+```
+
+**Java class**
 
 ```java
-@Value("${server.port}")
-private int port;
+@Component
+public class AppInfo {
 
-@Value("${app.feature.enabled:false}")  // default value if property missing
-private boolean featureEnabled;
+    @Value("${app.name}")
+    private String appName;
+}
 ```
+
+Spring injects the value `"EmployeeService"` into the `appName` field.
+
+---
+
+### Default Value
+
+```java
+@Value("${app.version:1.0}")
+private String version;
+```
+
+If `app.version` is not defined, Spring injects `"1.0"`.
+
+---
+
+### Where can `@Value` read values from?
+
+* `application.properties`
+* `application.yml`
+* Environment variables
+* JVM system properties
+
+---
+
+### Interview Follow-up: `@Value` vs `@ConfigurationProperties`
+
+> **"`@Value` is suitable for injecting one or two individual properties. If there are many related properties (for example, database or mail configuration), `@ConfigurationProperties` is preferred because it binds all related properties into a single POJO, making the code cleaner and easier to maintain."**
+
+### One-line answer
+
+> **"`@Value` is used to inject configuration values from external sources into Spring beans, helping keep configuration separate from the application code."**
+
 
 **Points to mention:**
 - Supports SpEL (Spring Expression Language): `@Value("#{2 * 10}")`
