@@ -604,6 +604,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 }
 ```
 
+{
+Pagination and sorting in JpaRepository are built-in mechanisms used to manage large datasets efficiently by fetching data in smaller chunks (pages) and organizing it in a specific order (sorting).
+
+saveAll(...): This saves your entire list to the internal JPA persistence context memory. It delays writing SQL commands (INSERT/UPDATE) to the database until the transaction commits.
+
+flush(): This forces JPA to push all pending in-memory changes into the database transaction buffer immediately.
+}
+
 **Practical answer for "which do you use":** In real projects, you almost always use `JpaRepository` directly since it gives you everything `CrudRepository` does plus pagination — there's rarely a reason to use the more limited `CrudRepository` unless you're deliberately keeping an abstraction non-JPA-specific (e.g., supporting multiple persistence technologies).
 
 ---
