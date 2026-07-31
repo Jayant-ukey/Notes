@@ -719,11 +719,12 @@ Good scenario question — answer practically with the product catalog domain:
 
 ## 5. Difference between `@RequestParam`, `@PathVariable`, `@RequestBody`
 
-| Annotation | Used for | Example URL/Body | 
-|---|---|---|
-| `@PathVariable` | Value embedded in the URI path — usually identifies a specific resource | `/employees/{id}` |
-| `@RequestParam` | Query parameters — usually for filtering, optional values, pagination | `/employees?dept=IT&page=0` |
-| `@RequestBody` | Entire JSON/XML payload, deserialized into a Java object | POST/PUT body |
+| Annotation      | Purpose                             | Data Source       | Example URL    |
+| --------------- | ----------------------------------- | ----------------- | -------------- |
+| `@RequestParam` | Read query parameters or form data  | Query string      | `/users?id=10` |
+| `@PathVariable` | Read values from the URL path       | URL path          | `/users/10`    |
+| `@RequestBody`  | Read JSON/XML from the request body | HTTP request body | `POST /users`  |
+
 
 ```java
 @GetMapping("/employees/{id}")
