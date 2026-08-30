@@ -1,6 +1,16 @@
 
 # How to Perform Database Connectivity in Java?
 
+
+# Short Crisp Interview Answer (Only this thing is imp only reed this)
+
+> Database connectivity in Java is typically achieved using JDBC, where we establish a connection using DriverManager, create PreparedStatement, execute SQL queries, process ResultSet, and close resources properly.
+>
+> In Spring Boot applications, we usually use Spring Data JPA or Hibernate for ORM-based database interaction. Database configuration is done in application.properties, and connection pooling is managed using HikariCP.
+>
+> Internally, Hibernate still uses JDBC to communicate with the database. Transactions are typically handled using @Transactional annotations.
+> 
+
 ## Basic Definition
 
 Database connectivity in Java is the process of establishing communication between a Java application and a relational database using JDBC or ORM frameworks like Hibernate/JPA.
@@ -346,10 +356,3 @@ Requests wait until connection becomes available or timeout occurs.
 
 ---
 
-# Short Crisp Interview Answer
-
-> Database connectivity in Java is typically achieved using JDBC, where we establish a connection using DriverManager, create PreparedStatement, execute SQL queries, process ResultSet, and close resources properly.
->
-> In Spring Boot applications, we usually use Spring Data JPA or Hibernate for ORM-based database interaction. Database configuration is done in application.properties, and connection pooling is managed using HikariCP.
->
-> Internally, Hibernate still uses JDBC to communicate with the database. Transactions are typically handled using @Transactional annotations.
