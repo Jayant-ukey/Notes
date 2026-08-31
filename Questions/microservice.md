@@ -156,16 +156,6 @@ This gives you "session" semantics while remaining horizontally scalable, since 
 
 **Good closing line:** *"For a truly stateless REST API, I'd avoid HttpSession entirely and use JWT — it scales naturally since there's no server-side state to synchronize. If the application genuinely needs server-side session data (e.g., for revocability or large session payloads), I'd back it with Redis rather than in-memory sessions, so it stays scalable across instances."*
 
----
-
-## 8. "You have experience working with microservices architecture, right?"
-
-This is a **screening/confidence question**, not a technical one — answer honestly and confidently based on your actual background:
-
-- If yes: briefly mention the project, number of services, your role, and one specific contribution (e.g., "I built two of the services and implemented the Resilience4j circuit breaker integration for our payment service calls").
-- If your experience is more monolith-heavy: be honest but bridge it — *"My primary hands-on experience has been with Spring Boot monolithic/modular services, but I've worked on [specific microservices-adjacent work, e.g., service-to-service REST integration, or a POC], and I'm comfortable with the core concepts — service discovery, API gateway, resilience patterns — and confident I can ramp up quickly on a microservices-first project."*
-
-**Don't overclaim** — if they sense you're bluffing on architecture experience, follow-up questions will expose it quickly and hurt more than honesty would have.
 
 ---
 
