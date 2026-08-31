@@ -678,7 +678,7 @@ Today, resource management should use **try-with-resources** or explicit cleanup
 ---
 Now we're into Multithreading — one of the most heavily probed areas for Java Developer interviews, especially at mid-to-senior level. Let's go through these carefully.
 
-## 26. What is Threading in Java?
+## 23. What is Threading in Java?
 
 A **thread** is the smallest unit of execution within a process. **Multithreading** is the ability to run multiple threads concurrently within a single program, sharing the same memory space (heap), while each thread has its own stack and program counter.
 
@@ -691,7 +691,7 @@ A **thread** is the smallest unit of execution within a process. **Multithreadin
 
 ---
 
-## 27. Different ways to create a thread in Java
+## 24. Different ways to create a thread in Java
 
 **1. Extending the `Thread` class**
 ```java
@@ -736,7 +736,7 @@ executor.shutdown();
 
 ---
 
-## 28. Creating a thread by extending Thread class and starting it
+## 25. Creating a thread by extending Thread class and starting it
 
 ```java
 class MyThread extends Thread {
@@ -761,7 +761,7 @@ public class Test {
 
 ---
 
-## 29. When to use Runnable vs Thread
+## 26. When to use Runnable vs Thread
 
 **Prefer `Runnable` over extending `Thread`** in almost all cases. Reasons:
 
@@ -776,7 +776,7 @@ public class Test {
 
 ---
 
-## 30. Different states of a Thread Life Cycle
+## 27. Different states of a Thread Life Cycle
 
 Java thread states are defined in the `Thread.State` enum:
 
@@ -793,7 +793,7 @@ NEW → RUNNABLE → (BLOCKED / WAITING / TIMED_WAITING) → RUNNABLE → TERMIN
 
 ---
 
-## 31 & 32. Can a thread be restarted after completing? Why/why not?
+## 28 . Can a thread be restarted after completing? Why/why not?
 
 **No, a thread cannot be restarted once it has completed execution (reached TERMINATED state).**
 
@@ -806,7 +806,7 @@ NEW → RUNNABLE → (BLOCKED / WAITING / TIMED_WAITING) → RUNNABLE → TERMIN
 
 ---
 
-## 33. What happens if you try to start an already-started thread?
+## 29. What happens if you try to start an already-started thread?
 
 It throws **`IllegalThreadStateException`** (a subclass of `RuntimeException`), at runtime.
 
@@ -820,7 +820,7 @@ This applies whether the thread is still running, or has already completed — `
 
 ---
 
-## 34. What is a deadlock?
+## 30. What is a deadlock?
 
 A **deadlock** occurs when two or more threads are blocked forever, each waiting for a resource (lock) held by another thread in the group — creating a circular wait with no possible resolution.
 
@@ -852,7 +852,7 @@ Thread 1 holds `lockA` and wants `lockB`. Thread 2 holds `lockB` and wants `lock
 
 ---
 
-## 35. How can you avoid a deadlock?
+## 31. How can you avoid a deadlock?
 
 1. **Lock ordering** – Always acquire multiple locks in a **consistent, predefined order** across all threads. If every thread locks `lockA` before `lockB`, the circular wait condition is broken.
 2. **Lock timeout** – Use `tryLock(timeout)` (from `java.util.concurrent.locks.Lock`) instead of indefinite blocking `synchronized`, so a thread gives up and retries/backs off if it can't acquire a lock in time.
@@ -864,7 +864,7 @@ Thread 1 holds `lockA` and wants `lockB`. Thread 2 holds `lockB` and wants `lock
 
 ---
 
-## 36. Do you know wait() and notify()?
+## 32. Do you know wait() and notify()?
 
 Yes — these are methods on `Object` (not `Thread`) used for **inter-thread communication**, typically within a `synchronized` block.
 
@@ -897,7 +897,7 @@ class SharedResource {
 
 ---
 
-## 37. Writing to a file from multiple threads — synchronization techniques
+## 33. Writing to a file from multiple threads — synchronization techniques
 
 This is a practical/design question. A few valid approaches, mention trade-offs:
 
@@ -926,7 +926,7 @@ BlockingQueue<String> queue = new LinkedBlockingQueue<>();
 
 ---
 
-## 38. What is a race condition?
+## 34. What is a race condition?
 
 A **race condition** occurs when **multiple threads access and modify shared data concurrently**, and the final outcome depends on the unpredictable timing/order of thread execution — leading to incorrect or inconsistent results.
 
@@ -944,7 +944,7 @@ If two threads call `increment()` simultaneously, both might read `count = 5` be
 
 ---
 
-## 39. How can a race condition be prevented?
+## 35. How can a race condition be prevented?
 
 1. **Synchronization (`synchronized` keyword)** – Ensures only one thread executes the critical section at a time.
    ```java
@@ -965,7 +965,7 @@ If two threads call `increment()` simultaneously, both might read `count = 5` be
 ---
 These move into JVM internals and design patterns — important for showing you can think beyond syntax into system behavior and design. Let's go through them.
 
-## 40. How does Garbage Collection work in Java?
+## 36. How does Garbage Collection work in Java?
 
 **Core idea:** Java manages memory automatically — the **Garbage Collector (GC)** identifies and reclaims memory occupied by objects that are no longer reachable from any live reference (GC roots: local variables, active threads, static fields, etc.).
 
@@ -991,7 +991,7 @@ These move into JVM internals and design patterns — important for showing you 
 
 ---
 
-## 41. Analyzing GC logs and tuning JVM for production GC performance
+## 37. Analyzing GC logs and tuning JVM for production GC performance
 
 This is a practical, experience-based question — structure your answer as a process.
 
@@ -1022,7 +1022,7 @@ This is a practical, experience-based question — structure your answer as a pr
 
 ---
 
-## 42. What are transient fields in Java?
+## 38. What are transient fields in Java?
 
 The **`transient`** keyword marks a field so that it is **excluded from the default serialization process**. When an object is serialized (converted to a byte stream via `ObjectOutputStream`), transient fields are skipped — only **non-transient** fields are written.
 
@@ -1040,7 +1040,7 @@ class User implements Serializable {
 
 ---
 
-## 43. What happens to a transient field on deserialization, and how do you restore it?
+## 39. What happens to a transient field on deserialization, and how do you restore it?
 
 **What happens:** During deserialization, **transient fields are set to their default values** — `null` for objects, `0` for numeric primitives, `false` for booleans — since they were never written to the byte stream in the first place.
 
@@ -1071,7 +1071,7 @@ This pairs naturally with a custom `writeObject()` if you need custom serializat
 
 ---
 
-## 44. Design patterns — how comfortable are you?
+## 40. Design patterns — how comfortable are you?
 
 This is open-ended; structure your answer by **category**, and mention a couple of examples + when you've used them (if you have real experience, mention it specifically — interviewers love concrete examples over textbook lists).
 
@@ -1085,7 +1085,7 @@ This is open-ended; structure your answer by **category**, and mention a couple 
 
 ---
 
-## 45. SOLID Principles
+## 41. SOLID Principles
 
 Five principles for writing maintainable, extensible object-oriented code:
 
@@ -1099,7 +1099,7 @@ Five principles for writing maintainable, extensible object-oriented code:
 
 ---
 
-## 46. Difference between Factory and Abstract Factory
+## 42. Difference between Factory and Abstract Factory
 
 | Aspect | Factory Pattern | Abstract Factory Pattern |
 |---|---|---|
@@ -1137,7 +1137,7 @@ class MacUIFactory implements UIFactory {
 
 ---
 
-## 47. Singleton Design Pattern — code
+## 43. Singleton Design Pattern — code
 
 The most interview-relevant version is **thread-safe lazy initialization using double-checked locking**, since it shows you understand both the pattern AND threading concerns together:
 
