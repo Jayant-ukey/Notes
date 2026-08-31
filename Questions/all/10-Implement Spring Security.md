@@ -13,6 +13,19 @@ A strong answer should explain both:
 
 ---
 
+# Short Crisp Interview Answer
+
+> Spring Security is used to implement authentication and authorization in Spring Boot applications.
+>
+> We configure security using SecurityFilterChain, define endpoint access rules, and use UserDetailsService for loading users. Passwords are encrypted using BCryptPasswordEncoder.
+>
+> In modern microservices, JWT-based authentication is commonly used. After login, the server generates a JWT token, and every request carries the token in the Authorization header. A custom JWT filter validates the token and sets authentication in the SecurityContext.
+>
+> Spring Security internally works using a filter chain mechanism to secure requests.
+
+> Then read upto 2nd point which is security configure
+---
+
 # What is Spring Security?
 
 Spring Security is a security framework used to secure Spring applications.
@@ -389,13 +402,3 @@ Cross-Site Request Forgery attack.
 Usually disabled for stateless REST APIs using JWT.
 
 ---
-
-# Short Crisp Interview Answer
-
-> Spring Security is used to implement authentication and authorization in Spring Boot applications.
->
-> We configure security using SecurityFilterChain, define endpoint access rules, and use UserDetailsService for loading users. Passwords are encrypted using BCryptPasswordEncoder.
->
-> In modern microservices, JWT-based authentication is commonly used. After login, the server generates a JWT token, and every request carries the token in the Authorization header. A custom JWT filter validates the token and sets authentication in the SecurityContext.
->
-> Spring Security internally works using a filter chain mechanism to secure requests.
