@@ -67,6 +67,10 @@ Used for immutable data classes.
 public record Employee(Long id, String name) {}
 ```
 
+📦 What Does a Record Automatically Generate?
+
+-> Private, final fields, Constructor, Accessor Methods (Getters), toString(), equals() & hashCode().
+
 ### Benefits:
 
 * No getters/setters needed
