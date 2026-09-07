@@ -767,9 +767,9 @@ public class Test {
 
 1. **Java doesn't support multiple inheritance of classes.** If your class extends `Thread`, it can't extend anything else. Implementing `Runnable` keeps that door open.
 2. **Separation of concerns** — `Runnable` represents *a task*, while `Thread` represents *the mechanism executing it*. This is cleaner design (favor composition over inheritance).
-3. **Reusability** — the same `Runnable` instance can be passed to multiple threads, an `ExecutorService`, etc. A `Thread` subclass is tied to thread-specific mechanics.
-4. **Works well with the modern concurrency API** — `ExecutorService`, thread pools, and `Callable` are all designed around the task (`Runnable`/`Callable`) and execution mechanism (`Executor`) being decoupled.
-
+   (Ex:- Runnable = What should be done? → “Download this file.” Thread = Who/how will execute it? → “Run that download task on a separate thread.)
+4. **Reusability** — the same `Runnable` instance can be passed to multiple threads, an `ExecutorService`, etc. A `Thread` subclass is tied to thread-specific mechanics.
+5. **Works well with the modern concurrency API** — Such as `ExecutorService`, thread pools
 **When would you actually extend `Thread`?** Rarely — maybe if you need to override other `Thread` methods beyond `run()`, but even that's uncommon in practice.
 
 **Good line for interviews:** "`Runnable` defines *what* to run, `Thread` defines *how* to run it — keeping them separate is better design."
