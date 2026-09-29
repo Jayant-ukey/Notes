@@ -317,11 +317,13 @@ executor.shutdown();
 
 ### 2. Difference between `start()` and `run()`
 
-| Aspect | `start()` | `run()` |
+| Feature | `start()` | `run()` |
 |---|---|---|
-| Thread creation | Creates a **new thread** and the JVM's thread scheduler executes `run()` on it | Executes on the **current calling thread** — no new thread is created |
-| Concurrency | Enables actual multithreading | No concurrency; behaves like a normal method call |
-| Can be called twice | No — throws `IllegalThreadStateException` if called again on the same thread | Yes, can be called multiple times like any method |
+| Thread creation | Creates a new thread from the New to Runnable state. | Does not create a new thread. |
+| Execution Context | Executes the code inside run() in a separate, asynchronous thread. | Executes the code inside run() inside the calling thread (usually main). |
+| Concurrency | Provides true asynchronous parallel execution | Behaves like a normal synchronous method call. |
+| Multiple Calls | Cannot be invoked twice on the same thread instance. Throws an IllegalThreadStateException. | Can be called multiple times safely, just like any standard Java method. |
+
 
 **Example:**
 ```java
